@@ -1,0 +1,18 @@
+{# Page variables needed by client-side code (Javascript). #}
+<script type="text/javascript" id="datatablejs01_{{dtoptions.htmlid}}">
+{% autoescape 'js' %}
+    jQuery(document).ready(function () {
+        page_dttables['{{dtoptions.htmlid}}'] = [];
+/* Srinivas TODO : Setting the datatable fields array - updated this not to render fields array */
+    page_dttables['{{dtoptions.htmlid}}']['dtoptions'] ={{ dtoptions|json_encode(constant('JSON_PRETTY_PRINT'))|raw }} ;
+
+/* Initializing datatable */
+ 
+        page_dttables['{{dtoptions.htmlid}}']['dtoptions']['columns'] = [
+        {% for column in dtoptions.fields %}
+            {% include "components/column.html.twig" %}
+        {% endfor %} ];
+        page_dttables['{{dtoptions.htmlid}}']['dtobject'] = createDatatableOnPage(page_dttables['{{dtoptions.htmlid}}']['dtoptions']);
+        });
+{% endautoescape %}
+</script>

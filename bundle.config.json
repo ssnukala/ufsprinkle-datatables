@@ -1,0 +1,47 @@
+{
+    "bundle": {
+        "js/dtutilities": {
+            "scripts": [
+                "local/js/sndatatable_util.js"
+            ],
+            "options": {
+                "result": {
+                    "type": {
+                        "scripts": "plain"
+                    }
+                }
+            }
+        },
+        "js/datatables": {
+            "scripts": [
+                "vendor/datatables/media/js/jquery.dataTables.min.js",
+                "vendor/datatables/media/js/dataTables.bootstrap.min.js",
+                "vendor/datatables-colvis/js/dataTables.colVis.js",
+                "vendor/datatables-tabletools/js/dataTables.tableTools.js",
+                "vendor/datatables-responsive/js/dataTables.responsive.js",
+                "vendor/datatables-fixedheader/js/dataTables.fixedHeader.js"
+            ],
+            "options": {
+                "result": {
+                    "type": {
+                        "scripts": "plain"
+                    }
+                }
+            }
+        },
+        "css/datatables": {
+            "styles": [
+                "vendor/datatables/media/css/dataTables.bootstrap.min.css",
+                "vendor/datatables-colvis/css/dataTables.colVis.css",
+                "vendor/datatables-tabletools/css/dataTables.tableTools.css"
+            ],
+            "options": {
+                "result": {
+                    "type": {
+                        "styles": "plain"
+                    }
+                }
+            }
+        }
+    }
+}

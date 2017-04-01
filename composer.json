@@ -1,0 +1,22 @@
+{
+    "name": "userfrosting/sprinkle-account",
+    "type": "sprinkle",
+    "description": "Authentication and account management module for UserFrosting.",
+    "keywords": ["php user management", "usercake", "bootstrap"],
+    "homepage": "https://github.com/userfrosting/UserFrosting",
+    "license" : "MIT",
+    "authors" : [
+        {
+            "name": "Srinivas Nukala",
+            "homepage": "https://srinivasnukala.com"
+        }
+    ],
+    "version": "4.0.0",
+    "require": {
+    },
+    "autoload": {
+        "psr-4": {
+            "UserFrosting\\Sprinkle\\SnDatatables\\": "src/"
+        }
+    }
+}
