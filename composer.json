@@ -1,14 +1,14 @@
 {
-    "name": "userfrosting/sprinkle-account",
+    "name": "ssnukala/ufsprinkle-datatables",
     "type": "sprinkle",
-    "description": "Authentication and account management module for UserFrosting.",
+    "description": "Datatables Sprinkle module for UserFrosting.",
     "keywords": ["php user management", "usercake", "bootstrap"],
-    "homepage": "https://github.com/userfrosting/UserFrosting",
+    "homepage": "https://github.com/ssnukala/ufsprinkle-datatable",
     "license" : "MIT",
     "authors" : [
         {
             "name": "Srinivas Nukala",
-            "homepage": "https://srinivasnukala.com"
+            "homepage": "http://srinivasnukala.com"
         }
     ],
     "version": "4.0.0",
