@@ -1,3 +1,6 @@
+//https://datatables.net/reference/api/columns().every()
+//https://datatables.net/reference/api/columns()
+
 var page_dttables = [];
 function createDatatableOnPage(dtoptions)
 {
@@ -58,9 +61,6 @@ function createDatatableOnPage(dtoptions)
             if (typeof fncallback === "function") {
                 fncallback(settings);
             }
-//                            if (o._iDisplayStart != oldStart) {
-//                                jQuery('html,body').animate({scrollTop: 0}, 2000);
-//                            }
         }
         /*This adds column level automatic filter. Needs some debugging
          *                         ,initComplete: function () {
@@ -392,62 +392,4 @@ function getFormContent(par_ajaxurl, par_id, postdtopts, par_options)
         }
     });
     return ret_html;
-}
-
-
-/*
- * View Value Row : For single value that will come using AJAX call similar to the Ajax detail row
- */
-function onClickViewValueRow(oTableid, par_this, par_source, par_id)
-{
-    var oTable_full = [];
-    var oTable_full = page_dttables[oTableid];
-    var oTable = oTable_full['dtobject'];
-
-    var tr = jQuery(par_this).closest('tr');
-    //alert("Line 430");            
-    var row = oTable.api().row(tr);
-    //            var row = oTable.api().row(tr[0]);
-    if (row.child.isShown()) {
-        // This row is already open - close it
-        row.child.hide();
-        tr.removeClass('shown');
-    } else {
-        // Open this row
-        row.child(showDetailRow_Value(oTableid, par_source, par_id)).show();
-        tr.addClass('shown');
-    }
-}
-function showDetailRow_Value(oTableid, par_source, par_id) {
-    // `d` is the original data object for the row
-    //            formData = serialize(d);
-    var oTable_full = [];
-    var oTable_full = page_dttables[oTableid];
-    var oTable_options = oTable_full['dtoptions'];
-    var odata_options = oTable_full['data_options'];
-
-    var wp_ajaxurl = oTable_options.process_url;
-
-//            var refmemid = <?= (isset($var_memrec['recid']) ? $var_memrec['recid'] : -1) ?>;
-    var var_detret;
-    jQuery.ajax({
-        url: wp_ajaxurl + '?action=ceAPIProcess&source=' + par_source + '&value=' + par_id,
-        type: "post",
-        async: false,
-        success: function (retval) {
-            var var_detret1 = 'some value';
-            if (retval !== "") {
-                var_detret1 = retval;
-            } else
-            {
-                var_detret1 = "No details found";
-            }
-            var_detret = var_detret1;
-            return var_detret1
-        }
-    });
-
-
-    return '<table width="100%" cellpadding="5" cellspacing="0" border="0" style="height:60px; overflow:scroll;padding:0px 15px;">' +
-            '<tr><td>' + var_detret + '</td></tr></table>';
 }

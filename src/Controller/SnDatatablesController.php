@@ -189,7 +189,8 @@ class SnDatatablesController extends SimpleController {
 //SnUtil::logarr($this->_datatable['options'],"Line 123 datatable options and the JS file is ".$this->_datatable_js_twig);    
 //error_log("Line 163 datatable options and the JS file is ".$this->_datatable_js_twig);    
         $this->_datatable['js'] = $this->ci->view->fetch($this->_datatable_js_twig, [
-            'dtoptions' => $this->_datatable['options']]
+            'dtoptions' => $this->_datatable['options'],
+            'fields'=>$this->_fields]
         );
 //error_log("Line 175 the js file contents are ".$this->_datatable['js']);        
     }
@@ -229,7 +230,7 @@ class SnDatatablesController extends SimpleController {
             "column_definition" => "",
             "swf_path" => "/swf",
             "initial_search" => "",
-            'fields' => $this->_fields,
+//            'fields' => $this->_fields,
             'all_columns' => $this->_datatable['all_columns'],
             'colspan' => $this->_datatable['column_count']);
 //logarr($this->_datatable['options'],"Line 186");        

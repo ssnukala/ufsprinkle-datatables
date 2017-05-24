@@ -9,7 +9,7 @@
 /* Initializing datatable */
  
         page_dttables['{{dtoptions.htmlid}}']['dtoptions']['columns'] = [
-        {% for column in dtoptions.fields %}
+        {% for column in fields %}
             {% include "components/column.html.twig" %}
         {% endfor %} ];
         page_dttables['{{dtoptions.htmlid}}']['dtobject'] = createDatatableOnPage(page_dttables['{{dtoptions.htmlid}}']['dtoptions']);
