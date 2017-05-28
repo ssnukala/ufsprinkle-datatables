@@ -8,7 +8,7 @@
  * @license   https://github.com/chinmaya.regsevak/blob/master/licenses/UserFrosting.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\SnDatatables\Controller;
+namespace UserFrosting\Sprinkle\Datatables\Controller;
 
 use Carbon\Carbon;
 use UserFrosting\Sprinkle\Core\Controller\SimpleController;
@@ -18,7 +18,7 @@ use UserFrosting\Sprinkle\Core\Util\EnvironmentInfo;
 use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\ServerSideValidator;
-use UserFrosting\Sprinkle\SnDatatables\Model\SnDatatableSource;
+use UserFrosting\Sprinkle\Datatables\Model\DatatableSource;
 use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
 
 /**
@@ -29,7 +29,7 @@ use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
  * @author Alex Weissman
  * @link http://www.userfrosting.com/navigating/#structure
  */
-class SnDatatablesController extends SimpleController {
+class DatatablesController extends SimpleController {
 
     protected $_source;       // table that this datatable will use to query
     protected $_source_type;       // table that this datatable will use to query
@@ -282,15 +282,15 @@ class SnDatatablesController extends SimpleController {
 
     public function getDataFromSource($getparam, $par_nondbcols = 'none', $par_where = '', $par_filter = '', $par_order = '') {
 
-        SnDatatableSource::init($this->_db_table);
+        DatatableSource::init($this->_db_table);
 
 //logarr($getparam,"Line 112 inside DB Datatable controller, $par_nondbcols = 'none', $par_where = '', $par_filter = '' Table ".$this->_db_table);            
 //logarr($this->_db_columns,"Line 113 columns");
 //logarr($this->_datatable['column_data_def'],"Line 115 column def");
 //            $var_retarr = $this->simple($getparam, $par_nondbcols, $par_where, $par_filter);
 //error_log("Line 143 setting dtrowid ".$this->_datatable['options']['_dt_rowid']) ;           
-        SnDatatableSource::setRowIdColumn($this->_datatable['options']['_dt_rowid']);
-        $var_retdata = SnDatatableSource::getDatatableData($this->_datatable['column_data_def'], $getparam, $par_nondbcols, $par_where, $par_filter, $par_order);
+        DatatableSource::setRowIdColumn($this->_datatable['options']['_dt_rowid']);
+        $var_retdata = DatatableSource::getDatatableData($this->_datatable['column_data_def'], $getparam, $par_nondbcols, $par_where, $par_filter, $par_order);
 
         $this->_data['records'] = $var_retdata['records'];
         $this->_data['filtered_count'] = $var_retdata['filtered_count'];
@@ -326,7 +326,7 @@ class SnDatatablesController extends SimpleController {
         $ms = $this->ci->alerts;
 
         // Load the request schema
-        $schema = new RequestSchema('schema://sndatatable.json');
+        $schema = new RequestSchema('schema://datatable.json');
 
         // Whitelist and set parameter defaults
         $transformer = new RequestDataTransformer($schema);

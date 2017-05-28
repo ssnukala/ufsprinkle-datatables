@@ -7,10 +7,10 @@
  * @license   https://github.com/chinmaya.regsevak/blob/master/licenses/UserFrosting.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\SnDatatables\Controller;
+namespace UserFrosting\Sprinkle\Datatables\Controller;
 
 use Carbon\Carbon;
-use UserFrosting\Sprinkle\SnDatatables\Controller\SnDatatablesController;
+use UserFrosting\Sprinkle\Datatables\Controller\DatatablesController;
 use UserFrosting\Support\Exception\BadRequestException;
 use UserFrosting\Support\Exception\ForbiddenException;
 use UserFrosting\Sprinkle\Core\Util\EnvironmentInfo;
@@ -27,7 +27,7 @@ use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
  * @author Alex Weissman
  * @link http://www.userfrosting.com/navigating/#structure
  */
-class SnDatatablesFFController extends SnDatatablesController {
+class DatatablesFFController extends DatatablesController {
 
     public function setupDatatable($properties = []) {
 //SnUtil::logarr($properties,"Line 30 FF controller");

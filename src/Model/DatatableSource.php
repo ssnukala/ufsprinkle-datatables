@@ -1,6 +1,6 @@
 <?php
 
-namespace UserFrosting\Sprinkle\SnDatatables\Model;
+namespace UserFrosting\Sprinkle\Datatables\Model;
 use \Illuminate\Database\Capsule\Manager as Capsule; 
 use UserFrosting\Sprinkle\Core\Model\UFModel;
 use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
@@ -14,7 +14,7 @@ use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
  */
 
 
-class SnDatatableSource extends UFModel {
+class DatatableSource extends UFModel {
 
     protected static $_last_sql_executed;       // The name of the table whose rows this class represents. Must be set in the child concrete class.    
     protected static $_filtered_records;       // The name of the table whose rows this class represents. Must be set in the child concrete class.    

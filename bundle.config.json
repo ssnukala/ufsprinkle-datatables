@@ -2,7 +2,7 @@
     "bundle": {
         "js/dtutilities": {
             "scripts": [
-                "local/js/sndatatable_util.js"
+                "local/js/datatable_util.js"
             ],
             "options": {
                 "result": {
