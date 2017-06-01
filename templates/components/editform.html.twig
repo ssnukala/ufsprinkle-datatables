@@ -17,7 +17,7 @@
                     {% for column in dtoptions.fields %}
                         {% if(column.showin_editform=='Y') %}
                             {% if(column.type=='select')%}
-                                {% set options_array=getLookupOptions(column.lookup_cat) %}
+                                {% set options_array=getLookupOptions(column.lookup_category) %}
                                 {{ macros.input_select((column.db_field_name~'_i'), column.db_name, column.label,'',options_array,'','')}}
                             {% elseif(column.type=='textarea')%}
                                 {{ macros.input_textarea((column.db_field_name~'_i'), column.db_name, column.label,'', column.label,3,60,'', dtdata[column.db_name]|default(''), '')}}
