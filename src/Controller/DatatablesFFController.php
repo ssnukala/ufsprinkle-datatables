@@ -47,7 +47,7 @@ class DatatablesFFController extends DatatablesController {
         foreach ($par_tabdef as &$var_column) {
 //logarr($var_column,"Line 980 tabdef");
 
-            $var_colspan+=$var_column['hidden'] != 'Y' ? 1 : 0;
+            $var_colspan+=$var_column['visible'] == 'Y' ? 1 : 0;
             $var_column["padding"] = "";
             $var_column["name"] = $var_column['db_name'];
             $var_column["orderable"] = $var_column['orderable']=='Y';
@@ -55,7 +55,7 @@ class DatatablesFFController extends DatatablesController {
 //            $var_column["searchable"] = $var_column['searchable'] == 'Y';
             $var_column["title"] = $var_column["label"];
             $var_column["type"] = $var_column['type'];
-            $var_column["visible"] = $var_column['hidden'] != 'Y';
+            $var_column["visible"] = $var_column['visible'] == 'Y';
             $var_column["class"] = "dt_column ".$var_column['db_name'];
             $var_column["width"] = "";
             $var_column["data"] = $var_column['db_name'];
