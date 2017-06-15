@@ -16,7 +16,7 @@ use UserFrosting\Support\Exception\ForbiddenException;
 use UserFrosting\Sprinkle\Core\Util\EnvironmentInfo;
 use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
-use UserFrosting\Sprinkle\AutoForms\Model\Formfields;
+use UserFrosting\Sprinkle\AutoForms\Database\Models\Formfields;
 use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
 
 /**
