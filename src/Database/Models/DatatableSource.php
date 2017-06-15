@@ -83,11 +83,11 @@ class DatatableSource extends Model {
         }
         
         $results = Capsule::select($query); 
-SnUtil::logarr($results,"Line 86 Query 2 results $query");
+//SnUtil::logarr($results,"Line 86 Query 2 results $query");
         
         $query2 = "SELECT FOUND_ROWS() as foundrows";
         $results2 = Capsule::select($query2); 
-SnUtil::logarr($results2,"Line 90 Query 2 results $query2");
+//SnUtil::logarr($results2,"Line 90 Query 2 results $query2");
 
         $query3 = "SELECT count(*) total_count FROM `$table` ";
         

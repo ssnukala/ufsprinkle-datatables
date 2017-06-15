@@ -403,15 +403,16 @@ class DatatablesController extends SimpleController {
             $row = array();
 //logarr($this->_datatable['column_data_def'],"Line 332 the coldef array");            
             foreach ($this->_datatable['column_data_def'] as $var_coldef) {
-//SnUtil::logarr($var_coldef,"Line 390");    
+//SnUtil::logarr($var_coldef,"Line 390");  
+                $thisdbfield = $var_coldef['db'];
                 if (isset($var_coldef['formatter'])) {
 //                                    echobr("Line 46 formatter is set");
 //SnUtil::logarr($var_coldef['dt'],"Line 393");    
 //SnUtil::logarr($var_coldef['db'],"Line 393");    
 
-                    $row[$var_coldef['dt']] = $var_coldef['formatter']($var_datarec->$var_coldef['db'], $var_datarec);
+                    $row[$var_coldef['dt']] = $var_coldef['formatter']($var_datarec->$thisdbfield, $var_datarec);
                 } else {
-                    $row[$var_coldef['dt']] = $var_datarec->$var_coldef['db'];
+                    $row[$var_coldef['dt']] = $var_datarec->$thisdbfield;
                 }
             }
 
