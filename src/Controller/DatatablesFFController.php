@@ -49,16 +49,16 @@ class DatatablesFFController extends DatatablesController {
 
             $var_colspan+=$var_column['visible'] == 'Y' ? 1 : 0;
             $var_column["padding"] = "";
-            $var_column["name"] = $var_column['db_name'];
+            $var_column["name"] = $var_column['db_field'];
             $var_column["orderable"] = $var_column['orderable']=='Y';
 //            $var_column["orderable"] = $this->_column_defaults['orderable'];
 //            $var_column["searchable"] = $var_column['searchable'] == 'Y';
             $var_column["title"] = $var_column["label"];
             $var_column["type"] = $var_column['type'];
             $var_column["visible"] = $var_column['visible'] == 'Y';
-            $var_column["class"] = "dt_column ".$var_column['db_name'];
+            $var_column["class"] = "dt_column ".$var_column['db_field'];
             $var_column["width"] = "";
-            $var_column["data"] = $var_column['db_name'];
+            $var_column["data"] = $var_column['db_field'];
             $var_column["render"] = "";
 
             $var_fcol = array();
