@@ -7,16 +7,16 @@
  * @license   https://github.com/chinmaya.regsevak/blob/master/licenses/UserFrosting.md (MIT License)
  */
 
-namespace UserFrosting\Sprinkle\SnDatatables\Controller;
+namespace UserFrosting\Sprinkle\Datatables\Controller;
 
 use Carbon\Carbon;
-use UserFrosting\Sprinkle\SnDatatables\Controller\SnDatatablesController;
+use UserFrosting\Sprinkle\Datatables\Controller\DatatablesController;
 use UserFrosting\Support\Exception\BadRequestException;
 use UserFrosting\Support\Exception\ForbiddenException;
 use UserFrosting\Sprinkle\Core\Util\EnvironmentInfo;
 use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
-use UserFrosting\Sprinkle\AutoForms\Model\Formfields;
+use UserFrosting\Sprinkle\AutoForms\Database\Models\Formfields;
 use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
 
 /**
@@ -27,7 +27,7 @@ use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
  * @author Alex Weissman
  * @link http://www.userfrosting.com/navigating/#structure
  */
-class SnDatatablesFFController extends SnDatatablesController {
+class DatatablesFFController extends DatatablesController {
 
     public function setupDatatable($properties = []) {
 //SnUtil::logarr($properties,"Line 30 FF controller");
@@ -47,18 +47,18 @@ class SnDatatablesFFController extends SnDatatablesController {
         foreach ($par_tabdef as &$var_column) {
 //logarr($var_column,"Line 980 tabdef");
 
-            $var_colspan+=$var_column['hidden'] != 'Y' ? 1 : 0;
+            $var_colspan+=$var_column['visible'] == 'Y' ? 1 : 0;
             $var_column["padding"] = "";
-            $var_column["name"] = $var_column['db_name'];
+            $var_column["name"] = $var_column['db_field'];
             $var_column["orderable"] = $var_column['orderable']=='Y';
 //            $var_column["orderable"] = $this->_column_defaults['orderable'];
 //            $var_column["searchable"] = $var_column['searchable'] == 'Y';
             $var_column["title"] = $var_column["label"];
             $var_column["type"] = $var_column['type'];
-            $var_column["visible"] = $var_column['hidden'] != 'Y';
-            $var_column["class"] = "dt_column ".$var_column['db_name'];
+            $var_column["visible"] = $var_column['visible'] == 'Y';
+            $var_column["class"] = "dt_column ".$var_column['db_field'];
             $var_column["width"] = "";
-            $var_column["data"] = $var_column['db_name'];
+            $var_column["data"] = $var_column['db_field'];
             $var_column["render"] = "";
 
             $var_fcol = array();

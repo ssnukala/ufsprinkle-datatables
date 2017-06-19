@@ -7,8 +7,8 @@
  * @license   https://github.com/chinmaya.regsevak/blob/master/licenses/UserFrosting.md (MIT License)
  */
 
-$app->group('/api/sndatatable', function () {
-    $this->delete('/d/{source_name}', 'UserFrosting\Sprinkle\SNDatatable\Controller\SNDatatablesController:populateDatatable');
+$app->group('/api/datatable', function () {
+    $this->delete('/d/{source_name}', 'UserFrosting\Sprinkle\Datatables\Controller\DatatablesController:populateDatatable');
 
     $this->get('', 'UserFrosting\Sprinkle\Admin\Controller\UserController:getList');
 

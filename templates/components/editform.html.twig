@@ -17,12 +17,12 @@
                     {% for column in dtoptions.fields %}
                         {% if(column.showin_editform=='Y') %}
                             {% if(column.type=='select')%}
-                                {% set options_array=getLookupOptions(column.lookup_cat) %}
-                                {{ macros.input_select((column.db_field_name~'_i'), column.db_name, column.label,'',options_array,'','')}}
+                                {% set options_array=getLookupOptions(column.lookup_category) %}
+                                {{ macros.input_select((column.db_field_name~'_i'), column.db_field, column.label,'',options_array,'','')}}
                             {% elseif(column.type=='textarea')%}
-                                {{ macros.input_textarea((column.db_field_name~'_i'), column.db_name, column.label,'', column.label,3,60,'', dtdata[column.db_name]|default(''), '')}}
+                                {{ macros.input_textarea((column.db_field_name~'_i'), column.db_field, column.label,'', column.label,3,60,'', dtdata[column.db_field]|default(''), '')}}
                             {% else%}
-                                {{ macros.input_text(column.type,(column.db_name~'_i'), column.db_name, column.label,'', column.label,'', dtdata[column.db_name]|default(''), '')}}
+                                {{ macros.input_text(column.type,(column.db_field~'_i'), column.db_field, column.label,'', column.label,'', dtdata[column.db_field]|default(''), '')}}
                             {% endif %}
                             {% set this_cols = this_cols+1 %}
                         </div>

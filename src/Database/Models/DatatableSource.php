@@ -1,8 +1,8 @@
 <?php
 
-namespace UserFrosting\Sprinkle\SnDatatables\Model;
+namespace UserFrosting\Sprinkle\Datatables\Database\Models;
 use \Illuminate\Database\Capsule\Manager as Capsule; 
-use UserFrosting\Sprinkle\Core\Model\UFModel;
+use UserFrosting\Sprinkle\Core\Database\Models\Model;
 use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
 
 /**
@@ -14,7 +14,7 @@ use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
  */
 
 
-class SnDatatableSource extends UFModel {
+class DatatableSource extends Model {
 
     protected static $_last_sql_executed;       // The name of the table whose rows this class represents. Must be set in the child concrete class.    
     protected static $_filtered_records;       // The name of the table whose rows this class represents. Must be set in the child concrete class.    
@@ -83,11 +83,11 @@ class SnDatatableSource extends UFModel {
         }
         
         $results = Capsule::select($query); 
-SnUtil::logarr($results,"Line 86 Query 2 results $query");
+//SnUtil::logarr($results,"Line 86 Query 2 results $query");
         
         $query2 = "SELECT FOUND_ROWS() as foundrows";
         $results2 = Capsule::select($query2); 
-SnUtil::logarr($results2,"Line 90 Query 2 results $query2");
+//SnUtil::logarr($results2,"Line 90 Query 2 results $query2");
 
         $query3 = "SELECT count(*) total_count FROM `$table` ";
         
