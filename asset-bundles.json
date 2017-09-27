@@ -19,6 +19,7 @@
                 "vendor/datatables-colvis/js/dataTables.colVis.js",
                 "vendor/datatables-tabletools/js/dataTables.tableTools.js",
                 "vendor/datatables-responsive/js/dataTables.responsive.js",
+                "vendor/datatables-plugins/api/fnReloadAjax.js",
                 "vendor/datatables-fixedheader/js/dataTables.fixedHeader.js"
             ],
             "options": {
