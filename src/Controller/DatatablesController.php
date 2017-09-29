@@ -211,6 +211,10 @@ class DatatablesController extends SimpleController {
     }
 
     private function setDatatableDefaultOptions() {
+        if(!isset($this->_datatable['options']['pagelength']))
+        {
+            $this->_datatable['options']['pagelength']=10;
+        }
         $this->_datatable['options'] = array("htmlid" => $this->_htmlid,
             "dtjsvar" => $this->_dtjsvar,
             "show_detail" => $this->_show_detail,
@@ -220,7 +224,7 @@ class DatatablesController extends SimpleController {
 //            "process_url" => "/".$this->_process_route."/" . $this->_source,
             "process_url" => "/" . $this->_process_route,
             "source" => $this->_source,
-            "pagelength" => "10",
+            "pagelength" => $this->_datatable['options']['pagelength'],
             "thispage" => "1",
             "extra_param" => "",
             "responsive" => "N",
