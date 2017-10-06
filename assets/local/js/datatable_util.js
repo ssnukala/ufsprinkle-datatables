@@ -118,7 +118,7 @@ function reloadDatatableNewURL(oTableid, dtURL)
     var oTable_full = [];
     var oTable_full = page_dttables[oTableid];
     var oTable = oTable_full['dtobject'];
-    oTable.fnReloadAjax(dtURL);
+    oTable.fnReloadAjax(dtURL,null,true);
 }
 
 
