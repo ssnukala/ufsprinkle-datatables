@@ -1,6 +1,6 @@
 {
     "name": "ssnukala/ufsprinkle-datatables",
-    "type": "sprinkle",
+    "type": "userfrosting-sprinkle",
     "description": "Datatables Sprinkle module for UserFrosting.",
     "keywords": ["php user management", "usercake", "bootstrap"],
     "homepage": "https://github.com/ssnukala/ufsprinkle-datatable",
@@ -13,10 +13,14 @@
     ],
     "version": "4.0.0",
     "require": {
+        "php": ">=5.6"
     },
     "autoload": {
         "psr-4": {
             "UserFrosting\\Sprinkle\\Datatables\\": "src/"
         }
+    },
+    "extra": {
+        "installer-name": "DSD"
     }
 }

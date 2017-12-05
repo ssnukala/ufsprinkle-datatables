@@ -303,12 +303,6 @@ class DatatablesController extends SimpleController {
         return $var_retdata;
     }
 
-    protected function getDatatableRequest($request) {
-        // Load the request schema
-        $params = $request->getQueryParams();
-        return $params;
-    }
-
     public function getDatatablePost($request) {
         // Get POST parameters: name, slug, icon, description
         $params = $request->getParsedBody();

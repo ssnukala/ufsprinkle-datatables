@@ -16,8 +16,8 @@ use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
 
 class DatatableSource extends Model {
 
-    protected static $_last_sql_executed;       // The name of the table whose rows this class represents. Must be set in the child concrete class.    
-    protected static $_filtered_records;       // The name of the table whose rows this class represents. Must be set in the child concrete class.    
+    protected static $_last_sql_executed;
+    protected static $_filtered_records; 
     protected static $_total_records;  
     protected static $_dt_rowid='';
     protected static $_dt_dbtable_id = "undefined";
