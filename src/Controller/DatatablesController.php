@@ -171,6 +171,7 @@ class DatatablesController extends SimpleController {
 
     public function getDatatableArray() {
         $this->_datatable['htmlid'] = $this->_htmlid;
+        $this->_datatable['fields'] = $this->_fields;
         return $this->_datatable;
     }
 
@@ -278,6 +279,7 @@ class DatatablesController extends SimpleController {
             $var_allcols[$var_column['name']] = $var_column['name'];
         }
         $this->_fields = $par_tabdef;
+//        $this->_datatable['fields'] = $par_tabdef;
         $this->_datatable['all_columns'] = $var_allcols;
         $this->_datatable['column_count'] = $var_colspan;
         $this->_datatable['column_data_def'] = $var_datatable_cols;

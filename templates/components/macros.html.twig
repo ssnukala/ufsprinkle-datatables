@@ -38,7 +38,6 @@
 
 {% macro input_textarea(id, name, label, class, placeholder, rows, cols, value, errors) %}
     {% import _self as form %}
-
     <div class="form-group {% if errors %}has-error{% endif %}">
         <label class="control-label " for="{{id | default("input_" ~ name ~ "_i" ) }}" >{{ label }}</label>
         <textarea rows="{{rows|default(3)}}"  cols="{{cols|default(60)}}" class="form-control {{class}}" id="{{id | default("input_" ~ name ~ "_i" ) }}"  
