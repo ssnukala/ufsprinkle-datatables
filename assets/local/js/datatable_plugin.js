@@ -19,16 +19,16 @@ function createDatatableOnPage(dtoptions)
     var csrf_keyname = site.csrf.name;
     var csrf_key = site.csrf.value;
 
-    var dtpostdata ={
-                'request': 'get_idtdata',
-                dtoptions: {id: dtoptions.htmlid, dtjsvar: dtoptions.dtjsvar, source: dtoptions.source,
-                    thispage: dtoptions.thispage, show_detail: dtoptions.show_detail,
-                    ajax_detail: dtoptions.ajax_detail, data_options: dtoptions.data_options}
-            };
+    var dtpostdata = {
+        'request': 'get_idtdata',
+        dtoptions: {id: dtoptions.htmlid, dtjsvar: dtoptions.dtjsvar, source: dtoptions.source,
+            thispage: dtoptions.thispage, show_detail: dtoptions.show_detail,
+            ajax_detail: dtoptions.ajax_detail, data_options: dtoptions.data_options}
+    };
 //    dtpostdata[csrf_keyname]=csrf_key;
     dtpostdata[site.csrf.keys.name] = site.csrf.name;
     dtpostdata[site.csrf.keys.value] = site.csrf.value;
-    
+
     oTable = jQuery(divid).dataTable({
         "oSearch": {"sSearch": dtoptions.initial_search},
         "columns": dtoptions.columns,
@@ -83,13 +83,27 @@ function createDatatableOnPage(dtoptions)
     return oTable;
 }
 
+$.fn.dataTable.render.format_column = function (column_name) {
+    return function (data, type, row) {
+        if (type === 'display' && jQuery('div[column_formatter="' + column_name + '"]').length)
+        {
+            var colhtml = jQuery('div[column_formatter="' + column_name + '"]');
+            jQuery.each(row, function (key, value) {
+                colhtml.replace("row." + key, value);
+            });
+            return colhtml;
+        }
+        // Search, order and type can use the original data
+        return data;
+    };
+};
 /*
  * Srinivas TODO : Check this API syntax
-jQuery.fn.dataTable.Api.register('column().title()', function () {
-    var colheader = this.header();
-    return jQuery(colheader).text().trim();
-});
-*/
+ jQuery.fn.dataTable.Api.register('column().title()', function () {
+ var colheader = this.header();
+ return jQuery(colheader).text().trim();
+ });
+ */
 function hideDetailRow_DT(oTableid, buttonthis)
 {
     if (oTableid !== 'none')
@@ -118,7 +132,7 @@ function reloadDatatableNewURL(oTableid, dtURL)
     var oTable_full = [];
     var oTable_full = page_dttables[oTableid];
     var oTable = oTable_full['dtobject'];
-    oTable.fnReloadAjax(dtURL,null,true);
+    oTable.fnReloadAjax(dtURL, null, true);
 }
 
 

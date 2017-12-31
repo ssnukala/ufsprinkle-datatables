@@ -8,9 +8,10 @@
  #}
 {
     {% block common %}
+        "name": "{{ column.name }}",
         "contentPadding": "{{ column.padding }}",
         "defaultContent": "{{ column.defaultContent }}",
-        "name": "{{ column.name }}",
+        "render": $.fn.dataTable.render.format_column("{{ column.name }}"),
         {% if column.orderable %}
             "orderable": true,
         {% else %}

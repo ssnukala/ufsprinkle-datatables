@@ -83,6 +83,24 @@ function createDatatableOnPage(dtoptions)
     return oTable;
 }
 
+$.fn.dataTable.render.format_column = function (column_name) {
+    return function (data, type, row) {
+        if (type === 'display' && jQuery('div[column_formatter="' + column_name + '"]').length)
+        {
+            var colhtml = jQuery('div[column_formatter="' + column_name + '"]').html();
+            jQuery.each(row, function (key, value) {
+//console.log("Line 92 replacing this "+'row.' + key);
+                var rowkey = 'row.'+key;
+                var rowkey1 = new RegExp(rowkey, 'g');                
+                colhtml = colhtml.replace(rowkey1, value);
+//console.log("Line 95 the html is "+colhtml);            
+            });
+            return colhtml;
+        }
+        // Search, order and type can use the original data
+        return data;
+    };
+};
 /*
  * Srinivas TODO : Check this API syntax
 jQuery.fn.dataTable.Api.register('column().title()', function () {

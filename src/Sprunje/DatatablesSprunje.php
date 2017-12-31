@@ -65,9 +65,9 @@ class DatatablesSprunje extends Sprunje
     public function getArray()
     {
 //Debug::debug("Line 66 the options are ",$this->options);
-        
-        $this->options['page']=$this->options['start'];
+        $this->options['page']=($this->options['start']/$this->options['length']);
         $this->options['size']=$this->options['length'];
+//Debug::debug("Line 70 the options are ",$this->options);
         $this->options['filters']['_all']=$this->options['search']['value'];
         
         list($count, $countFiltered, $rows) = $this->getModels();
@@ -89,5 +89,51 @@ class DatatablesSprunje extends Sprunje
         return $this->classMapper->createInstance($this->name)->newQuery();
     }
     
+    /**
+     * Get the unpaginated count of items (before filtering) in this query.
+     *
+     * @param Builder $query
+     * @return int
+     */
+    protected function count($query)
+    {
+//Debug::debug("Line 540 the sql is ".$query->toSql());
+        $thissql = $query->toSql();
+        if(stripos($thissql,'group by')!== false)
+        {
+            $thiscount =  count($query->get());
+Debug::debug("Line 105 the sql is  updating the count to ($thiscount) ");
+//            $origcount= $query->count();
+//Debug::debug("Line 547 the sql is  instead of ($origcount) ");
+            return $thiscount;
+        }
+        else
+        {
+            return $query->count();
+        }
+    }
+
+    /**
+     * Get the unpaginated count of items (after filtering) in this query.
+     *
+     * @param Builder $query
+     * @return int
+     */
+    protected function countFiltered($query)
+    {
+        $thissql = $query->toSql();
+        if(stripos($thissql,'group by')!== false)
+        {
+            $thiscount =  count($query->get());
+Debug::debug("Line 128 the sql is  updating the count to ($thiscount) ");
+//            $origcount= $query->count();
+//Debug::debug("Line 568 the sql is  instead of ($origcount) ");
+            return $thiscount;
+        }
+        else
+        {
+            return $query->count();
+        }
+    }
     
 }
