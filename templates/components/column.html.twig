@@ -9,23 +9,26 @@
 {
 {% block common %}
     "name": "{{ column.name }}",
-    "contentPadding": "{{ column.padding }}",
-    "defaultContent": "{{ column.default }}",
-    "render": $.fn.dataTable.render.format_column("{{ column.name }}"),
-    "orderable": {{column.orderable?'true':'false'}},
-    "searchable":{{column.searchable? 'true':'false'}},
     "title": "{{ column.title|raw }}",
-    {% if column.type %}
+    {% if column.type is not empty %}
         "type": "{{ column.type }}",
     {% endif %}
-    "visible": {{column.visible ? 'true':'false'}},
-    "className":"{{column.visible ? '':'never '}} {{column.class }}",
+    {% if column.default is not empty %}
+        "defaultContent": "{{ column.default }}",
+    {% endif %}
+    "orderable": {{(column.orderable|default(false))?'true':'false'}},
+    "searchable":{{(column.searchable|default(false))? 'true':'false'}},
+    "visible": {{(column.visible|default(false)) ? 'true':'false'}},
+    "className":"{{(column.visible|default(false)) ? '':'never '}} {{column.class }}",
+    {% if column.padding is not empty %}
+        "contentPadding": "{{ column.padding }}",
+    {% endif %}
     {% if column.width is not empty %}
         "width": "{{ column.width }}",
     {% endif %}
+    "render": $.fn.dataTable.render.format_column("{{ column.name }}"),
 {% endblock %}
-
 {% block data %}
-    "data": "{{ column.data }}"
+    "data": "{{ column.data|default(column.name) }}"
 {% endblock %}
 },
