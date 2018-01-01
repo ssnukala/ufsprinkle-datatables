@@ -15,7 +15,7 @@ return [
     ]
     ,
     'debug' => [
-        'queries' => true
+        'queries' => false
     ]
         ]
 ;
