@@ -18,8 +18,10 @@ use UserFrosting\Sprinkle\Core\Util\EnvironmentInfo;
 use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\ServerSideValidator;
-use UserFrosting\Sprinkle\Datatables\Database\Models\DatatableSource;
+//use UserFrosting\Sprinkle\Datatables\Database\Models\DatatableSource;
 use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
+use UserFrosting\Support\Repository\Loader\YamlFileLoader;
+use UserFrosting\Sprinkle\Core\Facades\Debug;
 
 /**
  * AdminController Class
@@ -30,57 +32,21 @@ use UserFrosting\Sprinkle\SnUtilities\Controller\SnUtilities as SnUtil;
  * @link http://www.userfrosting.com/navigating/#structure
  */
 class DatatablesController extends SimpleController {
+    protected $schema;       // json schema for the datatable definitions
 
-    protected $_source;       // table that this datatable will use to query
-    protected $_source_type;       // table that this datatable will use to query
     protected $_htmlid;       // table that this datatable will use to query
-    protected $_dtjsvar;
     protected $_fields;       // source fields data model
-    protected $_data;       // source data model
     protected $_datatable;
-    protected $_show_detail;
-    protected $_ajax_detail;
-    protected $_searchable = true;
-    protected $_sortable = true;
-    protected $_datatable_html_twig = 'components/datatable.html.twig';
-    protected $_datatable_js_twig = 'components/datatable.js.twig';
     protected $_formatters = [];
-    protected $_data_route = 'getdata';
-    protected $_process_route = 'process';
-    protected $_db_table;       // table that this datatable will use to query
-    protected $_db_columns;       // columns that this datatable will use to query
-    protected $_primary_key = 'id';       // table that this datatable will use to query
+//    protected $_db_columns;       // columns that this datatable will use to query
     protected $_role = 'guest';
-    protected $_where_criteria = '';       // where criteria, dynamicall set
-    protected $_order_by = '';       // Order by column
     protected $_protected=true; //if the user needs to be logged in
 
     public function setupDatatable($properties = []) {
 //SnUtil::logarr($properties,"Line 56 Datatables controller");
-
-        $this->_source = SnUtil::valueIfSet($properties, 'source', $this->_source);
-        $this->_db_table = SnUtil::valueIfSet($properties, 'dbtable', $this->_db_table);
-        $this->_source_type = SnUtil::valueIfSet($properties, 'source_type', $this->_source_type);
         $this->_htmlid = SnUtil::valueIfSet($properties, 'htmlid', $this->_htmlid);
-        $this->_dtjsvar = SnUtil::valueIfSet($properties, 'dtjsvar', $this->_dtjsvar);
-        $this->_show_detail = SnUtil::valueIfSet($properties, 'show_detail', $this->_show_detail);
-        $this->_ajax_detail = SnUtil::valueIfSet($properties, 'ajax_detail', $this->_ajax_detail);
-        $this->_searchable = SnUtil::valueIfSet($properties, 'searchable', $this->_searchable);
-        $this->_sortable = SnUtil::valueIfSet($properties, 'sortable', $this->_sortable);
-        $this->_show_detail = SnUtil::valueIfSet($properties, 'show_detail', $this->_show_detail);
         $this->_role = SnUtil::valueIfSet($properties, 'role', $this->_role);
-
-//        $this->createDatatableToken();
         $this->setFormatters();
-    }
-
-    public function initializeFieldAttributes($field, $title = '', $visible = false, $primary_key = 'N') {
-        if ($title == '') {
-            $title = ucwords(str_replace('_', ' ', $field));
-        }
-        $this->_fields[$field] = ["primary_key" => $primary_key, "name" => $field, "orderable" => $this->_sortable,
-            "searchable" => $this->_searchable, "title" => $title, "type" => "text", "visible" => $visible,
-            "showin_editform" => true];
     }
 
     public function getFieldAttributes($field) {
@@ -106,22 +72,6 @@ class DatatablesController extends SimpleController {
         }
     }
 
-    public function getWhereCriteria() {
-        return $this->_where_criteria;
-    }
-
-    public function setWhereCriteria($where) {
-        $this->_where_criteria = $where;
-    }
-
-    public function getOrderBy() {
-        return $this->_order_by;
-    }
-
-    public function setOrderBy($order) {
-        $this->_order_by = $order;
-    }
-
     public function setRole($role) {
 //error_log("Line 55 setting user role to $role");
         $this->_role = $role;
@@ -144,15 +94,14 @@ class DatatablesController extends SimpleController {
         // will be used by the child classes to set the formatters for various columns
     }
 
-    public function postDatatableInit() {
-        $this->setDatatableDefaultOptions();
+    protected function getSchemaContent()
+    {
+        // Define the YAML loader
+        $loader = new YamlFileLoader([]);
+        $loader->addPath($this->schema);
+        return $loader->load();
     }
-
-    public function createDatatableHTMLJS() {
-        $this->createDatatableHTML();
-        $this->createDatatableJS();
-    }
-
+        
     public function getDatatableOptions() {
         return $this->_datatable['options'];
     }
@@ -161,18 +110,105 @@ class DatatablesController extends SimpleController {
         $this->_datatable['options'][$option] = $optvalue;
     }
 
+    public function postDatatableInit() {
+        $this->setDatatableDefaultOptions();
+    }
+
     public function setFormatters() {
         // will be used by the child classes to set the formatters for various columns
     }
 
     protected function getColumnDefinitions() {
         // will be used by the child classes to set the formatters for various columns
+        return $this->getSchemaContent($this);
+
     }
 
     public function getDatatableArray() {
         $this->_datatable['htmlid'] = $this->_htmlid;
         $this->_datatable['fields'] = $this->_fields;
+//        $this->_datatable['fields'] = [];
+//        $var_dtfields =["name","title","type","data","default","orderable","searchable","visible","class","padding","width"];
+//        foreach($this->_fields as $fldid => $field)
+//        {
+//            foreach($var_dtfields as $dtfield)
+//            {
+//                $this->_datatable['fields'][$fldid][$dtfield]=$field[$dtfield];
+//            }
+//        }
+//Debug::debug("Line 155 fields ", $this->_datatable['fields']);        
         return $this->_datatable;
+    }
+
+    private function setDatatableDefaultOptions() {
+        if(!isset($this->_datatable['options']['pagelength']))
+        {
+            $this->_datatable['options']['pagelength']=10;
+        }
+        $this->_datatable['options'] = array(
+            "htmlid" => $this->_htmlid,
+            "pagelength" => $this->_datatable['options']['pagelength'],
+            "extra_param" => "",
+            "swf_path" => "/swf",
+            "initial_search" => ""
+                );
+//logarr($this->_datatable['options'],"Line 186");        
+    }
+
+    protected function setDatatableParameters($par_tabdef = false) {
+        $var_colspan = 0;
+        $var_datatable_cols = $var_allcols = array();
+        if ($par_tabdef === false) {
+            $par_tabdef = $this->_fields;
+        }
+///logarr($par_tabdef,"Line 279 fields");        
+        foreach ($par_tabdef as &$var_column) {
+//            logarr($var_column, "Line 980 tabdef");
+            $var_colspan += $var_column['visible'] ? 0 : 1;
+            $var_fcol = array();
+            $var_fcol['db'] = $var_column['name'];
+            $var_fcol['dt'] = $var_fcol['db'];
+            $var_column["data"] = $var_column['name'];
+
+            if (isset($this->_formatters[$var_column['name']])) {
+                $var_fcol['formatter'] = $this->_formatters[$var_column['name']];
+            } 
+//            else {
+//                if ($var_column['type'] == 'date' || $var_column['type'] == 'datetime') {
+//                    $var_fcol['formatter'] = function( $d, $row ) {
+//                        if ($d != '')
+//                            return date('D jS \of M Y h:i A', strtotime($d));
+//                        else
+//                            return $d;
+//                    };
+//                }
+//                //echobr($this->_dtjsvar." Line 181");
+//                if ($this->_show_detail == 'Y') {
+//                    if (isset($var_column['primary_key']) && $var_column['primary_key']) {
+//                        //echobr("Line 69 ".$this->_ajax_detail);
+//                        $var_fcol['formatter'] = $this->setPrimaryKeyFormatter();
+//                    }
+//                }
+//            }
+            $var_datatable_cols[] = $var_fcol;
+            $var_allcols[$var_column['name']] = $var_column['name'];
+        }
+        $this->_fields = $par_tabdef;
+    }
+
+    /**
+     * Create the data output array for the DataTables rows
+     *
+     *  @param  array $columns Column information array
+     *  @param  array $data    Data from the SQL get
+     *  @return array          Formatted data in a row based format
+     */
+
+// Deleted functions
+/*
+    public function createDatatableHTMLJS() {
+        $this->createDatatableHTML();
+        $this->createDatatableJS();
     }
 
     public function createDatatableHTML() {
@@ -196,6 +232,31 @@ class DatatablesController extends SimpleController {
 //error_log("Line 175 the js file contents are ".$this->_datatable['js']);        
     }
 
+    public function initializeFieldAttributes($field, $title = '', $visible = false, $primary_key = 'N') {
+        if ($title == '') {
+            $title = ucwords(str_replace('_', ' ', $field));
+        }
+        $this->_fields[$field] = ["primary_key" => $primary_key, "name" => $field, "orderable" => $this->_sortable,
+            "searchable" => $this->_searchable, "title" => $title, "type" => "text", "visible" => $visible,
+            "showin_editform" => true];
+    }
+
+    public function getWhereCriteria() {
+        return $this->_where_criteria;
+    }
+
+    public function setWhereCriteria($where) {
+        $this->_where_criteria = $where;
+    }
+
+    public function getOrderBy() {
+        return $this->_order_by;
+    }
+
+    public function setOrderBy($order) {
+        $this->_order_by = $order;
+    }
+
     public function setPrimaryKeyFormatter() {
         if ($this->_ajax_detail == 'N') {
             $var_pkformatter = function( $d, $row ) {
@@ -209,81 +270,6 @@ class DatatablesController extends SimpleController {
             };
         }
         return $var_pkformatter;
-    }
-
-    private function setDatatableDefaultOptions() {
-        if(!isset($this->_datatable['options']['pagelength']))
-        {
-            $this->_datatable['options']['pagelength']=10;
-        }
-        $this->_datatable['options'] = array("htmlid" => $this->_htmlid,
-            "dtjsvar" => $this->_dtjsvar,
-            "show_detail" => $this->_show_detail,
-            "ajax_detail" => $this->_ajax_detail,
-//            "ajax_url" => "/".$this->_data_route."/" . $this->_source,
-            "ajax_url" => "/" . $this->_data_route,
-//            "process_url" => "/".$this->_process_route."/" . $this->_source,
-            "process_url" => "/" . $this->_process_route,
-            "source" => $this->_source,
-            "pagelength" => $this->_datatable['options']['pagelength'],
-            "thispage" => "1",
-            "extra_param" => "",
-            "responsive" => "N",
-            "scroll" => "N",
-            "_dt_rowid" => '',
-            "scrollsize" => "0",
-            "column_definition" => "",
-            "swf_path" => "/swf",
-            "initial_search" => "",
-//            'fields' => $this->_fields,
-            'all_columns' => $this->_datatable['all_columns'],
-            'colspan' => $this->_datatable['column_count']);
-//logarr($this->_datatable['options'],"Line 186");        
-    }
-
-    protected function setDatatableParameters($par_tabdef = false) {
-        $var_colspan = 0;
-        $var_datatable_cols = $var_allcols = array();
-        if ($par_tabdef === false) {
-            $par_tabdef = $this->_fields;
-        }
-///logarr($par_tabdef,"Line 279 fields");        
-        foreach ($par_tabdef as &$var_column) {
-//            logarr($var_column, "Line 980 tabdef");
-            $var_colspan += $var_column['visible'] ? 0 : 1;
-            $var_fcol = array();
-            $var_fcol['db'] = $var_column['name'];
-            $var_fcol['dt'] = $var_fcol['db'];
-            $var_column["data"] = $var_column['name'];
-
-            if (isset($this->_formatters[$var_column['name']])) {
-                $var_fcol['formatter'] = $this->_formatters[$var_column['name']];
-            } else {
-                if ($var_column['type'] == 'date' || $var_column['type'] == 'datetime') {
-                    $var_fcol['formatter'] = function( $d, $row ) {
-                        if ($d != '')
-                            return date('D jS \of M Y h:i A', strtotime($d));
-                        else
-                            return $d;
-                    };
-                }
-                //echobr($this->_dtjsvar." Line 181");
-                if ($this->_show_detail == 'Y') {
-                    if (isset($var_column['primary_key']) && $var_column['primary_key']) {
-                        //echobr("Line 69 ".$this->_ajax_detail);
-                        $var_fcol['formatter'] = $this->setPrimaryKeyFormatter();
-                    }
-                }
-            }
-            $var_datatable_cols[] = $var_fcol;
-            $var_allcols[$var_column['name']] = $var_column['name'];
-        }
-        $this->_fields = $par_tabdef;
-//        $this->_datatable['fields'] = $par_tabdef;
-        $this->_datatable['all_columns'] = $var_allcols;
-        $this->_datatable['column_count'] = $var_colspan;
-        $this->_datatable['column_data_def'] = $var_datatable_cols;
-//logarr( $this->_datatable,"Line 91 datatable variable");        
     }
 
     public function getDataFromSource($getparam, $par_nondbcols = 'none', $par_where = '', $par_filter = '', $par_order = '') {
@@ -305,14 +291,30 @@ class DatatablesController extends SimpleController {
         return $var_retdata;
     }
 
+    public function populateDatatable($request, $response, $args) {
+        $data = $this->getDatatablePost($request);
+//SnUtil::logarr($data,"Line 340 populate datatable input is"); 
+
+        $this->getDataFromSource($data);
+
+//SnUtil::echobr($data,"Line 340 populate datatable input is"); 
+        $var_retarr = $this->createOutputJSONArray($data['draw']);
+
+// @var Config $config 
+        $config = $this->ci->config;
+
+//        return $response->withJson($var_retarr, 200, JSON_PRETTY_PRINT);
+        return $response->write(json_encode($var_retarr));
+    }
+
     public function getDatatablePost($request) {
         // Get POST parameters: name, slug, icon, description
         $params = $request->getParsedBody();
 
-        /** @var UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager */
+// @var UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager 
         $authorizer = $this->ci->authorizer;
 
-        /** @var UserFrosting\Sprinkle\Account\Database\Models\User $currentUser */
+// @var UserFrosting\Sprinkle\Account\Database\Models\User $currentUser 
         $currentUser = $this->ci->currentUser;
 
         if ($this->_protected) {
@@ -322,7 +324,7 @@ class DatatablesController extends SimpleController {
             }
         }
 
-        /** @var MessageStream $ms */
+// @var MessageStream $ms 
         $ms = $this->ci->alerts;
 
         // Load the request schema
@@ -347,22 +349,6 @@ class DatatablesController extends SimpleController {
         return $data;
     }
 
-    public function populateDatatable($request, $response, $args) {
-        $data = $this->getDatatablePost($request);
-//SnUtil::logarr($data,"Line 340 populate datatable input is"); 
-
-        $this->getDataFromSource($data);
-
-//SnUtil::echobr($data,"Line 340 populate datatable input is"); 
-        $var_retarr = $this->createOutputJSONArray($data['draw']);
-
-        /** @var Config $config */
-        $config = $this->ci->config;
-
-//        return $response->withJson($var_retarr, 200, JSON_PRETTY_PRINT);
-        return $response->write(json_encode($var_retarr));
-    }
-
     public function createOutputJSONArray($par_draw) {
 
 //count($this->_db_table), count($this->_db_table), $var_cols, $this->_db_table        
@@ -378,13 +364,6 @@ class DatatablesController extends SimpleController {
         return $var_retarr;
     }
 
-    /**
-     * Create the data output array for the DataTables rows
-     *
-     *  @param  array $columns Column information array
-     *  @param  array $data    Data from the SQL get
-     *  @return array          Formatted data in a row based format
-     */
     public function createDatatableOutput() {
 //    data_output($data) {
 //echoarr($data, "Line 36 data array") ;           
@@ -421,4 +400,6 @@ class DatatablesController extends SimpleController {
         $this->_datatable['output_data'] = $out;
     }
 
+*/    
+    
 }

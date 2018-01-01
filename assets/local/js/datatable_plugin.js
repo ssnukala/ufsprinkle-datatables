@@ -21,8 +21,8 @@ function createDatatableOnPage(dtoptions)
 
     var dtpostdata = {
         'request': 'get_idtdata',
-        dtoptions: {id: dtoptions.htmlid, dtjsvar: dtoptions.dtjsvar, source: dtoptions.source,
-            thispage: dtoptions.thispage, show_detail: dtoptions.show_detail,
+        dtoptions: {id: dtoptions.htmlid, 
+            thispage: dtoptions.thispage, 
             ajax_detail: dtoptions.ajax_detail, data_options: dtoptions.data_options}
     };
 //    dtpostdata[csrf_keyname]=csrf_key;
@@ -207,12 +207,12 @@ function showEditRow_Generic_table(oTableid, d) {
             var_colspan--;
         }
     });
-    var var_source = oTable_options['source'];
+//    var var_source = oTable_options['source'];
 
     var var_rethtml1 = '<form action="#" role="form" method="post" class="inline_edit_frm" id="inlineedit_i_' + var_rid + '" ' +
             'enctype="multipart/form-data" onSubmit="submitEditRowForm( \'' + var_rid + '\', \'' + oTable_options['htmlid'] + '\',this);return false;"> ' +
             '<input type="hidden" name="erec[id]" value="' + var_rid + '">' +
-            '<input type="hidden" name="source" value="' + var_source + '">' +
+//            '<input type="hidden" name="source" value="' + var_source + '">' +
             '<div style="text-align:center;"><b>Edit Record </b><span style="padding:0px 5px;margin:0px 5px;" id="inlineedit_i_' + var_rid + '_result"></span></div>' +
             '<table width="100%" cellpadding="5" cellspacing="0" border="1" style="background:white;padding:0px 15px;"><tr>' +
             var_rethtml2 + '<td style="border:none;text-align:right;" colspan="' + (var_colspan) + '">' +
@@ -287,7 +287,7 @@ function showEditRow_Generic(oTableid, d) {
         }
     });
 
-    var var_source = oTable_options['source'];
+//    var var_source = oTable_options['source'];
 
     var var_rethtml1 = '<div class="panel panel-default"> ' +
             '<div class="panel-heading">' +
@@ -299,7 +299,7 @@ function showEditRow_Generic(oTableid, d) {
             '<form action="#" role="form" method="post" class="form-horizontal inline_edit_frm" id="inlineedit_i_' + var_rid + '" ' +
             'enctype="multipart/form-data" onSubmit="submitEditRowForm( \'' + var_rid + '\', \'' + oTable_options['htmlid'] + '\',this);return false;"> ' +
             '<input type="hidden" name="erec[id]" value="' + var_rid + '">' +
-            '<input type="hidden" name="source" value="' + var_source + '">' +
+//            '<input type="hidden" name="source" value="' + var_source + '">' +
             '<div class="row" style="padding:5px;">' +
             var_rethtml2 + '<div class="col-md-' + var_colspan + '">' +
             '<button class="btn btn-primary portal_btn_class ">Save</button></div>' +
@@ -315,7 +315,7 @@ function submitEditRowForm(recid, oTableid, par_form)
     var oTable_options = oTable_full['dtoptions'];
     var oTable = oTable_full['dtobject'];
 
-    var wp_ajaxurl = '/savedata/' + oTable_options['source'];
+    var wp_ajaxurl = '/savedata/specifisavesource' ;
     var formData = jQuery(par_form).serialize();
     var t_formid = jQuery(par_form).attr('id');
 
@@ -345,8 +345,8 @@ function onClickAjaxEditRow(oTableid, par_this, par_id, par_options)
     var oTable_options = oTable_full['dtoptions'];
     var odata_options = oTable_options['data_options'];
 
-    var postdtopts = {id: oTable_options.htmlid, dtjsvar: oTable_options.dtjsvar, source: oTable_options.source,
-        thispage: oTable_options.thispage, show_detail: oTable_options.show_detail,
+    var postdtopts = {id: oTable_options.htmlid, dtjsvar: oTable_options.dtjsvar,
+        thispage: oTable_options.thispage, 
         ajax_detail: oTable_options.ajax_detail, data_options: odata_options};
     var tr = jQuery(par_this).closest('tr');
     //alert("Line 430");            
