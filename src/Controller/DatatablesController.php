@@ -123,6 +123,8 @@ class DatatablesController extends SimpleController {
         $var_retarr = [
             "fields"=>$this->fields,
             "options"=>$this->options,
+            "formatters"=>[],
+            "filters"=>[]
         ];
         
         return $var_retarr;
