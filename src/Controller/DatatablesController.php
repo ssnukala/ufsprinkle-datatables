@@ -32,8 +32,8 @@ use UserFrosting\Sprinkle\Core\Facades\Debug;
 class DatatablesController extends SimpleController {
 
 //    protected $schema;       // json schema for the datatable definitions
-    protected $fields;       // datatable field definitions
-    protected $options;       // options for the data table
+    protected $fields=[];       // datatable field definitions
+    protected $options=[];       // options for the data table
     protected $protected = true; //if the user needs to be logged in
 
     public function setupDatatable($options = []) {
@@ -122,9 +122,7 @@ class DatatablesController extends SimpleController {
 //Debug::debug("Line 155 fields ", $this->fields);        
         $var_retarr = [
             "fields"=>$this->fields,
-            "options"=>$this->options,
-            "formatters"=>[],
-            "filters"=>[]
+            "options"=>$this->options
         ];
         
         return $var_retarr;
