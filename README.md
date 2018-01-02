@@ -14,6 +14,7 @@ I am in the process of adding instructions and documentation. in the meantime pl
 * Optimized Ajax calls
 
 ## schema template for datatable fields
+```
     "status": {
         "name": "status",
         "title": "Status",
@@ -27,3 +28,10 @@ I am in the process of adding instructions and documentation. in the meantime pl
         "padding": "",
         "width": ""
     }
+```
+
+## TO-DOs 
+* Add in-line documentation
+* Write tests
+* Implement DOM based datatable using Twig Functions by creating [Twig Template Function](https://github.com/ssnukala/ufsprinkle-datatables/blob/master/src/Twig/DatatablesExtension.php#L42) (not sure if this is a good idea :-) 
+* Convert [Datatable Utility Javascript](https://github.com/ssnukala/ufsprinkle-datatables/blob/master/assets/local/js/datatable_util.js) into jQuery plugin like one we have for Tablesorter (ufTable)
