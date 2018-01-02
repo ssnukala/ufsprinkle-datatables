@@ -34,6 +34,8 @@ class DatatablesController extends SimpleController {
 //    protected $schema;       // json schema for the datatable definitions
     protected $fields=[];       // datatable field definitions
     protected $options=[];       // options for the data table
+    protected $sprunje_name='sprunjenotset';       // Name if the sprunje
+    protected $sprunje='sprunjenotset';       // Sprunje to be used for data retrieval
     protected $protected = true; //if the user needs to be logged in
     protected $default_options= [
             "htmlid"=>"notsetbyuser",
@@ -83,12 +85,18 @@ class DatatablesController extends SimpleController {
 
     public function getProtected() {
         return $this->protected;
-        // will be used by the child classes to set the formatters for various columns
     }
 
     public function setProtected($protected) {
         $this->protected = $protected;
-        // will be used by the child classes to set the formatters for various columns
+    }
+
+    public function getSprunjeName() {
+        return $this->sprunje_name;
+    }
+
+    public function setSprunjeName($sprunje_name) {
+        $this->sprunje_name = $sprunje_name;
     }
 
     public function getOptions() {
@@ -160,6 +168,40 @@ class DatatablesController extends SimpleController {
             "options"=>$this->options
         ];
         return $var_retarr;
+    }
+
+    /**
+     * Returns a list of DSD Tracking report
+     *
+     * Generates a list of users, optionally paginated, sorted and/or filtered.
+     * This page requires authentication.
+     * Request type: GET
+     */
+    public function setSprunje($request, $response, $args) {
+// POST Parameters        
+        $params1 = $request->getParsedBody();
+        // GET parameters
+        $params = $request->getQueryParams();
+        if (!is_null($params1)) {
+            $params = array_merge($params, $params1);
+        }
+Debug::debug("Line 188 Sprunje name is ".$this->sprunje_name);
+
+        /** @var UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager $authorizer */
+        $authorizer = $this->ci->authorizer;
+
+        /** @var UserFrosting\Sprinkle\Account\Database\Models\User $currentUser */
+        $currentUser = $this->ci->currentUser;
+
+        // Access-controlled page
+//        if (!$authorizer->checkAccess($currentUser, 'uri_users')) {
+//            throw new ForbiddenException();
+//        }
+
+        /** @var UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
+        $classMapper = $this->ci->classMapper;
+
+        $this->sprunje = $classMapper->createInstance($this->sprunje_name, $classMapper, $params);
     }
 
 }
