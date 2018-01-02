@@ -35,24 +35,26 @@ class DatatablesController extends SimpleController {
     protected $fields=[];       // datatable field definitions
     protected $options=[];       // options for the data table
     protected $protected = true; //if the user needs to be logged in
-
-    public function setupDatatable($options = []) {
-        $default_options = array(
+    protected $default_options= [
             "htmlid"=>"notsetbyuser",
             "ajax_url"=>"/datatable/notsetbyuser",
             "pagelength" => 10,
             "extra_param" => "",
             "swf_path" => "/swf",
+            "visible_columns"=>1,
             "initial_search" => ""
-        );
-        $this->options = array_merge($default_options,$options);
+        ];
+
+
+    public function setupDatatable($options = []) {
+        $this->options = array_merge($this->default_options,$options);
         $this->setFormatters();
         $this->getColumnDefinitions();
 //logarr($cur_ff_table,"Line 34 dtdbcontroller params");   
         $this->postDatatableInit();
     }
 
-    public function getFieldAttributes($field) {
+    public function getField($field) {
         if (isset($this->fields[$field])) {
             return $this->fields[$field];
         } else {
@@ -60,6 +62,10 @@ class DatatablesController extends SimpleController {
         }
     }
 
+    public function setField($field,$fieldrec) {
+            $this->fields[$field]=$fieldrec;
+    }
+    
     public function setFieldAttribute($field, $attribute, $value) {
         if (!isset($this->fields[$field])) {
             $this->fields[$field] = [];
@@ -68,16 +74,11 @@ class DatatablesController extends SimpleController {
     }
 
     public function getFieldAttribute($field, $attribute) {
-        if (!isset($this->fields[$attribute])) {
-            return $this->fields[$attribute];
+        if (!isset($this->fields[$field][$attribute])) {
+            return $this->fields[$field][$attribute];
         } else {
             return false;
         }
-    }
-
-    public function setProtected($protected) {
-        $this->protected = $protected;
-        // will be used by the child classes to set the formatters for various columns
     }
 
     public function getProtected() {
@@ -85,11 +86,28 @@ class DatatablesController extends SimpleController {
         // will be used by the child classes to set the formatters for various columns
     }
 
-    public function getDatatableOptions() {
+    public function setProtected($protected) {
+        $this->protected = $protected;
+        // will be used by the child classes to set the formatters for various columns
+    }
+
+    public function getOptions() {
         return $this->options;
     }
 
-    public function setDatatableOption($option, $optvalue) {
+    public function setOptions($options) {
+        $this->options = $options;
+    }
+
+    public function getOption($option) {
+        if (!isset($this->options[$option])) {
+            return $this->options[$option];
+        } else {
+            return false;
+        }
+    }
+
+    public function setOption($option, $optvalue) {
         $this->options[$option] = $optvalue;
     }
 
@@ -117,17 +135,6 @@ class DatatablesController extends SimpleController {
         // will be used by the child classes to set the formatters for various columns
     }
 
-    public function getDatatableArray() {
-//        $this->fields = $this->fields;
-//Debug::debug("Line 155 fields ", $this->fields);        
-        $var_retarr = [
-            "fields"=>$this->fields,
-            "options"=>$this->options
-        ];
-        
-        return $var_retarr;
-    }
-
     protected function setColumnDefaults($par_tabdef = false) {
         if ($par_tabdef === false) {
             $par_tabdef = $this->fields;
@@ -143,6 +150,16 @@ class DatatablesController extends SimpleController {
             $var_column["class"] = (isset($var_column["class"]) ? $var_column["class"] : "") . " dt_column " . $var_column['name'];
         }
         $this->fields = $par_tabdef;
+        $this->options['visible_columns']=$var_colspan;
+    }
+
+    public function getDatatableArray() {
+//Debug::debug("Line 155 fields ", $this->fields);        
+        $var_retarr = [
+            "fields"=>$this->fields,
+            "options"=>$this->options
+        ];
+        return $var_retarr;
     }
 
 }
