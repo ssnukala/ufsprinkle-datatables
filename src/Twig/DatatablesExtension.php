@@ -13,9 +13,9 @@ use UserFrosting\Sprinkle\Datatables\Controller\DatatablesController as Datatabl
 use Slim\Http\Uri;
 
 /**
- * Extends Twig functionality for the Account sprinkle.
+ * Extends Twig functionality for the Datatable sprinkle.
  *
- * @author Alex Weissman (https://alexanderweissman.com)
+ * @author Srinivas Nukala
  */
 class DatatablesExtension extends \Twig_Extension implements \Twig_Extension_GlobalsInterface
 {
@@ -39,6 +39,7 @@ class DatatablesExtension extends \Twig_Extension implements \Twig_Extension_Glo
         return array(
             // Add Twig function for checking permissions during dynamic menu rendering
             new \Twig_SimpleFunction('createDatatable', function ($params = []) {
+//Srinivas TODO : This is not working, CI is not valide here, need to understand how to invoke controller classes here                
                 $dtcontroller = new DatatablesController($this->ci);
                 $dtcontroller->setupDatatable($params);
                 $dtarray = $dtcontroller->getDatatableArray();

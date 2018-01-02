@@ -22,12 +22,11 @@ use UserFrosting\Support\Repository\Loader\YamlFileLoader;
 use UserFrosting\Sprinkle\Core\Facades\Debug;
 
 /**
- * AdminController Class
+ * DatatablesController Class
  *
- * Controller class for /admin URL.  Handles admin-related activities
+ * Controller class for Datatables.  Handles datatable related activities
  *
- * @author Alex Weissman
- * @link http://www.userfrosting.com/navigating/#structure
+ * @author Srinivas Nukala
  */
 class DatatablesController extends SimpleController {
 
@@ -185,7 +184,7 @@ class DatatablesController extends SimpleController {
         if (!is_null($params1)) {
             $params = array_merge($params, $params1);
         }
-Debug::debug("Line 188 Sprunje name is ".$this->sprunje_name);
+//Debug::debug("Line 188 Sprunje name is ".$this->sprunje_name);
 
         /** @var UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager $authorizer */
         $authorizer = $this->ci->authorizer;

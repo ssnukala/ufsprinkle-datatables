@@ -29,9 +29,9 @@ use UserFrosting\Sprinkle\Core\Facades\Debug;
 use UserFrosting\Sprinkle\Core\Log\MixedFormatter;
 
 /**
- * Registers services for the account sprinkle, such as currentUser, etc.
+ * Registers services for the Datatables sprinkle, 
  *
- * @author Alex Weissman (https://alexanderweissman.com)
+ * @author Srinivas Nukala
  */
 class ServicesProvider
 {
