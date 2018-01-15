@@ -184,6 +184,14 @@ class DatatablesController extends SimpleController {
         if (!is_null($params1)) {
             $params = array_merge($params, $params1);
         }
+        $var_sorts = [];
+        foreach($params1['order'] as $orderrec)
+        {
+            $thiscol =$params1['columns'][$orderrec['column']];
+            $var_sorts[$thiscol['name']]=$orderrec['dir'];
+        }
+        $params['sorts']=$var_sorts;
+//Debug::debug("Line 214 sending sorts to create sprunje",$var_sorts);  
 //Debug::debug("Line 188 Sprunje name is ".$this->sprunje_name);
 
         /** @var UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager $authorizer */
