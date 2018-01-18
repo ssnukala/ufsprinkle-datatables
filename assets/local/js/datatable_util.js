@@ -38,6 +38,8 @@ function createDatatableOnPage(dtoptions) {
  * [oTable description]
  * @type {[type]}
  */
+    jQuery.fn.dataTable.moment( 'MM-DD-YYYY HH:mm:ss' );
+//    jQuery.fn.dataTable.moment( '  HH:mm MMM D, YY' );
   oTable = jQuery(divid).dataTable({
     "oSearch": {
       "sSearch": dtoptions.initial_search

@@ -13,6 +13,13 @@
     {% if column.type is not empty %}
         "type": "{{ column.type }}",
     {% endif %}
+{#    
+    {% if column.type =='datetime' %}
+                "def":       function () { return new Date(); },
+                "format":    'MM-DD-YYYY h:mm A',
+                "fieldInfo": 'US style m-d-y date input with 12 hour clock',    
+    {% endif %}
+#}    
     {% if column.default is not empty %}
         "defaultContent": "{{ column.default }}",
     {% endif %}
