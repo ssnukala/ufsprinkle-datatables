@@ -51,7 +51,7 @@ class DatatablesController extends SimpleController {
         $this->options = array_merge($this->default_options,$options);
         $this->setFormatters();
         $this->getColumnDefinitions();
-//logarr($cur_ff_table,"Line 34 dtdbcontroller params");   
+//logarr($cur_ff_table,"Line 34 dtdbcontroller params");
         $this->postDatatableInit();
     }
 
@@ -66,7 +66,7 @@ class DatatablesController extends SimpleController {
     public function setField($field,$fieldrec) {
             $this->fields[$field]=$fieldrec;
     }
-    
+
     public function setFieldAttribute($field, $attribute, $value) {
         if (!isset($this->fields[$field])) {
             $this->fields[$field] = [];
@@ -135,7 +135,7 @@ class DatatablesController extends SimpleController {
 
     protected function getColumnDefinitions() {
 //        $cur_ff_table = parent::getColumnDefinitions();
-//Debug::debug("Line 39 column definitions",$cur_ff_table);        
+//Debug::debug("Line 39 column definitions",$cur_ff_table);
         $jsonschema = $this->getSchemaContent();
         $this->fields = $jsonschema;
         $this->setColumnDefaults();
@@ -161,7 +161,7 @@ class DatatablesController extends SimpleController {
     }
 
     public function getDatatableArray() {
-//Debug::debug("Line 155 fields ", $this->fields);        
+//Debug::debug("Line 155 fields ", $this->fields);
         $var_retarr = [
             "fields"=>$this->fields,
             "options"=>$this->options
@@ -177,7 +177,7 @@ class DatatablesController extends SimpleController {
      * Request type: GET
      */
     public function setSprunje($request, $response, $args) {
-// POST Parameters        
+// POST Parameters
         $params1 = $request->getParsedBody();
         // GET parameters
         $params = $request->getQueryParams();
@@ -191,7 +191,7 @@ class DatatablesController extends SimpleController {
             $var_sorts[$thiscol['name']]=$orderrec['dir'];
         }
         $params['sorts']=$var_sorts;
-//Debug::debug("Line 214 sending sorts to create sprunje",$var_sorts);  
+//Debug::debug("Line 214 sending sorts to create sprunje",$var_sorts);
 //Debug::debug("Line 188 Sprunje name is ".$this->sprunje_name);
 
         /** @var UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager $authorizer */
@@ -207,7 +207,7 @@ class DatatablesController extends SimpleController {
 
         /** @var UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
         $classMapper = $this->ci->classMapper;
-
+Debug::debug("Line 210 setting sprunje ".$this->sprunje_name);
         $this->sprunje = $classMapper->createInstance($this->sprunje_name, $classMapper, $params);
     }
 
