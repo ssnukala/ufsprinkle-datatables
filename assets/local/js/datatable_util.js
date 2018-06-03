@@ -44,6 +44,7 @@ function createDatatableOnPage(dtoptions) {
     "oSearch": {
       "sSearch": dtoptions.initial_search
     },
+    "order": dtoptions.initial_sort,
     "columns": dtoptions.columns,
     "pageLength": dtoptions.pagelength,
     "processing": true,

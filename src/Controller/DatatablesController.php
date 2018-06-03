@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Chinmaya Registration Sevak (http://www.chinmayacloud.com)
+ * Datatables Sprinkle for User Frosting
  *
- * @link      https://github.com/chinmaya.regsevak
+ * @link      https://github.com/ufsprinkle-datatables
  * @copyright Copyright (c) 2013-2016 Srinivas Nukala
- * @license   https://github.com/chinmaya.regsevak/blob/master/licenses/UserFrosting.md (MIT License)
+ *
  */
 
 namespace UserFrosting\Sprinkle\Datatables\Controller;
@@ -28,7 +28,8 @@ use UserFrosting\Sprinkle\Core\Facades\Debug;
  *
  * @author Srinivas Nukala
  */
-class DatatablesController extends SimpleController {
+class DatatablesController extends SimpleController
+{
 
 //    protected $schema;       // json schema for the datatable definitions
     protected $fields=[];       // datatable field definitions
@@ -43,19 +44,22 @@ class DatatablesController extends SimpleController {
             "extra_param" => "",
             "swf_path" => "/swf",
             "visible_columns"=>1,
-            "initial_search" => ""
+            "initial_search" => "",
+            "initial_sort" => [[ 1, 'asc' ]]
         ];
 
 
-    public function setupDatatable($options = []) {
-        $this->options = array_merge($this->default_options,$options);
+    public function setupDatatable($options = [])
+    {
+        $this->options = array_merge($this->default_options, $options);
         $this->setFormatters();
         $this->getColumnDefinitions();
-//logarr($cur_ff_table,"Line 34 dtdbcontroller params");
+        //logarr($cur_ff_table,"Line 34 dtdbcontroller params");
         $this->postDatatableInit();
     }
 
-    public function getField($field) {
+    public function getField($field)
+    {
         if (isset($this->fields[$field])) {
             return $this->fields[$field];
         } else {
@@ -63,18 +67,21 @@ class DatatablesController extends SimpleController {
         }
     }
 
-    public function setField($field,$fieldrec) {
-            $this->fields[$field]=$fieldrec;
+    public function setField($field, $fieldrec)
+    {
+        $this->fields[$field]=$fieldrec;
     }
 
-    public function setFieldAttribute($field, $attribute, $value) {
+    public function setFieldAttribute($field, $attribute, $value)
+    {
         if (!isset($this->fields[$field])) {
             $this->fields[$field] = [];
         }
         $this->fields[$field][$attribute] = $value;
     }
 
-    public function getFieldAttribute($field, $attribute) {
+    public function getFieldAttribute($field, $attribute)
+    {
         if (!isset($this->fields[$field][$attribute])) {
             return $this->fields[$field][$attribute];
         } else {
@@ -82,31 +89,38 @@ class DatatablesController extends SimpleController {
         }
     }
 
-    public function getProtected() {
+    public function getProtected()
+    {
         return $this->protected;
     }
 
-    public function setProtected($protected) {
+    public function setProtected($protected)
+    {
         $this->protected = $protected;
     }
 
-    public function getSprunjeName() {
+    public function getSprunjeName()
+    {
         return $this->sprunje_name;
     }
 
-    public function setSprunjeName($sprunje_name) {
+    public function setSprunjeName($sprunje_name)
+    {
         $this->sprunje_name = $sprunje_name;
     }
 
-    public function getOptions() {
+    public function getOptions()
+    {
         return $this->options;
     }
 
-    public function setOptions($options) {
+    public function setOptions($options)
+    {
         $this->options = $options;
     }
 
-    public function getOption($option) {
+    public function getOption($option)
+    {
         if (!isset($this->options[$option])) {
             return $this->options[$option];
         } else {
@@ -114,35 +128,41 @@ class DatatablesController extends SimpleController {
         }
     }
 
-    public function setOption($option, $optvalue) {
+    public function setOption($option, $optvalue)
+    {
         $this->options[$option] = $optvalue;
     }
 
-    public function postDatatableInit() {
+    public function postDatatableInit()
+    {
         // will be used by the child classes to set additional options
     }
 
-    public function setFormatters() {
+    public function setFormatters()
+    {
         // will be used by the child classes to set the formatters for various columns
     }
 
-    protected function getSchemaContent() {
+    protected function getSchemaContent()
+    {
         // Define the YAML loader
         $loader = new YamlFileLoader([]);
         $loader->addPath($this->options['schema']);
         return $loader->load();
     }
 
-    protected function getColumnDefinitions() {
+    protected function getColumnDefinitions()
+    {
 //        $cur_ff_table = parent::getColumnDefinitions();
-//Debug::debug("Line 39 column definitions",$cur_ff_table);
+        //Debug::debug("Line 39 column definitions",$cur_ff_table);
         $jsonschema = $this->getSchemaContent();
         $this->fields = $jsonschema;
         $this->setColumnDefaults();
         // will be used by the child classes to set the formatters for various columns
     }
 
-    protected function setColumnDefaults($par_tabdef = false) {
+    protected function setColumnDefaults($par_tabdef = false)
+    {
         if ($par_tabdef === false) {
             $par_tabdef = $this->fields;
         }
@@ -160,8 +180,9 @@ class DatatablesController extends SimpleController {
         $this->options['visible_columns']=$var_colspan;
     }
 
-    public function getDatatableArray() {
-//Debug::debug("Line 155 fields ", $this->fields);
+    public function getDatatableArray()
+    {
+        //Debug::debug("Line 155 fields ", $this->fields);
         $var_retarr = [
             "fields"=>$this->fields,
             "options"=>$this->options
@@ -176,8 +197,9 @@ class DatatablesController extends SimpleController {
      * This page requires authentication.
      * Request type: GET
      */
-    public function setSprunje($request, $response, $args) {
-// POST Parameters
+    public function setSprunje($request, $response, $args)
+    {
+        // POST Parameters
         $params1 = $request->getParsedBody();
         // GET parameters
         $params = $request->getQueryParams();
@@ -185,14 +207,13 @@ class DatatablesController extends SimpleController {
             $params = array_merge($params, $params1);
         }
         $var_sorts = [];
-        foreach($params1['order'] as $orderrec)
-        {
+        foreach ($params1['order'] as $orderrec) {
             $thiscol =$params1['columns'][$orderrec['column']];
             $var_sorts[$thiscol['name']]=$orderrec['dir'];
         }
         $params['sorts']=$var_sorts;
-//Debug::debug("Line 214 sending sorts to create sprunje",$var_sorts);
-//Debug::debug("Line 188 Sprunje name is ".$this->sprunje_name);
+        //Debug::debug("Line 214 sending sorts to create sprunje",$var_sorts);
+        //Debug::debug("Line 188 Sprunje name is ".$this->sprunje_name);
 
         /** @var UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager $authorizer */
         $authorizer = $this->ci->authorizer;
@@ -207,8 +228,7 @@ class DatatablesController extends SimpleController {
 
         /** @var UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
         $classMapper = $this->ci->classMapper;
-Debug::debug("Line 210 setting sprunje ".$this->sprunje_name);
+        //Debug::debug("Line 210 setting sprunje ".$this->sprunje_name);
         $this->sprunje = $classMapper->createInstance($this->sprunje_name, $classMapper, $params);
     }
-
 }
