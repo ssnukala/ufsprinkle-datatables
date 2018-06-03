@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Datatables Sprinkle for User Frosting
+ * Datatables Sprinkle for UserFrosting
  *
  * @link      https://github.com/ufsprinkle-datatables
  * @copyright Copyright (c) 2013-2016 Srinivas Nukala
