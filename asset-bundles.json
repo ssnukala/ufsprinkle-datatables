@@ -16,10 +16,9 @@
             "scripts": [
                 "vendor/datatables/media/js/jquery.dataTables.min.js",
                 "vendor/datatables/media/js/dataTables.bootstrap.min.js",
-                "vendor/datatables-colvis/js/dataTables.colVis.js",
-                "vendor/datatables-tabletools/js/dataTables.tableTools.js",
                 "vendor/datatables-responsive/js/dataTables.responsive.js",
                 "vendor/datatables-plugins/api/fnReloadAjax.js",
+                "vendor/moment/moment.js",
                 "vendor/datatables-plugins/sorting/datetime-moment.js",
                 "vendor/datatables-fixedheader/js/dataTables.fixedHeader.js"
             ],
@@ -34,8 +33,7 @@
         "css/datatables": {
             "styles": [
                 "vendor/datatables/media/css/dataTables.bootstrap.min.css",
-                "vendor/datatables-colvis/css/dataTables.colVis.css",
-                "vendor/datatables-tabletools/css/dataTables.tableTools.css"
+                "vendor/datatables/media/css/jquery.dataTables.min.css"
             ],
             "options": {
                 "result": {

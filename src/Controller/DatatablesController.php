@@ -42,7 +42,6 @@ class DatatablesController extends SimpleController
             "ajax_url"=>"/datatable/notsetbyuser",
             "pagelength" => 10,
             "extra_param" => "",
-            "swf_path" => "/swf",
             "visible_columns"=>1,
             "initial_search" => "",
             "initial_sort" => [[ 1, 'asc' ]]
