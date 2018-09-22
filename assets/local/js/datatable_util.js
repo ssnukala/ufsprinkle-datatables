@@ -9,6 +9,7 @@ var page_dttables = [];
  * @return {[type]}           [description]
  */
 
+
 function createDatatableOnPage(dtoptions) {
     var oTable;
     var final_dturl;
@@ -84,6 +85,9 @@ function createDatatableOnPage(dtoptions) {
             }
         }
     };
+
+    dtOptions["sWrapper"]= "dataTables_wrapper uf-datatable dt-bootstrap";
+
     if (dtoptions.scroll == 'Y') {
         dtOptions["scrollY"] = 200;
         dtOptions["scrollCollapse"] = true;
@@ -96,6 +100,8 @@ function createDatatableOnPage(dtoptions) {
     }
 
     oTable = jQuery(divid).dataTable(dtOptions);
+    jQuery(divid+'_wrapper').removeClass( 'form-inline' ).addClass( 'uf-datatables' );
+
     return oTable;
 }
 
