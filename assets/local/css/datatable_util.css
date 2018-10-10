@@ -1,0 +1,9 @@
+.dataTables_filter,
+.dataTables_filter label,
+.dataTables_filter input {
+  width: 100% !important;
+}
+
+.dataTables_filter input {
+  text-align: center;
+}
