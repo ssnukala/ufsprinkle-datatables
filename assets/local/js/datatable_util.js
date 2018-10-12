@@ -56,28 +56,28 @@ function createDatatableOnPage(dtoptions) {
     },
     order: dtoptions.initial_sort,
     columns: dtoptions.columns,
-    drawCallback: function(settings) {
+    drawCallback: function (settings) {
       var thisapi = this.api();
       var fncallback = window[dtoptions.drawCallback];
       if (typeof fncallback === "function") {
         fncallback(settings);
       }
     },
-    preDrawCallback: function(settings) {
+    preDrawCallback: function (settings) {
       var thisapi = this.api();
       var fncallback = window[dtoptions.preDrawCallback];
       if (typeof fncallback === "function") {
         fncallback(settings);
       }
     },
-    rowCallback: function(row, data) {
+    rowCallback: function (row, data) {
       var thisapi = this.api();
       var fncallback = window[dtoptions.rowCallback];
       if (typeof fncallback === "function") {
         fncallback(row, data);
       }
     },
-    createdRow: function(row, data, index) {
+    createdRow: function (row, data, index) {
       var thisapi = this.api();
       var fncallback = window[dtoptions.createdRow];
       if (typeof fncallback === "function") {
@@ -125,8 +125,8 @@ function createDatatableOnPage(dtoptions) {
   return oTable;
 }
 
-$.fn.dataTable.render.format_column = function(column_name) {
-  return function(data, type, row) {
+$.fn.dataTable.render.format_column = function (column_name) {
+  return function (data, type, row) {
     if (
       type === "display" &&
       jQuery('div[column_formatter="' + column_name + '"]').length
@@ -134,7 +134,7 @@ $.fn.dataTable.render.format_column = function(column_name) {
       var colhtml = jQuery(
         'div[column_formatter="' + column_name + '"]'
       ).html();
-      jQuery.each(row, function(key, value) {
+      jQuery.each(row, function (key, value) {
         //console.log("Line 92 replacing this "+'row.' + key);
         var rowkey = "row." + key;
         var rowkey1 = new RegExp(rowkey, "g");
@@ -147,6 +147,33 @@ $.fn.dataTable.render.format_column = function(column_name) {
     return data;
   };
 };
+
+function showCRUDForm(oTableid, rowCrudDiv) {
+  var tr = jQuery("#" + rowCrudDiv).closest("tr");
+
+  var oTable = jQuery("#" + oTableid)
+    .dataTable()
+    .api();
+
+  //  data = oTable.row($(this).parents("tr")).data();
+  var row = oTable.row(tr);
+  var data = row.data();
+  var crudDivId = "crudform_" + oTableid;
+  var crudhtml = "Edit Form not defined";
+  if (jQuery("#" + crudDivId).length) {
+    crudhtml = jQuery("#" + crudDivId).html();
+    jQuery.each(data, function (key, value) {
+      //console.log("Line 92 replacing this "+'row.' + key);
+      var rowkey = "row." + key;
+      var rowkey1 = new RegExp(rowkey, "g");
+      crudhtml = crudhtml.replace(rowkey1, value);
+      //console.log("Line 95 the html is "+colhtml);
+    });
+  }
+  jQuery("#" + rowCrudDiv).html(crudhtml);
+  //  return rowhtml;
+}
+
 /*
  * Srinivas TODO : Check this API syntax
 jQuery.fn.dataTable.Api.register('column().title()', function () {
@@ -214,7 +241,7 @@ function showEditRow_Generic_table(oTableid, d) {
   var oTable_full = page_dttables[oTableid];
   var oTable_options = oTable_full["dtoptions"];
 
-  jQuery.each(d, function(v_index, v_value) {
+  jQuery.each(d, function (v_index, v_value) {
     //                var var_label = var_col(index).header();
     var var_label = oTable_options["fields"][v_index]["frm_label"];
 
@@ -300,7 +327,7 @@ function showEditRow_Generic(oTableid, d) {
   var oTable_full = page_dttables[oTableid];
   var oTable_options = oTable_full["dtoptions"];
 
-  jQuery.each(d, function(v_index, v_value) {
+  jQuery.each(d, function (v_index, v_value) {
     //                var var_label = var_col(index).header();
     var thisdfld = (var_label = oTable_options["fields"][v_index]);
     var var_label = oTable_options["fields"][v_index]["label"];
@@ -416,7 +443,7 @@ function submitEditRowForm(recid, oTableid, par_form) {
     url: wp_ajaxurl,
     type: "get",
     data: formData,
-    success: function(retval) {
+    success: function (retval) {
       if (retval !== "") {
         jQuery("#" + t_formid + "_result").html(retval);
         //                        oTable.fnReloadAjax();
@@ -489,7 +516,7 @@ function getFormContent(par_ajaxurl, par_id, postdtopts, par_options) {
     async: false,
     //            datatype: "html",
     //                data: formData,
-    success: function(ret_data, status, xhr) {
+    success: function (ret_data, status, xhr) {
       try {
         var ret_data1 = JSON.parse(ret_data);
         ret_html = ret_data1.html;
