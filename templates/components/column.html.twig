@@ -8,25 +8,21 @@
  #}
 {
 {% block common %}
-    "name": "{{ column.name }}",
-    "title": "{{ column.title|raw }}",
+    "name": "{{ column.name }}", "title": "{{ translate(column.title)|raw }}",
     {% if column.type is not empty %}
         "type": "{{ column.type }}",
     {% endif %}
-{#    
+    {#    
     {% if column.type =='datetime' %}
                 "def":       function () { return new Date(); },
                 "format":    'MM-DD-YYYY h:mm A',
                 "fieldInfo": 'US style m-d-y date input with 12 hour clock',    
     {% endif %}
-#}    
+#}
     {% if column.default is not empty %}
         "defaultContent": "{{ column.default }}",
     {% endif %}
-    "orderable": {{(column.orderable|default(false))?'true':'false'}},
-    "searchable":{{(column.searchable|default(false))? 'true':'false'}},
-    "visible": {{(column.visible|default(false)) ? 'true':'false'}},
-    "className":"{{(column.visible|default(false)) ? '':'never '}} {{column.class }}",
+    "orderable":{{(column.orderable|default(false))?'true':'false'}}, "searchable":{{(column.searchable|default(false))? 'true':'false'}}, "visible":{{(column.visible|default(false)) ? 'true':'false'}}, "className":"{{(column.visible|default(false)) ? '':'never '}}{{column.class }}",
     {% if column.padding is not empty %}
         "contentPadding": "{{ column.padding }}",
     {% endif %}
