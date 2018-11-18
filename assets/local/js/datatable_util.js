@@ -36,7 +36,8 @@ function createDatatableOnPage(dtoptions) {
   //    jQuery.fn.dataTable.moment( '  HH:mm MMM D, YY' );
 
   var sPlaceholder;
-  var dtOptions = {
+  var pLength;
+  var dtSettings = {
     processing: true,
     serverSide: true,
     ajax: {
@@ -79,37 +80,37 @@ function createDatatableOnPage(dtoptions) {
     }
   };
 
-  dtOptions["sWrapper"] = "dataTables_wrapper uf-datatable dt-bootstrap";
+  dtSettings["sWrapper"] = "dataTables_wrapper uf-datatable dt-bootstrap";
 
   if (dtoptions["searchPlaceholder"] != undefined && dtoptions["searchPlaceholder"] != "") {
     sPlaceholder = dtoptions["searchPlaceholder"];
   } else {
     sPlaceholder = "Filter records ...";
   }
-  dtOptions["language"] = {
+  dtSettings["language"] = {
     search: "_INPUT_",
     searchPlaceholder: sPlaceholder
   };
 
   if (dtoptions.scroll == "Y") {
-    dtOptions["scrollY"] = 200;
-    dtOptions["scrollCollapse"] = true;
-    dtOptions["paging"] = false;
+    dtSettings["scrollY"] = 200;
+    dtSettings["scrollCollapse"] = true;
+    dtSettings["paging"] = false;
   } else {
-    dtOptions["pageLength"] = dtoptions.pagelength;
+    dtSettings["pageLength"] = dtoptions.pagelength;
     /*
-    dtOptions["dom"] =
+    dtSettings["dom"] =
       "<'dtable-heading' <'well1 cddatatable-topbox " +
       "row'<'col-md-6'f><'col-md-6'l>r>t<'row'<'col-md-3'i>" +
       "<'col-md-9 pager pager-lg1 text-right tablesorter-pager1'p> > >S";
 */
-    dtOptions["dom"] =
+    dtSettings["dom"] =
       "<'dtable-heading' <'well1 cddatatable-topbox " +
       "row'<'col-md-9 search'f><'col-md-3 text-right'l>r>t<'row'<'col-md-3'i>" +
       "<'col-md-9 pager1 pager-lg1 text-right tablesorter-pager'p> > >S";
   }
 
-  oTable = jQuery(divid).dataTable(dtOptions);
+  oTable = jQuery(divid).dataTable(dtSettings);
   //    jQuery(divid+'_wrapper').removeClass( 'form-inline' ).addClass( 'uf-datatables' );
 
   return oTable;
