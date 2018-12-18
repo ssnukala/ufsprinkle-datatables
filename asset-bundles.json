@@ -12,13 +12,13 @@
     },
     "js/datatables": {
       "scripts": [
-        "vendor/datatables/media/js/jquery.dataTables.js",
-        "vendor/datatables/media/js/dataTables.bootstrap.min.js",
-        "vendor/datatables-responsive/js/dataTables.responsive.js",
-        "vendor/datatables-plugins/api/fnReloadAjax.js",
+        "vendor/datatables.net/js/jquery.dataTables.min.js",
+        "vendor/datatables.net-bs/js/dataTables.bootstrap.min.js",
+        "vendor/datatables.net-responsive/dataTables.responsive.min.js",
+        "vendor/datatables.net-plugins/api/fnReloadAjax.js",
         "vendor/moment/moment.js",
-        "vendor/datatables-plugins/sorting/datetime-moment.js",
-        "vendor/datatables-fixedheader/js/dataTables.fixedHeader.js"
+        "vendor/datatables.net-plugins/sorting/datetime-moment.js",
+        "vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.js"
       ],
       "options": {
         "result": {
@@ -30,8 +30,8 @@
     },
     "css/datatables": {
       "styles": [
-        "vendor/datatables/media/css/dataTables.bootstrap.min.css",
-        "vendor/datatables/media/css/jquery.dataTables.min.css",
+        "vendor/datatables.net-bs/css/dataTables.bootstrap.min.css",
+        "vendor/datatables.net-dt/css/jquery.dataTables.min.css",
         "local/css/datatable_util.css"
       ],
       "options": {

@@ -1,0 +1,19 @@
+{
+  "private": true,
+  "dependencies": {
+    "datatables.net": "~1.10.19",
+    "datatables.net-dt": "~1.10.19",
+    "datatables.net-responsive-bs": "2.2.3",
+    "datatables.net-bs": "1.10.19",
+    "datatables.net-plugins": "1.10.18",
+    "datatables.net-fixedcolumns-bs": "3.2.6",
+    "datatables.net-fixedheader": "3.1.5",
+    "moment": "^2.22.2",
+    "cleave.js": "1.4.4"
+  },
+  "resolutions": {
+    "jquery": ">= 2.2.4",
+    "bootstrap": "3.x",
+    "jquery-validation": "~1.14.0"
+  }
+}
