@@ -14,7 +14,7 @@
       "scripts": [
         "vendor/datatables.net/js/jquery.dataTables.min.js",
         "vendor/datatables.net-bs/js/dataTables.bootstrap.min.js",
-        "vendor/datatables.net-responsive/dataTables.responsive.min.js",
+        "vendor/datatables.net-responsive/js/dataTables.responsive.min.js",
         "vendor/datatables.net-plugins/api/fnReloadAjax.js",
         "vendor/moment/moment.js",
         "vendor/datatables.net-plugins/sorting/datetime-moment.js",
