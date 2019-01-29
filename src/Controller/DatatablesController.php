@@ -32,20 +32,20 @@ class DatatablesController extends SimpleController
 {
 
 //    protected $schema;       // json schema for the datatable definitions
-    protected $fields=[];       // datatable field definitions
-    protected $options=[];       // options for the data table
-    protected $sprunje_name='sprunjenotset';       // Name if the sprunje
-    protected $sprunje='sprunjenotset';       // Sprunje to be used for data retrieval
+    protected $fields = [];       // datatable field definitions
+    protected $options = [];       // options for the data table
+    protected $sprunje_name = 'sprunjenotset';       // Name if the sprunje
+    protected $sprunje = 'sprunjenotset';       // Sprunje to be used for data retrieval
     protected $protected = true; //if the user needs to be logged in
-    protected $default_options= [
-            "htmlid"=>"notsetbyuser",
-            "ajax_url"=>"/datatable/notsetbyuser",
-            "pagelength" => 10,
-            "extra_param" => "",
-            "visible_columns"=>1,
-            "initial_search" => "",
-            "initial_sort" => [[ 1, 'asc' ]]
-        ];
+    protected $default_options = [
+        "htmlid" => "notsetbyuser",
+        "ajax_url" => "/datatable/notsetbyuser",
+        "pagelength" => 10,
+        "extra_param" => "",
+        "visible_columns" => 1,
+        "initial_search" => "",
+        "initial_sort" => [[1, 'asc']]
+    ];
 
 
     public function setupDatatable($options = [])
@@ -68,7 +68,7 @@ class DatatablesController extends SimpleController
 
     public function setField($field, $fieldrec)
     {
-        $this->fields[$field]=$fieldrec;
+        $this->fields[$field] = $fieldrec;
     }
 
     public function setFieldAttribute($field, $attribute, $value)
@@ -176,15 +176,15 @@ class DatatablesController extends SimpleController
             $var_column["class"] = (isset($var_column["class"]) ? $var_column["class"] : "") . " dt_column " . $var_column['name'];
         }
         $this->fields = $par_tabdef;
-        $this->options['visible_columns']=$var_colspan;
+        $this->options['visible_columns'] = $var_colspan;
     }
 
     public function getDatatableArray()
     {
         //Debug::debug("Line 155 fields ", $this->fields);
         $var_retarr = [
-            "fields"=>$this->fields,
-            "options"=>$this->options
+            "fields" => $this->fields,
+            "options" => $this->options
         ];
         return $var_retarr;
     }
@@ -205,12 +205,13 @@ class DatatablesController extends SimpleController
         if (!is_null($params1)) {
             $params = array_merge($params, $params1);
         }
+//        Debug::debug("Line 208 The datatable params are ", $params);
         $var_sorts = [];
         foreach ($params1['order'] as $orderrec) {
-            $thiscol =$params1['columns'][$orderrec['column']];
-            $var_sorts[$thiscol['name']]=$orderrec['dir'];
+            $thiscol = $params1['columns'][$orderrec['column']];
+            $var_sorts[$thiscol['name']] = $orderrec['dir'];
         }
-        $params['sorts']=$var_sorts;
+        $params['sorts'] = $var_sorts;
         //Debug::debug("Line 214 sending sorts to create sprunje",$var_sorts);
         //Debug::debug("Line 188 Sprunje name is ".$this->sprunje_name);
 

@@ -1,4 +1,4 @@
-//var page_dttables = [];
+var page_dttables = [];
 
 /**
  * [createDatatableOnPage description]
@@ -32,7 +32,7 @@ function createDatatableOnPage(dtoptions) {
   dtpostdata[site.csrf.keys.name] = site.csrf.name;
   dtpostdata[site.csrf.keys.value] = site.csrf.value;
 
-  jQuery.fn.dataTable.moment("MM-DD-YYYY HH:mm:ss");
+  //  jQuery.fn.dataTable.moment("MM-DD-YYYY HH:mm:ss");
   //    jQuery.fn.dataTable.moment( '  HH:mm MMM D, YY' );
 
   var sPlaceholder;
@@ -81,7 +81,7 @@ function createDatatableOnPage(dtoptions) {
   };
   if (dtoptions["select"] != undefined && dtoptions["select"] != "") {
     dtoptions["select"] = {
-      style: 'single'
+      style: "single"
     };
   }
 
@@ -138,11 +138,14 @@ function createDatatableOnPage(dtoptions) {
   */
   // S is for https://datatables.net/extensions/select/ : this plugin is not enabled yet
 
-  oTable = jQuery(divid).dataTable(dtSettings);
+  //  oTable = jQuery(divid).Datatable(dtSettings);
+  //  $.noConflict();
+  $(divid).Datatable(dtSettings);
   //    jQuery(divid+'_wrapper').removeClass( 'form-inline' ).addClass( 'uf-datatables' );
 
   return oTable;
 }
+
 
 $.fn.dataTable.render.format_column = function (column_name) {
   return function (data, type, row, meta) {
@@ -182,58 +185,47 @@ $.fn.dataTable.render.format_column = function (column_name) {
 };
 
 function reloadDatatable(oTableid) {
+  //    var oTable_full = [];
+  //    var oTable_full = page_dttables[oTableid];
+  //    var oTable = oTable_full['dtobject'];
   var oTable = jQuery("#" + oTableid).dataTable();
   oTable.fnReloadAjax();
 }
 
 function reloadDatatableNewURL(oTableid, dtURL) {
+  //    var oTable_full = [];
+  //    var oTable_full = page_dttables[oTableid];
+  //    var oTable = oTable_full['dtobject'];
   var oTable = jQuery("#" + oTableid).dataTable();
   oTable.fnReloadAjax(dtURL, null, true);
 }
 
 function toggleSelectOnRowClick(oTableid) {
-  jQuery('#' + oTableid + ' tbody').on('click', 'tr', function () {
-    if (jQuery(this).hasClass('selected')) {
-      jQuery(this).removeClass('selected');
+  jQuery("#" + oTableid + " tbody").on("click", "tr", function () {
+    if (jQuery(this).hasClass("selected")) {
+      jQuery(this).removeClass("selected");
     } else {
-      jQuery('#' + oTableid + ' tr.selected').removeClass('selected');
-      jQuery(this).addClass('selected');
+      jQuery("#" + oTableid + " tr.selected").removeClass("selected");
+      jQuery(this).addClass("selected");
     }
   });
 }
 
 function selectRowOnClick(oTableid) {
-  jQuery('#' + oTableid + ' tbody').on('click', 'tr', function () {
-    var isselected = jQuery(this).hasClass('selected');
+  jQuery("#" + oTableid + " tbody").on("click", "tr", function () {
+    var isselected = jQuery(this).hasClass("selected");
     if (!isselected) {
-      jQuery('#' + oTableid + ' tr.selected').removeClass('selected');
-      jQuery(this).addClass('selected');
+      jQuery("#" + oTableid + " tr.selected").removeClass("selected");
+      jQuery(this).addClass("selected");
     }
   });
 }
 
-function clickSelectRowReloadChild(oTableid, childDTid) {
-  jQuery('#' + oTableid + ' tbody').on('click', 'tr', function () {
-    var isselected = jQuery(this).hasClass('selected');
-    if (!isselected) {
-      jQuery('#' + oTableid + ' tr.selected').removeClass('selected');
-      jQuery(this).addClass('selected');
-      reloadDatatable(childDTid);
-    }
-  });
-}
-
-
-function selectRowNumber(oTableid, selectRow) {
-  var thisrow = jQuery('#' + oTableid + ' tbody tr:nth-child(' + selectRow + ')');
-  thisrow.addClass('selected');
-}
-
-function getSelectedDTRow(oTableid) {
+function getSelectRow(oTableid) {
   var oTable = jQuery("#" + oTableid)
     .dataTable()
     .api();
-  var thisdttr = jQuery('#' + oTableid + ' tr.selected');
+  var thisdttr = jQuery("#" + oTableid + " tr.selected");
   var row = oTable.row(thisdttr);
   return row;
 }

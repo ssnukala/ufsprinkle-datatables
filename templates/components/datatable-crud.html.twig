@@ -1,0 +1,51 @@
+<div class="{{cruddt.divclass|default('col-md-12')}} crud-datatable {{cruddt.options.name}}" >
+    <div id="widget-{{cruddt.options.htmlid}}" class="box box-primary">
+        <div class="box-header">
+            <div class="row">
+                <div class="col-md-11">
+                    <h3 class="box-title">
+                        <i class="fa fa-tasks fa-fw"></i>
+                        {{translate(cruddt.options.title)}}</h3>
+                </div>
+                <div class="col-md-1">
+                    <a class='pull-right' href="#" onclick="reloadDatatable('{{ cruddt.options.htmlid }}');">
+                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="box-body">
+            <div id='crud-newrow_{{cruddt.options.htmlid}}' class='crud-newrow'>
+                {% include cruddt.options.newrow_template with {
+                    'dtoptions' : cruddt.options,
+                    'page_params': page_params
+            } %}
+            </div>
+            {% include 'components/datatable.html.twig' with {
+                    'dtoptions' : cruddt.options,
+                    'page_params': page_params
+            } %}
+        </div>
+    </div>
+    <div class='column-formatters' style='display:none;'>
+            {% for colformatter in cruddt.options.formatters %}
+                {% include colformatter with {
+                        'dtid' : cruddt.options.htmlid,
+                        'crudformid' : cruddt.options.crudformid,
+                        'crudsuccessjs' : cruddt.options.crud_success_js,
+                        'page_params': page_params
+                    } %}
+            {% endfor %}
+    </div>
+    <div class='crud-forms' style='display:none;'>
+            {% for dtableid, crudformarr in cruddt.options.crud_forms %}
+            <div class='crud-form-group' id='crudfor_{{dtableid}}'>
+                {% for cftype, crudform in crudformarr %}
+                    <div class='crud-template-{{cftype}}' id='crudform_{{dtableid}}_{{cftype}}'>
+                        {% include "forms/crud-form.html.twig" with {form : crudform, 'page_params' : page_params} %}
+                    </div>
+                {% endfor %}
+            </div>
+            {% endfor %}
+    </div>   
+</div>
