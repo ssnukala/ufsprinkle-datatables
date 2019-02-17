@@ -3,7 +3,7 @@
         border="0"  id="{{dtoptions.htmlid}}" data-url="/datatable/testurl" data-schema="testschema"
         {% if (page_params.parentdtid is not empty) %} parentdt="{{page_params.parentdtid}}" {% endif %}
         {% if (page_params.childdtid is not empty) %} childdt="{{page_params.childdtid}}" {% endif %} 
-        {% if (page_params.model is not empty) %} model="{{page_params.model}}" {% endif %} >
+        {% if (dtoptions.source is not empty) %} data-source="{{dtoptions.source}}" {% endif %} >
         <thead>
         </thead>
         <tbody>
