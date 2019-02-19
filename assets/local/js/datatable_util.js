@@ -186,9 +186,22 @@ function reloadDatatable(oTableid) {
   oTable.fnReloadAjax();
 }
 
-function reloadDatatableNewURL(oTableid, dtURL) {
+function reloadDatatableNewURL(oTableid, dtURL, replaceId) {
   var oTable = jQuery("#" + oTableid).dataTable();
+  if (replaceId !== undefined) {
+    if (replaceId === 'Y') {
+      var newurl = RemoveLastDirectoryPartOf(oTable.api().ajax.url());
+      dtURL = newurl + dtURL
+    }
+  }
   oTable.fnReloadAjax(dtURL, null, true);
+}
+
+function reloadDatatableNewURLQuery(oTableid, query) {
+  var oTable = jQuery("#" + oTableid).dataTable();
+  var newurl = RemoveQueryPartOf(oTable.api().ajax.url());
+  newurl = newurl + query
+  oTable.fnReloadAjax(newurl, null, true);
 }
 
 function toggleSelectOnRowClick(oTableid) {
