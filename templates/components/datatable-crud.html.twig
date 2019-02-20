@@ -30,6 +30,7 @@
     <div class='column-formatters' style='display:none;'>
             {% for colformatter in cruddt.options.formatters %}
                 {% include colformatter with {
+                        'options':cruddt.options,
                         'dtid' : cruddt.options.htmlid,
                         'crudformid' : cruddt.options.crudformid,
                         'crudsuccessjs' : cruddt.options.crud_success_js,
