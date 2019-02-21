@@ -149,24 +149,29 @@ $.fn.dataTable.render.format_column = function (column_name) {
     //    var func = eval(column_name + 'GetFormatter');
     //console.log("Line 122 Datatable Util" + meta.settings.sTableId);
     var dtid = meta.settings.sTableId;
+    var crudbox = jQuery("#" + dtid).closest("div.crud-datatable");
+    // Get the Crudbox so we can look for formatters inside this table, so it does not pick up other 
+    // formatters with the same name  
     var func = column_name + "GetFormatter";
     var colFormatter = column_name;
-    var functionName = window[column_name + "GetFormatter"];
+    var functionName = window[column_name + func];
     if (typeof functionName === "function") {
       //    if ($.isFunction(functionName)) {
       //      newFormatter = this.$element.trigger(func, [row]);
       colFormatter = functionName(row);
       //      console.log('Line 135 : function ' + func + ' exists and newe formatter is ' + colFormatter);
     }
-    var colDiv1 = 'div[column_formatter="' + dtid + "_" + colFormatter + '"]';
-    var colDiv2 = 'div[column_formatter="' + colFormatter + '"]';
+    var colDiv;
+    var colDiv1 = crudbox.find('div[column_formatter="' + dtid + "_" + colFormatter + '"]');
     if (jQuery(colDiv1).length) {
       colDiv = colDiv1;
     } else {
+      var colDiv2 = crudbox.find('div[column_formatter="' + colFormatter + '"]');
       colDiv = colDiv2;
     }
     if (type === "display" && jQuery(colDiv).length) {
-      var colhtml = jQuery(colDiv).html();
+      //      var colhtml = jQuery(colDiv).html();
+      var colhtml = colDiv.html();
       jQuery.each(row, function (key, value) {
         //console.log("Line 92 replacing this "+'row.' + key);
         var rowkey = "row." + key;
@@ -235,7 +240,6 @@ function clickSelectRowReloadChild(oTableid, childDTid) {
     }
   });
 }
-
 
 function selectRowNumber(oTableid, selectRow) {
   var thisrow = jQuery('#' + oTableid + ' tbody tr:nth-child(' + selectRow + ')');
