@@ -1,0 +1,13 @@
+{% macro generate(dtid,filters) %}
+    {% set filter_sep = '' %}
+    <div class='datatable-filters'>
+    <strong>Filters: </strong>
+        {% for filter_url, filter_name in filters %}
+            {{filter_sep}}
+            <a href="#" onclick="reloadDatatableNewURL('{{dtid}}', '{{filter_url}}');">
+                {{filter_name}}
+            </a>
+            {% set filter_sep = ' | ' %}
+        {% endfor %}
+    </div>
+{% endmacro %}

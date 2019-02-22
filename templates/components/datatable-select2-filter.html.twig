@@ -1,0 +1,31 @@
+{% macro generate(dtid,dtfilters) %}
+    <div id="widget-select2" class="box box-primary">
+        <div class="box-header">
+            <h3 class="box-title">
+                <i class="fa fa-tasks fa-fw"></i>
+                {{translate(dtfilters.title|default("Select From List"))}}</h3>
+        </div>
+        <div class="box-body">
+            <div class="datatable-filter" datatable-id='{{dtid}}'>
+                <input type='hidden' class='filter-field' data-source= 'filter.url' 
+                name='filter_url' value='{{dtfilters.url}}'>
+                <div class="row">
+                {% if (dtfilters|length) == 5 %}
+                    {% set divcol = 2 %}
+                {% elseif (dtfilters|length) > 6 %}
+                    {% set divcol = 1 %}
+                {% else %}
+                    {% set divcol = 12/(dtfilters|length)%}
+                {% endif %}
+                    {% for filterid, select2 in dtfilters.fields %}
+                        <div class="col-md-{{divcol}}">
+                            <label for='{{dtid}}_{{select2.id}}' class="">{{select2.label}}:</label>
+                            <select name='{{select2.name}}' class='filter-field' id='{{dtid}}_{{select2.id}}' 
+                                data-source='{{select2.data-source}}' ></select>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endmacro %}

@@ -1,0 +1,23 @@
+{% macro generate(dtid,dtfilters) %}
+{% import "FormGenerator/macros/select.html.twig" as select %}
+    <div class="datatable-filters" datatable-id='{{dtid}}'>
+        {{translate(dtfilters.title|default("Select From List"))}}</h3>
+        <div class="row">
+        {% if (dtfilters.fields|length) == 5 %}
+            {% set divcol = 2 %}
+        {% elseif (dtfilters.fields|length) > 6 %}
+            {% set divcol = 1 %}
+        {% else %}
+            {% set divcol = 12/(dtfilters.fields|length)%}
+        {% endif %}
+            <input type='hidden' class='filter-field' data-source= 'filter.url' 
+            name='filter_url' value='{{dtfilters.url}}'>
+            {% for filterid, filterinput in dtfilters.fields %}
+                <div class="col-md-{{divcol}}">
+                    <label class='control-label'>{{filterinput.label}}: </label>
+                    {{ select.generate(filterinput) }}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}

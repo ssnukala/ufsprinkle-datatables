@@ -209,6 +209,33 @@ function reloadDatatableNewURLQuery(oTableid, query) {
   oTable.fnReloadAjax(newurl, null, true);
 }
 
+function genericPreDrawFilter(settings) {
+  var thisurl = settings.ajax.url;
+  var crudbox = jQuery("#" + settings.sTableId).closest("div.crud-datatable");
+  var filterbox = crudbox.find("div.datatable-filters");
+  var filterdata = {};
+  var returnval = true;
+
+  if (filterbox.length) {
+    var findpattern = "input:text, input:radio, select, input:hidden, textarea";
+    filterbox.find(findpattern).each(function () {
+      thisname = jQuery(this).attr('name');
+      thisval = jQuery(this).val();
+      filterdata[thisname] = thisval;
+    });
+    thisurl = filterdata.filter_url;
+    jQuery.each(filterdata, function (key, value) {
+      //      console.log("Line 231 the data is " + value)
+      thisurl = thisurl.replace(('/' + key), ('/' + value));
+    });
+
+    settings.ajax.url = thisurl;
+    console.log("Line 223 filter url is " + thisurl);
+    console.log(filterdata);
+  }
+  return returnval;
+}
+
 function toggleSelectOnRowClick(oTableid) {
   jQuery('#' + oTableid + ' tbody').on('click', 'tr', function () {
     if (jQuery(this).hasClass('selected')) {
