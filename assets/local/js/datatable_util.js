@@ -214,14 +214,17 @@ function genericPreDrawFilter(settings) {
   var crudbox = jQuery("#" + settings.sTableId).closest("div.crud-datatable");
   var filterbox = crudbox.find("div.datatable-filters");
   var filterdata = {};
+  var filtersource = {};
   var returnval = true;
 
   if (filterbox.length) {
     var findpattern = "input:text, input:radio, select, input:hidden, textarea";
     filterbox.find(findpattern).each(function () {
       thisname = jQuery(this).attr('name');
+      thissource = jQuery(this).attr('data-source');
       thisval = jQuery(this).val();
       filterdata[thisname] = thisval;
+      filtersource[thissource] = thisval;
     });
     thisurl = filterdata.filter_url;
     jQuery.each(filterdata, function (key, value) {
@@ -232,6 +235,15 @@ function genericPreDrawFilter(settings) {
     settings.ajax.url = thisurl;
     console.log("Line 223 filter url is " + thisurl);
     console.log(filterdata);
+
+    var newhtmlbox = crudbox.find('div.crud-newform, div.crud-template-new');
+    jQuery.each(filtersource, function (key, value) {
+      var findpattern = "[data-source^='" + key + "']";
+      newhtmlbox.find(findpattern).each(function () {
+        jQuery(this).val(value);
+      });
+    });
+
   }
   return returnval;
 }
