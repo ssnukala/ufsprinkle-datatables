@@ -24,7 +24,7 @@
             </div>
 {# Create filsters here 
 #}  
-            {% if (cruddt.options.filters is iterable) %}
+            {% if (cruddt.options.filters is iterable and cruddt.options.filters|length > 0) %}
                 {{dtfilter.generate(cruddt.options.htmlid,cruddt.options.filters)}}
             {% endif %}
             {% include 'components/datatable.html.twig' with {
