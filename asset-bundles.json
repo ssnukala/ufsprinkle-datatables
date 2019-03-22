@@ -19,7 +19,7 @@
         "vendor/moment/moment.js",
         "vendor/datatables.net-plugins/sorting/datetime-moment.js",
         "vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.js",
-        "vendor/datatables.net-select-dt/js/select.dataTables.min.js"
+        "vendor/datatables.net-select/js/dataTables.select.min.js"
       ],
       "options": {
         "result": {
@@ -33,7 +33,6 @@
       "styles": [
         "vendor/datatables.net-bs/css/dataTables.bootstrap.min.css",
         "vendor/datatables.net-dt/css/jquery.dataTables.min.css",
-        "vendor/datatables.net-select-dt/css/select.dataTables.min.css",
         "local/css/datatable_util.css"
       ],
       "options": {
