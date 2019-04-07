@@ -16,14 +16,16 @@
             </div>
         </div>
         <div class="box-body">
+        {% if cruddt.options.newrow_template is not empty   %}
             <div id='crud-newrow_{{cruddt.options.htmlid}}' class='crud-newrow'>
                 {% include cruddt.options.newrow_template with {
                     'dtoptions' : cruddt.options,
                     'page_params': page_params
             } %}
             </div>
-{# Create filsters here 
-#}  
+        {% endif %}
+{# Create filsters here
+#}
             {% if (cruddt.options.filters is iterable and cruddt.options.filters|length > 0) %}
                 {{dtfilter.generate(cruddt.options.htmlid,cruddt.options.filters)}}
             {% endif %}
@@ -54,5 +56,5 @@
                 {% endfor %}
             </div>
             {% endfor %}
-    </div>   
+    </div>
 </div>
