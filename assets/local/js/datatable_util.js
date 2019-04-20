@@ -212,6 +212,8 @@ function reloadDatatableNewURLQuery(oTableid, query) {
 function genericPreDrawFilter(settings) {
   var thisurl = settings.ajax.url;
   var crudbox = jQuery("#" + settings.sTableId).closest("div.crud-datatable");
+  var parentdt = jQuery('#' + settings.sTableId).attr('parentdt');
+
   var filterbox = crudbox.find("div.datatable-filters");
   var filterdata = {};
   var filtersource = {};
