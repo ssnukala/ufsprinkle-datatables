@@ -1,6 +1,6 @@
 {% import "components/datatable-select-filter.html.twig" as dtfilter %}
-<div class="{{cruddt.divclass|default('col-md-12')}} crud-datatable {{cruddt.options.name}}" >
-    <div id="widget-{{cruddt.options.htmlid}}" class="box box-primary">
+<div class="{{cruddt.divclass|default('col-md-12')}} crud-datatable {{cruddt.options.name}}">
+    <div class="box box-primary" id="widget-{{cruddt.options.htmlid}}">
         <div class="box-header">
             <div class="row">
                 <div class="col-md-11">
@@ -10,25 +10,27 @@
                 </div>
                 <div class="col-md-1">
                     <a class='pull-right' href="#" onclick="reloadDatatable('{{ cruddt.options.htmlid }}');">
-                        <i class="fa fa-refresh" aria-hidden="true"></i>
+                        <i aria-hidden="true" class="fa fa-refresh"></i>
                     </a>
                 </div>
             </div>
         </div>
         <div class="box-body">
-        {% if cruddt.options.newrow_template is not empty   %}
-            <div id='crud-newrow_{{cruddt.options.htmlid}}' class='crud-newrow'>
-                {% include cruddt.options.newrow_template with {
+            {% if cruddt.options.newrow_template is not empty   %}
+                <!-- datatable crud newrow start -->
+                <div class='crud-newrow' id='crud-newrow_{{cruddt.options.htmlid}}'>
+                    {% include cruddt.options.newrow_template with {
                     'dtoptions' : cruddt.options,
                     'page_params': page_params
-            } %}
-            </div>
-        {% endif %}
-{# Create filsters here
-#}
+                    } %}
+                </div>
+                <!-- datatable crud newrow end -->
+            {% endif %}
+            <!-- datatable filters start -->
             {% if (cruddt.options.filters is iterable and cruddt.options.filters|length > 0) %}
                 {{dtfilter.generate(cruddt.options.htmlid,cruddt.options.filters)}}
             {% endif %}
+            <!-- datatable filters end -->
             {% include 'components/datatable.html.twig' with {
                     'dtoptions' : cruddt.options,
                     'page_params': page_params
@@ -36,25 +38,27 @@
         </div>
     </div>
     <div class='column-formatters' style='display:none;'>
-            {% for colformatter in cruddt.options.formatters %}
-                {% include colformatter with {
+        {% for colformatter in cruddt.options.formatters %}
+            {% include colformatter with {
                         'options':cruddt.options,
                         'dtid' : cruddt.options.htmlid,
                         'crudformid' : cruddt.options.crudformid,
                         'crudsuccessjs' : cruddt.options.crud_success_js,
                         'page_params': page_params
                     } %}
-            {% endfor %}
+        {% endfor %}
     </div>
-    <div class='crud-forms' style='display:none;'>
+    {% if cruddt.options.crud_forms is iterable %}
+        <div class='crud-forms' style='display:none;'>
             {% for dtableid, crudformarr in cruddt.options.crud_forms %}
-            <div class='crud-form-group' id='crudfor_{{dtableid}}'>
-                {% for cftype, crudform in crudformarr %}
-                    <div class='crud-template-{{cftype}}' id='crudform_{{dtableid}}_{{cftype}}'>
-                        {% include "forms/crud-form.html.twig" with {form : crudform, 'page_params' : page_params} %}
-                    </div>
-                {% endfor %}
-            </div>
+                <div class='crud-form-group' id='crudfor_{{dtableid}}'>
+                    {% for cftype, crudform in crudformarr %}
+                        <div class='crud-template-{{cftype}}' id='crudform_{{dtableid}}_{{cftype}}'>
+                            {% include "forms/crud-form.html.twig" with {form : crudform, 'page_params' : page_params} %}
+                        </div>
+                    {% endfor %}
+                </div>
             {% endfor %}
-    </div>
+        </div>
+    {% endif %}
 </div>
