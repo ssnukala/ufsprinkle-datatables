@@ -38,6 +38,8 @@ function createDatatableOnPage(dtoptions) {
   var sPlaceholder;
   var pLength;
   var dtSettings = {
+    //https://datatables.net/forums/discussion/46752/the-column-render-callback-runs-too-many-times
+    autoWidth: false,
     processing: true,
     serverSide: true,
     ajax: {
@@ -77,7 +79,8 @@ function createDatatableOnPage(dtoptions) {
       if (typeof fncallback === "function") {
         fncallback(row, data, index);
       }
-    }
+    },
+    customRenderCallback: dtoptions.customRenderCallback,
   };
   if (dtoptions["select"] != undefined && dtoptions["select"] != "") {
     dtoptions["select"] = {
@@ -148,38 +151,52 @@ $.fn.dataTable.render.format_column = function (column_name) {
   return function (data, type, row, meta) {
     //    var func = eval(column_name + 'GetFormatter');
     //console.log("Line 122 Datatable Util" + meta.settings.sTableId);
-    var dtid = meta.settings.sTableId;
-    var crudbox = jQuery("#" + dtid).closest("div.crud-datatable");
-    // Get the Crudbox so we can look for formatters inside this table, so it does not pick up other 
-    // formatters with the same name  
-    var func = column_name + "GetFormatter";
-    var colFormatter = column_name;
-    var functionName = window[column_name + func];
-    if (typeof functionName === "function") {
-      //    if ($.isFunction(functionName)) {
-      //      newFormatter = this.$element.trigger(func, [row]);
-      colFormatter = functionName(row);
-      //      console.log('Line 135 : function ' + func + ' exists and newe formatter is ' + colFormatter);
-    }
-    var colDiv;
-    var colDiv1 = crudbox.find('div[column_formatter="' + dtid + "_" + colFormatter + '"]');
-    if (jQuery(colDiv1).length) {
-      colDiv = colDiv1;
-    } else {
-      var colDiv2 = crudbox.find('div[column_formatter="' + colFormatter + '"]');
-      colDiv = colDiv2;
-    }
-    if (type === "display" && jQuery(colDiv).length) {
-      //      var colhtml = jQuery(colDiv).html();
-      var colhtml = colDiv.html();
-      jQuery.each(row, function (key, value) {
-        //console.log("Line 92 replacing this "+'row.' + key);
-        var rowkey = "row." + key;
-        var rowkey1 = new RegExp(rowkey, "g");
-        colhtml = colhtml.replace(rowkey1, value);
-        //console.log("Line 95 the html is "+colhtml);
-      });
-      return colhtml;
+    /*  
+// old code that looks for javascript formatter function : June 2019 this is not in use at this time      
+        var func = column_name + "GetFormatter";
+        var colFormatter = column_name;
+        var functionName = window[column_name + func];
+        if (typeof functionName === "function") {
+          //    if ($.isFunction(functionName)) {
+          //      newFormatter = this.$element.trigger(func, [row]);
+          colFormatter = functionName(row);
+          //      console.log('Line 135 : function ' + func + ' exists and newe formatter is ' + colFormatter);
+        }
+    */
+
+    if (type === "display") {
+      var dtid = meta.settings.sTableId;
+      //      console.log("Line 168 meta.settings");
+      //      console.log(meta.settings);
+      var crudbox = jQuery("#" + dtid).closest("div.crud-datatable");
+      // Get the Crudbox so we can look for formatters inside this table, so it does not pick up other 
+      // formatters with the same name  
+      var colDiv;
+      var colDiv1 = crudbox.find('div[column_formatter="' + dtid + "_" + column_name + '"]');
+      if (jQuery(colDiv1).length) {
+        colDiv = colDiv1;
+      } else {
+        var colDiv2 = crudbox.find('div[column_formatter="' + column_name + '"]');
+        colDiv = colDiv2;
+      }
+      //      if (type === "display" && jQuery(colDiv).length) {
+      if (jQuery(colDiv).length) {
+        //      var colhtml = jQuery(colDiv).html();
+        var colhtml = colDiv.html();
+        jQuery.each(row, function (key, value) {
+          //console.log("Line 92 replacing this "+'row.' + key);
+          var rowkey = "row." + key;
+          var rowkey1 = new RegExp(rowkey, "g");
+          colhtml = colhtml.replace(rowkey1, value);
+          //console.log("Line 95 the html is "+colhtml);
+        });
+        console.log("Line 193 the custom render function is " + meta.settings.oInit.customRenderCallback);
+        var fncallback = window[meta.settings.oInit.customRenderCallback];
+        if (typeof fncallback === "function") {
+          fncallback(row, colhtml, meta);
+        }
+        return colhtml;
+      }
     }
     // Search, order and type can use the original data
     return data;
@@ -207,6 +224,25 @@ function reloadDatatableNewURLQuery(oTableid, query) {
   var newurl = RemoveQueryPartOf(oTable.api().ajax.url());
   newurl = newurl + query
   oTable.fnReloadAjax(newurl, null, true);
+}
+
+function testCreatedRow(row, data, dataIndex) {
+  console.log("Line 213 CreatedRow the table row is ");
+  console.log(data);
+}
+
+function testRowCallback(row, data) {
+  console.log("Line 225 RowCallback the table");
+}
+
+function testCustomRenderCallback(row, rowhtml, meta) {
+  console.log("Line 225 testCustomRenderCallback the table row is will look for #widget-cg-" + row.id);
+  console.log(row);
+  if (jQuery('#widget-cg-' + row.id).length) {
+    jQuery('#widget-cg-' + row.id + ' .box-title').addClass('srinivas');
+    console.log('Line 229: adding srinivas class to rendered HTML')
+  }
+
 }
 
 function genericPreDrawFilter(settings) {
