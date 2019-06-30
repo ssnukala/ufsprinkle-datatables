@@ -129,6 +129,11 @@ function createDatatableOnPage(dtoptions) {
       "row'<'col-md-8 search'f><'col-md-4 text-right'l>>rt<'row'<'col-md-3'i>" +
       "<'col-md-9 pager1 pager-lg1 text-right tablesorter-pager'p> > >S";
   }
+
+  if (dtoptions["formatCallback"] != undefined && dtoptions["formatCallback"] != "") {
+    dtSettings["formatCallback"] = dtoptions["formatCallback"];
+  }
+
   /*
         "<'dtable-heading' <'well1 cddatatable-topbox " +
         "row'<'col-md-9 search'f><'col-md-3 text-right'l>>rt<'row'<'col-md-3'i>" +
@@ -183,6 +188,12 @@ $.fn.dataTable.render.format_column = function (column_name) {
       if (jQuery(colDiv).length) {
         //      var colhtml = jQuery(colDiv).html();
         var colhtml = colDiv.html();
+        var fncallback = window[meta.settings.oInit.customRenderCallback];
+        if (typeof fncallback === "function") {
+          console.log("Line 193 the custom render function is " + meta.settings.oInit.customRenderCallback);
+          colhtml = fncallback(row, colhtml, meta);
+        }
+        var colhtml = fillFieldTags(colhtml, row);
         jQuery.each(row, function (key, value) {
           //console.log("Line 92 replacing this "+'row.' + key);
           var rowkey = "row." + key;
@@ -190,11 +201,6 @@ $.fn.dataTable.render.format_column = function (column_name) {
           colhtml = colhtml.replace(rowkey1, value);
           //console.log("Line 95 the html is "+colhtml);
         });
-        console.log("Line 193 the custom render function is " + meta.settings.oInit.customRenderCallback);
-        var fncallback = window[meta.settings.oInit.customRenderCallback];
-        if (typeof fncallback === "function") {
-          fncallback(row, colhtml, meta);
-        }
         return colhtml;
       }
     }

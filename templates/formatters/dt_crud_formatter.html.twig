@@ -12,7 +12,9 @@
         Notes : row.notes. 
         {{ _ce.generate(dtid,crudformdiv,'Update','genericDTCRUDSuccess') }}
     </p>
-{% endblock %}    
+{% endblock %}
+{% block crud_divs %}
     <div id="alerts-{{crudformdiv}}"></div>
     <div id='{{crudformdiv}}'></div>
+{% endblock %}
 </div>
