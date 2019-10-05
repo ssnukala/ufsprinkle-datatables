@@ -284,7 +284,13 @@ function genericPreDrawFilter(settings) {
     jQuery.each(filtersource, function (key, value) {
       var findpattern = "[data-source^='" + key + "']";
       newhtmlbox.find(findpattern).each(function () {
-        jQuery(this).val(value);
+        if (jQuery(this).is('input')) {
+          jQuery(this).val(value);
+        } else if (jQuery(this).is('select')) {
+          jQuery(this).val(value).prop('selected', true);
+        } else if (jQuery(this).is('select')) {
+          jQuery(this).text(value);
+        }
       });
     });
 

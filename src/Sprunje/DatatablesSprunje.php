@@ -20,7 +20,8 @@ use UserFrosting\Sprinkle\Core\Sprunje\Sprunje;
  *
  * @author Srinivas Nukala (https://srinivasnukala.com)
  */
-class DatatablesSprunje extends Sprunje {
+class DatatablesSprunje extends Sprunje
+{
 
     /**
      * Array key for the total unfiltered object count.
@@ -44,11 +45,12 @@ class DatatablesSprunje extends Sprunje {
     protected $rowsKey = 'aaData';
     protected $draw = 'draw';
 
-    public function getArray() {
-//Debug::debug("Line 66 the options are ",$this->options);
+    public function getArray()
+    {
+        //Debug::debug("Line 66 the options are ",$this->options);
         $this->options['page'] = ($this->options['start'] / $this->options['length']);
         $this->options['size'] = $this->options['length'];
-//Debug::debug("Line 70 the options are ",$this->options);
+        //Debug::debug("Line 70 the options are ",$this->options);
         $this->options['filters']['_all'] = $this->options['search']['value'];
 
         list($count, $countFiltered, $rows) = $this->getModels();
@@ -66,13 +68,14 @@ class DatatablesSprunje extends Sprunje {
     /**
      * Set the initial query used by your Sprunje.
      */
-    protected function baseQuery() {
+    protected function baseQuery()
+    {
         return $this->classMapper->createInstance($this->name)->newQuery();
     }
-    
+
     public function setFormat($format)
     {
-        $this->options['format']=$format;
+        $this->options['format'] = $format;
     }
 
     /**
@@ -81,9 +84,10 @@ class DatatablesSprunje extends Sprunje {
      * @param ResponseInterface $response
      * @return ResponseInterface
      */
-    public function toResponse($response) {
+    public function toResponse($response)
+    {
         $format = $this->options['format'];
-//Debug::debug("Line 81 $format is the return format");        
+        //        Debug::debug("Line 81 $format is the return format");
         switch ($format) {
             case 'csv': {
                     $result = $this->getCsv();
@@ -113,14 +117,15 @@ class DatatablesSprunje extends Sprunje {
      * @param Builder $query
      * @return int
      */
-    protected function count($query) {
-//Debug::debug("Line 540 the sql is ".$query->toSql());
+    protected function count($query)
+    {
+        //Debug::debug("Line 540 the sql is ".$query->toSql());
         $thissql = $query->toSql();
         if (stripos($thissql, 'group by') !== false) {
             $thiscount = count($query->get());
-//            Debug::debug("Line 105 the sql is  updating the count to ($thiscount) ");
-//            $origcount= $query->count();
-//Debug::debug("Line 547 the sql is  instead of ($origcount) ");
+            //            Debug::debug("Line 105 the sql is  updating the count to ($thiscount) ");
+            //            $origcount= $query->count();
+            //Debug::debug("Line 547 the sql is  instead of ($origcount) ");
             return $thiscount;
         } else {
             return $query->count();
@@ -133,17 +138,17 @@ class DatatablesSprunje extends Sprunje {
      * @param Builder $query
      * @return int
      */
-    protected function countFiltered($query) {
+    protected function countFiltered($query)
+    {
         $thissql = $query->toSql();
         if (stripos($thissql, 'group by') !== false) {
             $thiscount = count($query->get());
-//            Debug::debug("Line 128 the sql is  updating the count to ($thiscount) ");
-//            $origcount= $query->count();
-//Debug::debug("Line 568 the sql is  instead of ($origcount) ");
+            //            Debug::debug("Line 128 the sql is  updating the count to ($thiscount) ");
+            //            $origcount= $query->count();
+            //Debug::debug("Line 568 the sql is  instead of ($origcount) ");
             return $thiscount;
         } else {
             return $query->count();
         }
     }
-
 }

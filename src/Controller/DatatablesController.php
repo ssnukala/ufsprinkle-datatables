@@ -31,7 +31,7 @@ use UserFrosting\Sprinkle\Core\Facades\Debug;
 class DatatablesController extends SimpleController
 {
 
-//    protected $schema;       // json schema for the datatable definitions
+    //    protected $schema;       // json schema for the datatable definitions
     protected $fields = [];       // datatable field definitions
     protected $options = [];       // options for the data table
     protected $sprunje_name = 'sprunjenotset';       // Name if the sprunje
@@ -152,7 +152,7 @@ class DatatablesController extends SimpleController
 
     protected function getColumnDefinitions()
     {
-//        $cur_ff_table = parent::getColumnDefinitions();
+        //        $cur_ff_table = parent::getColumnDefinitions();
         //Debug::debug("Line 39 column definitions",$cur_ff_table);
         $jsonschema = $this->getSchemaContent();
         $this->fields = $jsonschema;
@@ -181,7 +181,7 @@ class DatatablesController extends SimpleController
 
     public function getDatatableArray()
     {
-        //Debug::debug("Line 155 fields ", $this->fields);
+        //        Debug::debug("Line 155 fields ", $this->fields);
         $var_retarr = [
             "fields" => $this->fields,
             "options" => $this->options
@@ -205,7 +205,7 @@ class DatatablesController extends SimpleController
         if (!is_null($params1)) {
             $params = array_merge($params, $params1);
         }
-//        Debug::debug("Line 208 The datatable params are ", $params);
+        //        Debug::debug("Line 208 The datatable params are ", $params);
         $var_sorts = [];
         foreach ($params1['order'] as $orderrec) {
             $thiscol = $params1['columns'][$orderrec['column']];
@@ -222,13 +222,13 @@ class DatatablesController extends SimpleController
         $currentUser = $this->ci->currentUser;
 
         // Access-controlled page
-//        if (!$authorizer->checkAccess($currentUser, 'uri_users')) {
-//            throw new ForbiddenException();
-//        }
+        //        if (!$authorizer->checkAccess($currentUser, 'uri_users')) {
+        //            throw new ForbiddenException();
+        //        }
 
         /** @var UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
         $classMapper = $this->ci->classMapper;
-        //Debug::debug("Line 210 setting sprunje ".$this->sprunje_name);
+        //        Debug::debug("Line 210 setting sprunje " . $this->sprunje_name);
         $this->sprunje = $classMapper->createInstance($this->sprunje_name, $classMapper, $params);
     }
 }
