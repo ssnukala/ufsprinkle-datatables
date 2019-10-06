@@ -288,7 +288,7 @@ function genericPreDrawFilter(settings) {
           jQuery(this).val(value);
         } else if (jQuery(this).is('select')) {
           jQuery(this).val(value).prop('selected', true);
-        } else if (jQuery(this).is('select')) {
+        } else if (jQuery(this).is('textarea')) {
           jQuery(this).text(value);
         }
       });
