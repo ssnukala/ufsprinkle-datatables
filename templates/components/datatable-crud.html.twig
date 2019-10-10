@@ -55,7 +55,7 @@
             {% for dtableid, crudformarr in cruddt.options.crud_forms %}
                 <div class='crud-form-group' id='crudfor_{{dtableid}}'>
                     {% for cftype, crudform in crudformarr %}
-                        <div class='crud-template-{{cftype}}' id='crudform_{{dtableid}}_{{cftype}}'>
+                        <div class='crud-template-{{cftype}}' id='crudform_{{dtableid}}_{{cftype}}' {% if crudform.forfield|default('') != '' %} data-forfield="{{crudform.forfield}}" {% endif %}>
                             {% include "forms/crud-form.html.twig" with {form : crudform, 'page_params' : page_params} %}
                         </div>
                     {% endfor %}

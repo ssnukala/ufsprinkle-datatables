@@ -50,6 +50,7 @@ class DatatablesController extends SimpleController
 
     public function setupDatatable($options = [])
     {
+        Debug::debug("Line 53 in Datatable Setup DDT class");
         $this->options = array_merge($this->default_options, $options);
         $this->setFormatters();
         $this->getColumnDefinitions();
