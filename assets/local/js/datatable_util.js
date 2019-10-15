@@ -251,6 +251,36 @@ function testCustomRenderCallback(row, rowhtml, meta) {
 
 }
 
+function genericCreatedRow(row, data, dataIndex) {
+  //  console.log("Line 53 CreatedRow the table row id is  " + data.id + " name is " + data.first_name);
+  //  console.log(data);
+
+  jQuery(row).find('.field_format').each(function () {
+    var thissource = jQuery(this).attr('data-forfield');
+    var thisdata = getValueFromSource(thissource, data)
+    //        var thisdata = data[thissource];
+    var thishtml = jQuery(this).html();
+    newhtml = jQuery.trim(thishtml);
+    var finalhtml = '';
+    if (thisdata !== undefined && thisdata.length !== 0) {
+      var tokens = jQuery.unique(thishtml.match(/\{[^)]*?\}/g));
+      jQuery.each(thisdata, function (rowid, rowdata) {
+        jQuery.each(tokens, function (tid, token) {
+          //console.log("Line 92 replacing this "+'row.' + key);
+          var rowkey = new RegExp(token, "g");
+          var cleantoken = token.replace(/\{|\}/g, '');
+          newhtml = newhtml.replace(rowkey, rowdata[cleantoken]);
+        });
+        finalhtml = finalhtml + ' | ' + jQuery.trim(newhtml);
+        newhtml = jQuery.trim(thishtml);
+      });
+      jQuery(this).html(finalhtml);
+    } else {
+      jQuery(this).parent().html('');
+    }
+  });
+}
+
 function genericPreDrawFilter(settings) {
   var thisurl = settings.ajax.url;
   var crudbox = jQuery("#" + settings.sTableId).closest("div.crud-datatable");

@@ -44,7 +44,7 @@ class DatatablesController extends SimpleController
         "extra_param" => "",
         "visible_columns" => 1,
         "initial_search" => "",
-        "initial_sort" => [[1, 'asc']]
+        "initial_sort" => [[0, 'asc']] // make first column is always ID even if is hidden? 
     ];
 
 
@@ -116,7 +116,9 @@ class DatatablesController extends SimpleController
 
     public function setOptions($options)
     {
-        $this->options = $options;
+        foreach ($options as $key => $value) {
+            $this->options[$key] = $value;
+        }
     }
 
     public function getOption($option)
