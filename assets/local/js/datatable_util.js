@@ -262,7 +262,7 @@ function genericCreatedRow(row, data, dataIndex) {
     var thishtml = jQuery(this).html();
     newhtml = jQuery.trim(thishtml);
     var finalhtml = '';
-    if (thisdata !== undefined && thisdata.length !== 0) {
+    if (thisdata !== "_undefined_" && thisdata !== undefined && thisdata.length !== 0) {
       var tokens = jQuery.unique(thishtml.match(/\{[^)]*?\}/g));
       jQuery.each(thisdata, function (rowid, rowdata) {
         jQuery.each(tokens, function (tid, token) {
