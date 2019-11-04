@@ -263,17 +263,20 @@ function genericCreatedRow(row, data, dataIndex) {
     newhtml = jQuery.trim(thishtml);
     var finalhtml = '';
     if (thisdata !== "_undefined_" && thisdata !== undefined && thisdata.length !== 0) {
-      var tokens = jQuery.unique(thishtml.match(/\{[^)]*?\}/g));
-      jQuery.each(thisdata, function (rowid, rowdata) {
-        jQuery.each(tokens, function (tid, token) {
-          //console.log("Line 92 replacing this "+'row.' + key);
-          var rowkey = new RegExp(token, "g");
-          var cleantoken = token.replace(/\{|\}/g, '');
-          newhtml = newhtml.replace(rowkey, rowdata[cleantoken]);
-        });
-        finalhtml = finalhtml + ' | ' + jQuery.trim(newhtml);
-        newhtml = jQuery.trim(thishtml);
-      });
+      finalhtml = replaceTokensInHTML(thishtml, thisdata);
+      /*
+            var tokens = jQuery.unique(thishtml.match(/\{[^)]*?\}/g));
+            jQuery.each(thisdata, function (rowid, rowdata) {
+              jQuery.each(tokens, function (tid, token) {
+                //console.log("Line 92 replacing this "+'row.' + key);
+                var rowkey = new RegExp(token, "g");
+                var cleantoken = token.replace(/\{|\}/g, '');
+                newhtml = newhtml.replace(rowkey, rowdata[cleantoken]);
+              });
+              finalhtml = finalhtml + ' | ' + jQuery.trim(newhtml);
+              newhtml = jQuery.trim(thishtml);
+            });
+      */
       jQuery(this).html(finalhtml);
     } else {
       jQuery(this).parent().html('');
