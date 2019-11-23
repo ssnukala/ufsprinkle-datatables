@@ -156,8 +156,8 @@ $.fn.dataTable.render.format_column = function (column_name) {
   return function (data, type, row, meta) {
     //    var func = eval(column_name + 'GetFormatter');
     //console.log("Line 122 Datatable Util" + meta.settings.sTableId);
-    /*  
-// old code that looks for javascript formatter function : June 2019 this is not in use at this time      
+    /*
+// old code that looks for javascript formatter function : June 2019 this is not in use at this time
         var func = column_name + "GetFormatter";
         var colFormatter = column_name;
         var functionName = window[column_name + func];
@@ -174,8 +174,8 @@ $.fn.dataTable.render.format_column = function (column_name) {
       //      console.log("Line 168 meta.settings");
       //      console.log(meta.settings);
       var crudbox = jQuery("#" + dtid).closest("div.crud-datatable");
-      // Get the Crudbox so we can look for formatters inside this table, so it does not pick up other 
-      // formatters with the same name  
+      // Get the Crudbox so we can look for formatters inside this table, so it does not pick up other
+      // formatters with the same name
       var colDiv;
       var colDiv1 = crudbox.find('div[column_formatter="' + dtid + "_" + column_name + '"]');
       if (jQuery(colDiv1).length) {
