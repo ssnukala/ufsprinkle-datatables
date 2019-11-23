@@ -44,13 +44,13 @@ class DatatablesController extends SimpleController
         "extra_param" => "",
         "visible_columns" => 1,
         "initial_search" => "",
-        "initial_sort" => [[0, 'asc']] // make first column is always ID even if is hidden? 
+        "initial_sort" => [[0, 'asc']] // make first column is always ID even if is hidden?
     ];
 
 
     public function setupDatatable($options = [])
     {
-        Debug::debug("Line 53 in Datatable Setup DDT class");
+        //Debug::debug("Line 53 in Datatable Setup DDT class");
         $this->options = array_merge($this->default_options, $options);
         $this->setFormatters();
         $this->getColumnDefinitions();
