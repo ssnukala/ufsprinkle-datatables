@@ -260,10 +260,26 @@ function genericCreatedRow(row, data, dataIndex) {
     var thisdata = getValueFromSource(thissource, data)
     //        var thisdata = data[thissource];
     var thishtml = jQuery(this).html();
+    var tagarr = buildTagTree(thishtml);
+    if (data.id !== undefined) {
+      thishtml = thishtml.replace(/\\{row.id\\}/g, data.id);
+    }
     newhtml = jQuery.trim(thishtml);
     var finalhtml = '';
+    var thishtml1 = '';
     if (thisdata !== "_undefined_" && thisdata !== undefined && thisdata.length !== 0) {
-      finalhtml = replaceTokensInHTML(thishtml, thisdata);
+      if (thishtml.indexOf('rs-conditional') !== -1) {
+        thishtml1 = removeConditionalHTML(thishtml, thisdata, thissource + '.');
+      } else {
+        thishtml1 = thishtml;
+      }
+
+      if (Object.keys(tagarr).length > 0) {
+        finalhtml = updateForEachHTML(thishtml1, data, tagarr, 0);
+      } else {
+        finalhtml = replaceTokensInHTML(thishtml1, thisdata); // replace the tokens from current row first
+      }
+
       /*
             var tokens = jQuery.unique(thishtml.match(/\{[^)]*?\}/g));
             jQuery.each(thisdata, function (rowid, rowdata) {
