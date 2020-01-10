@@ -85,7 +85,7 @@ function createDatatableOnPage(dtoptions) {
     };
   }
 
-  dtSettings["sWrapper"] = "dataTables_wrapper uf-datatable dt-bootstrap";
+  dtSettings["sWrapper"] = "dataTables_wrapper srinivas uf-datatable dt-bootstrap";
 
   if (
     dtoptions["searchPlaceholder"] != undefined &&

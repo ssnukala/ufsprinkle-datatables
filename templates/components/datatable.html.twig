@@ -1,6 +1,12 @@
 <!-- datatable div starts -->
-<div id="{{dtoptions.htmlid}}_content" class="dtable-content">
-    <table cellpadding="0" cellspacing="0" style="width:100%!important;" class="table table-striped table-bordered dataTable" border="0" id="{{dtoptions.htmlid}}" data-url="/datatable/testurl" data-schema="testschema" {% if (page_params.parentdtid is not empty) %} parentdt="{{page_params.parentdtid}}" {% endif %} {% if (page_params.childdtid is not empty) %} childdt="{{page_params.childdtid}}" {% endif %} {% if (dtoptions.source is not empty) %} data-source="{{dtoptions.source}}" {% endif %}>
+<div id="{{dtoptions.htmlid}}_content" class="dtable-content sn-datatable">
+    <table cellpadding="0" cellspacing="0" style="width:100%!important;" 
+    class="table table-striped table-bordered dataTable srinivas" 
+    border="0" id="{{dtoptions.htmlid}}" data-url="/datatable/testurl" 
+    data-schema="testschema" 
+    {% if (page_params.parentdtid is not empty) %} parentdt="{{page_params.parentdtid}}" {% endif %} 
+    {% if (page_params.childdtid is not empty) %} childdt="{{page_params.childdtid}}" {% endif %} 
+    {% if (dtoptions.source is not empty) %} data-source="{{dtoptions.source}}" {% endif %}>
         <thead></thead>
         <tbody>
             <tr>

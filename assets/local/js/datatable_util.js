@@ -76,6 +76,7 @@ function createDatatableOnPage(dtoptions) {
     createdRow: function (row, data, index) {
       //      var thisapi = this.api();
       var fncallback = window[dtoptions.createdRow];
+      jQuery(row).addClass('dt-row');
       if (typeof fncallback === "function") {
         fncallback(row, data, index);
       }
@@ -88,7 +89,17 @@ function createDatatableOnPage(dtoptions) {
     };
   }
 
-  dtSettings["sWrapper"] = "dataTables_wrapper uf-datatable dt-bootstrap";
+  dtSettings["sWrapper"] = "dataTables_wrapper srinivas uf-datatable dt-bootstrap";
+  // this is over ridden by dataTables.bootstrap.js and the wrapper classes come from there 
+  /*
+    / * Default class modification * /
+    $.extend(DataTable.ext.classes, {
+      sWrapper: "dataTables_wrapper form-inline dt-bootstrap",
+      sFilterInput: "form-control input-sm",
+      sLengthSelect: "form-control input-sm",
+      sProcessing: "dataTables_processing panel panel-default"
+    });
+  */
 
   if (
     dtoptions["searchPlaceholder"] != undefined &&
@@ -125,7 +136,7 @@ function createDatatableOnPage(dtoptions) {
       "<'col-md-9 pager pager-lg1 text-right tablesorter-pager1'p> > >S";
 */
     dtSettings["dom"] =
-      "<'dtable-heading' <'well1 cddatatable-topbox " +
+      "<'dt-customhead dtable-heading' <'well1 cddatatable-topbox " +
       "row'<'col-md-8 search'f><'col-md-4 text-right'l>>rt<'row'<'col-md-3'i>" +
       "<'col-md-9 pager1 pager-lg1 text-right tablesorter-pager'p> > >S";
   }
@@ -147,28 +158,14 @@ function createDatatableOnPage(dtoptions) {
   // S is for https://datatables.net/extensions/select/ : this plugin is not enabled yet
 
   oTable = jQuery(divid).dataTable(dtSettings);
-  //    jQuery(divid+'_wrapper').removeClass( 'form-inline' ).addClass( 'uf-datatables' );
+  /* since  dataTables.bootstrap.js  is creating the Wrapper div we will add our own classes here*/
+  jQuery(divid + '_wrapper').removeClass('form-inline').addClass('uf-datatables');
 
   return oTable;
 }
 
 $.fn.dataTable.render.format_column = function (column_name) {
   return function (data, type, row, meta) {
-    //    var func = eval(column_name + 'GetFormatter');
-    //console.log("Line 122 Datatable Util" + meta.settings.sTableId);
-    /*
-// old code that looks for javascript formatter function : June 2019 this is not in use at this time
-        var func = column_name + "GetFormatter";
-        var colFormatter = column_name;
-        var functionName = window[column_name + func];
-        if (typeof functionName === "function") {
-          //    if ($.isFunction(functionName)) {
-          //      newFormatter = this.$element.trigger(func, [row]);
-          colFormatter = functionName(row);
-          //      console.log('Line 135 : function ' + func + ' exists and newe formatter is ' + colFormatter);
-        }
-    */
-
     if (type === "display") {
       var dtid = meta.settings.sTableId;
       //      console.log("Line 168 meta.settings");
@@ -297,6 +294,8 @@ function genericCreatedRow(row, data, dataIndex) {
     } else {
       jQuery(this).parent().html('');
     }
+  }).replaceWith(function () {
+    return $(this).contents().clone();
   });
 }
 

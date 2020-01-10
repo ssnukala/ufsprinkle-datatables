@@ -11,3 +11,7 @@
 .dataTables_length {
   float: right !important;
 }
+
+.dataTable .odd {
+  background-color: #e1e1e1 !important;
+}
