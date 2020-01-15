@@ -217,21 +217,17 @@ class DatatablesController extends SimpleController
         $params['sorts'] = $var_sorts;
         //Debug::debug("Line 214 sending sorts to create sprunje",$var_sorts);
         //Debug::debug("Line 188 Sprunje name is ".$this->sprunje_name);
-
         /** @var UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager $authorizer */
         $authorizer = $this->ci->authorizer;
-
         /** @var UserFrosting\Sprinkle\Account\Database\Models\User $currentUser */
         $currentUser = $this->ci->currentUser;
-
         // Access-controlled page
         //        if (!$authorizer->checkAccess($currentUser, 'uri_users')) {
         //            throw new ForbiddenException();
         //        }
-
         /** @var UserFrosting\Sprinkle\Core\Util\ClassMapper $classMapper */
         $classMapper = $this->ci->classMapper;
-        //        Debug::debug("Line 210 setting sprunje " . $this->sprunje_name);
+        //Debug::debug("Line 234 setting sprunje " . $this->sprunje_name, $params);
         $this->sprunje = $classMapper->createInstance($this->sprunje_name, $classMapper, $params);
     }
 }

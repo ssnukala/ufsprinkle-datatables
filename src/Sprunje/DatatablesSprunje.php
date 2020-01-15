@@ -9,9 +9,11 @@
 
 namespace UserFrosting\Sprinkle\Datatables\Sprunje;
 
+use Carbon\Carbon;
 use Illuminate\Database\Capsule\Manager as Capsule;
 use UserFrosting\Sprinkle\Core\Facades\Debug;
 use UserFrosting\Sprinkle\Core\Sprunje\Sprunje;
+//use Psr\Http\Message\ResponseInterface as Response;
 
 /**
  * ActivitySprunje
@@ -47,10 +49,10 @@ class DatatablesSprunje extends Sprunje
 
     public function getArray()
     {
-        //Debug::debug("Line 66 the options are ",$this->options);
+        //Debug::debug("Line 52 the options are ", $this->options);
         $this->options['page'] = ($this->options['start'] / $this->options['length']);
         $this->options['size'] = $this->options['length'];
-        //Debug::debug("Line 70 the options are ",$this->options);
+        //Debug::debug("Line 55 the options are ", $this->options);
         $this->options['filters']['_all'] = $this->options['search']['value'];
 
         list($count, $countFiltered, $rows) = $this->getModels();
