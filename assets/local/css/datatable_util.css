@@ -15,3 +15,13 @@
 .dataTable .odd {
   background-color: #e1e1e1 !important;
 }
+
+.dt_column .uf_message p {
+  margin: 1px;
+  display: inline-block;
+}
+
+.dt_column .uf_message .uf_message_head,
+.dt_column .uf_message .uf_message_footer {
+  display: none;
+}
