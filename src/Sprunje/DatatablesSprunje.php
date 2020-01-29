@@ -42,6 +42,10 @@ class DatatablesSprunje extends Sprunje
     /**
      * Array key for the actual result set.
      *
+     *     "message": "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status1' in 
+     * 'where clause' (SQL: select count(*) as aggregate from `uf_message` 
+     * where `user_id` = 1 and `status1` = A and `uf_message`.`deleted_at` is null)",
+
      * @var string
      */
     protected $rowsKey = 'aaData';
@@ -54,6 +58,19 @@ class DatatablesSprunje extends Sprunje
         $this->options['size'] = $this->options['length'];
         //Debug::debug("Line 55 the options are ", $this->options);
         $this->options['filters']['_all'] = $this->options['search']['value'];
+
+        // Srinivas 1/28/2020 : not using this now, using the Filters instead, may use this in future
+        if (isset($this->options['dt_where'])) {
+            //Debug::debug("Line 59 the DT Where is ", $this->options['dt_where']);
+            $dtwhere = $this->options['dt_where'];
+            $this->extendQuery(function ($query) use ($dtwhere) {
+                foreach ($dtwhere as $col => $value) {
+                    //Debug::debug("Line 67 Setting where $col = $value");
+                    $query->where($col, $value);
+                }
+                return $query;
+            });
+        }
 
         list($count, $countFiltered, $rows) = $this->getModels();
 

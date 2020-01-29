@@ -25,3 +25,18 @@
 .dt_column .uf_message .uf_message_footer {
   display: none;
 }
+
+.datatable-filters select {
+  display: inline-block;
+  width: auto !important;
+}
+
+.datatable-filters .select2-container--default {
+  display: inline-block;
+  width: auto !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button {
+  padding: auto;
+  margin-left: auto;
+}

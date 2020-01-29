@@ -12,7 +12,7 @@ function createDatatableOnPage(dtoptions) {
   var oTable;
   var final_dturl;
   var oldStart = 0;
-  var divid = "#" + dtoptions.htmlid;
+  var datatableID = "#" + dtoptions.htmlid;
   var dtbase_url = dtoptions.ajax_url;
   var fe_filter = "";
   //  var csrf_keyname = site.csrf.name;
@@ -22,15 +22,6 @@ function createDatatableOnPage(dtoptions) {
   }
 
   final_dturl = dtbase_url + dtoptions.extra_param + fe_filter;
-  var dtpostdata = {
-    request: "get_idtdata",
-    dtoptions: {
-      id: dtoptions.htmlid,
-      data_options: dtoptions.data_options
-    }
-  };
-  dtpostdata[site.csrf.keys.name] = site.csrf.name;
-  dtpostdata[site.csrf.keys.value] = site.csrf.value;
 
   jQuery.fn.dataTable.moment("MM-DD-YYYY HH:mm:ss");
   //    jQuery.fn.dataTable.moment( '  HH:mm MMM D, YY' );
@@ -43,9 +34,28 @@ function createDatatableOnPage(dtoptions) {
     processing: true,
     serverSide: true,
     ajax: {
-      url: final_dturl,
-      type: "POST",
-      data: dtpostdata
+      "url": final_dturl,
+      "type": "POST",
+      "data": function (data) {
+        dtpostdata = {
+          request: "get_dtdata",
+          dtoptions: {
+            id: dtoptions.htmlid,
+            data_options: dtoptions.data_options
+          }
+        };
+        dtpostdata[site.csrf.keys.name] = site.csrf.name;
+        dtpostdata[site.csrf.keys.value] = site.csrf.value;
+        // Read values
+        // Srinivas Jan 2020 : Will add collecting any where criteria for data here to add to the Ajax Post 
+        // this is will be sent as Filters to the,
+        var filter_data = getDTFilterData(dtoptions.htmlid);
+        if (filter_data !== false) {
+          dtpostdata.filters = filter_data;
+        }
+        // Need to return this as an object or the data does not go thru properly
+        return jQuery.extend({}, data, dtpostdata);
+      }
     },
     oSearch: {
       sSearch: dtoptions.initial_search
@@ -76,7 +86,11 @@ function createDatatableOnPage(dtoptions) {
     createdRow: function (row, data, index) {
       //      var thisapi = this.api();
       var fncallback = window[dtoptions.createdRow];
-      jQuery(row).addClass('dt-row');
+      var rowclass = 'dt-row';
+      if (dtoptions.rowclass !== undefined) {
+        rowclass += ' ' + dtoptions.rowclass;
+      }
+      jQuery(row).addClass(rowclass);
       if (typeof fncallback === "function") {
         fncallback(row, data, index);
       }
@@ -157,9 +171,9 @@ function createDatatableOnPage(dtoptions) {
   */
   // S is for https://datatables.net/extensions/select/ : this plugin is not enabled yet
 
-  oTable = jQuery(divid).dataTable(dtSettings);
+  oTable = jQuery(datatableID).dataTable(dtSettings);
   /* since  dataTables.bootstrap.js  is creating the Wrapper div we will add our own classes here*/
-  jQuery(divid + '_wrapper').removeClass('form-inline').addClass('uf-datatables');
+  jQuery(datatableID + '_wrapper').removeClass('form-inline').addClass('uf-datatables');
 
   return oTable;
 }
@@ -254,7 +268,10 @@ function genericCreatedRow(row, data, dataIndex) {
 
   jQuery(row).find('.field_format').each(function () {
     var thissource = jQuery(this).attr('data-forfield');
-    var thisdata = getValueFromSource(thissource, data)
+    var thisdata = data;
+    if (thissource !== 'rowdata') {
+      thisdata = getValueFromSource(thissource, data)
+    }
     //        var thisdata = data[thissource];
     var thishtml = jQuery(this).html();
     var tagarr = buildTagTree(thishtml);
@@ -274,7 +291,7 @@ function genericCreatedRow(row, data, dataIndex) {
       if (Object.keys(tagarr).length > 0) {
         finalhtml = updateForEachHTML(thishtml1, data, tagarr, 0);
       } else {
-        finalhtml = replaceTokensInHTML(thishtml1, thisdata); // replace the tokens from current row first
+        finalhtml = replaceTokensInHTML(thishtml1, thisdata, thissource); // replace the tokens from current row first
       }
 
       /*
@@ -299,51 +316,31 @@ function genericCreatedRow(row, data, dataIndex) {
   });
 }
 
-function genericPreDrawFilter(settings) {
-  var thisurl = settings.ajax.url;
-  var crudbox = jQuery("#" + settings.sTableId).closest("div.crud-datatable");
-  var parentdt = jQuery('#' + settings.sTableId).attr('parentdt');
 
+function getDTFilterData(sTableId) {
+  var crudbox = jQuery("#" + sTableId).closest("div.crud-datatable");
   var filterbox = crudbox.find("div.datatable-filters");
   var filterdata = {};
-  var filtersource = {};
-  var returnval = true;
-
+  //var filtersource = {};
+  var returnval = {};
+  var thisurl = '';
   if (filterbox.length) {
     var findpattern = "input:text, input:radio, select, input:hidden, textarea";
     filterbox.find(findpattern).each(function () {
       thisname = jQuery(this).attr('name');
       thissource = jQuery(this).attr('data-source');
       thisval = jQuery(this).val();
-      filterdata[thisname] = thisval;
-      filtersource[thissource] = thisval;
+      if (thisname !== 'filter_url') {
+        filterdata[thisname] = thisval;
+        //filtersource[thissource] = thisval;
+      } else {
+        thisurl = thisval; //Future use not sure if we need this for now
+      }
     });
-    thisurl = filterdata.filter_url;
-    jQuery.each(filterdata, function (key, value) {
-      //      console.log("Line 231 the data is " + value)
-      thisurl = thisurl.replace(('/' + key), ('/' + value));
-    });
-
-    settings.ajax.url = thisurl;
-    console.log("Line 223 filter url is " + thisurl);
-    console.log(filterdata);
-
-    var newhtmlbox = crudbox.find('div.crud-newform, div.crud-template-new');
-    jQuery.each(filtersource, function (key, value) {
-      var findpattern = "[data-source^='" + key + "']";
-      newhtmlbox.find(findpattern).each(function () {
-        if (jQuery(this).is('input')) {
-          jQuery(this).val(value);
-        } else if (jQuery(this).is('select')) {
-          jQuery(this).val(value).prop('selected', true);
-        } else if (jQuery(this).is('textarea')) {
-          jQuery(this).text(value);
-        }
-      });
-    });
-
+  } else {
+    filterdata = false; //just return false if no filters exist
   }
-  return returnval;
+  return filterdata;
 }
 
 function toggleSelectOnRowClick(oTableid) {
@@ -390,4 +387,107 @@ function getSelectedDTRow(oTableid) {
   var thisdttr = jQuery('#' + oTableid + ' tr.selected');
   var row = oTable.row(thisdttr);
   return row;
+}
+
+
+/**
+ * Delete
+ */
+function genericPreDrawFilterURLDELETE(settings) {
+  var thisurl = settings.ajax.url;
+  var crudbox = jQuery("#" + settings.sTableId).closest("div.crud-datatable");
+  var parentdt = jQuery('#' + settings.sTableId).attr('parentdt');
+
+  var filterbox = crudbox.find("div.datatable-filters");
+  var filterdata = {};
+  var filtersource = {};
+  var returnval = true;
+
+  if (filterbox.length) {
+    var findpattern = "input:text, input:radio, select, input:hidden, textarea";
+    filterbox.find(findpattern).each(function () {
+      thisname = jQuery(this).attr('name');
+      thissource = jQuery(this).attr('data-source');
+      thisval = jQuery(this).val();
+      filterdata[thisname] = thisval;
+      filtersource[thissource] = thisval;
+    });
+    thisurl = filterdata.filter_url;
+    jQuery.each(filterdata, function (key, value) {
+      //      console.log("Line 231 the data is " + value)
+      thisurl = thisurl.replace(('/' + key), ('/' + value));
+    });
+
+    settings.ajax.url = thisurl;
+    console.log("Line 223 filter url is " + thisurl);
+    console.log(filterdata);
+
+    var newhtmlbox = crudbox.find('div.crud-newform, div.crud-template-new');
+    jQuery.each(filtersource, function (key, value) {
+      var findpattern = "[data-source^='" + key + "']";
+      newhtmlbox.find(findpattern).each(function () {
+        if (jQuery(this).is('input')) {
+          jQuery(this).val(value);
+        } else if (jQuery(this).is('select')) {
+          jQuery(this).val(value).prop('selected', true);
+        } else if (jQuery(this).is('textarea')) {
+          jQuery(this).text(value);
+        }
+      });
+    });
+
+  }
+  return returnval;
+}
+
+function genericPreDrawFilterDELETE(settings) {
+  var thisurl = settings.ajax.url;
+  var crudbox = jQuery("#" + settings.sTableId).closest("div.crud-datatable");
+  var parentdt = jQuery('#' + settings.sTableId).attr('parentdt');
+
+  var filterbox = crudbox.find("div.datatable-filters");
+  var filterdata = {};
+  var filtersource = {};
+  var returnval = true;
+
+  if (filterbox.length) {
+    var findpattern = "input:text, input:radio, select, input:hidden, textarea";
+    filterbox.find(findpattern).each(function () {
+      thisname = jQuery(this).attr('name');
+      thissource = jQuery(this).attr('data-source');
+      thisval = jQuery(this).val();
+      filterdata[thisname] = thisval;
+      filtersource[thissource] = thisval;
+    });
+    thisurl = filterdata.filter_url;
+    var connector = '?';
+    var qrystring = '';
+    jQuery.each(filterdata, function (key, value) {
+      if (key !== 'filter_url') {
+        qrystring = connector + key + '=' + value;
+        connector = '&';
+      }
+    });
+    var newurl = RemoveQueryPartOf(settings.ajax.url);
+    newurl = newurl + qrystring;
+    settings.ajax.url = newurl;
+    console.log("Line 223 filter url is " + newurl);
+    console.log(filterdata);
+
+    var newhtmlbox = crudbox.find('div.crud-newform, div.crud-template-new');
+    jQuery.each(filtersource, function (key, value) {
+      var findpattern = "[data-source^='" + key + "']";
+      newhtmlbox.find(findpattern).each(function () {
+        if (jQuery(this).is('input')) {
+          jQuery(this).val(value);
+        } else if (jQuery(this).is('select')) {
+          jQuery(this).val(value).prop('selected', true);
+        } else if (jQuery(this).is('textarea')) {
+          jQuery(this).text(value);
+        }
+      });
+    });
+
+  }
+  return returnval;
 }

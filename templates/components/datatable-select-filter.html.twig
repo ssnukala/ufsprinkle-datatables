@@ -1,27 +1,28 @@
 {% macro generate(dtid,dtfilters) %}
-    {% import "FormGenerator/macros/select.html.twig" as select %}
-    {% import "FormGenerator/macros/hidden.html.twig" as hidden %}
+{% import "forms/macros/select.html.twig" as select %}
+{% import "FormGenerator/macros/hidden.html.twig" as hidden %}
     <div class="datatable-filters" datatable-id='{{dtid}}'>
-        {{translate(dtfilters.title|default("Select From List"))}}</h3>
-    <div class="row">
-        {% if (dtfilters.fields|length) == 5 %}
-            {% set divcol = 2 %}
-        {% elseif (dtfilters.fields|length) > 6 %}
-            {% set divcol = 1 %}
-        {% else %}
-            {% set divcol = 12/(dtfilters.fields|length)%}
-        {% endif %}
-        <input type='hidden' class='filter-field' data-source='filter.url' name='filter_url' value='{{dtfilters.url}}'>
-        {% for filterid, filterinput in dtfilters.fields %}
-            <div class="col-md-{{divcol}}">
-                <label class='control-label'>{{filterinput.label}}:
-                </label>
-                {% if filterinput.type == 'hidden' %}
-                    {{ hidden.generate(filterinput) }}
-                {% else %}
-                    {{ select.generate(filterinput) }}
-                {% endif %}
-            </div>
-        {% endfor %}
+            {# <h3>{{translate(dtfilters.title|default("Select From List"))}}</h3> #}
+        <div class="row">
+            {% if (dtfilters.fields|length) == 5 %}
+                {% set divcol = 2 %}
+            {% elseif (dtfilters.fields|length) > 6 %}
+                {% set divcol = 1 %}
+            {% else %}
+                {% set divcol = 12/(dtfilters.fields|length)%}
+            {% endif %}
+            <input type='hidden' class='filter-field' data-source='filter.url' name='filter_url' value='{{dtfilters.url}}'>
+            {% for filterid, filterinput in dtfilters.fields %}
+                <div class="col-md-{{divcol}}">
+                    <label class='control-label'>{{filterinput.label}}:
+                    </label>
+                    {% if filterinput.type == 'hidden' %}
+                        {{ hidden.generate(filterinput) }}
+                    {% else %}
+                        {{ select.generate(filterinput) }}
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
     </div>
-</div>{% endmacro %}
+{% endmacro %}

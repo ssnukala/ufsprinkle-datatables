@@ -2,20 +2,14 @@
 <div class="{{cruddt.divclass|default('col-md-12')}} crud-datatable {{cruddt.options.name}}">
     <div class="box box-primary" id="widget-{{cruddt.options.htmlid}}">
         <div class="box-header">
-            <div class="row">
-                <div class="col-md-11">
-                    <h3 class="box-title">
-                        {#<i class="fa fa-tasks fa-fw"></i> #}
-                        <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>                        
-                        {{translate(cruddt.options.title)}}</h3>
-                </div>
-                <div class="col-md-1">
-                    <a class='pull-right' href="#" onclick="reloadDatatable('{{ cruddt.options.htmlid }}');">
+            <h3 class="box-title">
+                {#<i class="fa fa-tasks fa-fw"></i> #}
+                <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>                        
+                {{translate(cruddt.options.title)}}</h3>
+            <a class='pull-right' href="#" onclick="reloadDatatable('{{ cruddt.options.htmlid }}');">
 {#                        <i aria-hidden="true" class="fa fa-sync"></i> #}
-                        <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
-                    </a>
-                </div>
-            </div>
+                <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
+            </a>
         </div>
         <div class="box-body">
             {% if cruddt.options.newrow_template is not empty   %}
@@ -30,7 +24,10 @@
             {% endif %}
             <!-- datatable filters start -->
             {% if (cruddt.options.filters is iterable and cruddt.options.filters|length > 0) %}
+            <div class='dt-filters'>
+                {# {{cruddt.options.filters|json_encode(JSON_PRETTY_PRINT)}} #}
                 {{dtfilter.generate(cruddt.options.htmlid,cruddt.options.filters)}}
+            </div>
             {% endif %}
             <!-- datatable filters end -->
             {% include 'components/datatable.html.twig' with {
