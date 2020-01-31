@@ -17,7 +17,7 @@
                 <div class='crud-newrow' id='crud-newrow_{{cruddt.options.htmlid}}'>
                     {% include cruddt.options.newrow_template with {
                     'dtoptions' : cruddt.options,
-                    'page_params': page_params
+                    'crud_params': crud_params
                     } %}
                 </div>
                 <!-- datatable crud newrow end -->
@@ -32,7 +32,7 @@
             <!-- datatable filters end -->
             {% include 'components/datatable.html.twig' with {
                     'dtoptions' : cruddt.options,
-                    'page_params': page_params
+                    'crud_params': crud_params
             } %}
         </div>
     </div>
@@ -43,7 +43,7 @@
                         'dtid' : cruddt.options.htmlid,
                         'crudformid' : cruddt.options.crudformid,
                         'crudsuccessjs' : cruddt.options.crud_success_js,
-                        'page_params': page_params
+                        'crud_params': crud_params
                     } %}
         {% endfor %}
     </div>
@@ -53,7 +53,7 @@
                 <div class='crud-form-group' id='crudfor_{{dtableid}}'>
                     {% for cftype, crudform in crudformarr %}
                         <div class='crud-template-{{cftype}}' id='crudform_{{dtableid}}_{{cftype}}' {% if crudform.forfield|default('') != '' %} data-forfield="{{crudform.forfield}}" {% endif %}>
-                            {% include "forms/crud-form.html.twig" with {form : crudform, 'page_params' : page_params} %}
+                            {% include "forms/crud-form.html.twig" with {form : crudform, 'crud_params' : crud_params} %}
                         </div>
                     {% endfor %}
                 </div>

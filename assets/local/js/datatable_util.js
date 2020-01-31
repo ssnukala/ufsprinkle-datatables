@@ -42,7 +42,7 @@ function createDatatableOnPage(dtoptions) {
           dtoptions: {
             id: dtoptions.htmlid,
             data_options: dtoptions.data_options
-          }
+          },
         };
         dtpostdata[site.csrf.keys.name] = site.csrf.name;
         dtpostdata[site.csrf.keys.value] = site.csrf.value;
@@ -55,6 +55,9 @@ function createDatatableOnPage(dtoptions) {
         }
         // Need to return this as an object or the data does not go thru properly
         return jQuery.extend({}, data, dtpostdata);
+      },
+      "error": function (jqXHR, textStatus, errorThrown) {
+        showUFPageAlert(errorThrown);
       }
     },
     oSearch: {

@@ -57,7 +57,9 @@ class DatatablesSprunje extends Sprunje
         $this->options['page'] = ($this->options['start'] / $this->options['length']);
         $this->options['size'] = $this->options['length'];
         //Debug::debug("Line 55 the options are ", $this->options);
-        $this->options['filters']['_all'] = $this->options['search']['value'];
+        if (isset($this->options['search']['value']) && $this->options['search']['value'] != '') {
+            $this->options['filters']['_all'] = $this->options['search']['value'];
+        }
 
         // Srinivas 1/28/2020 : not using this now, using the Filters instead, may use this in future
         if (isset($this->options['dt_where'])) {
