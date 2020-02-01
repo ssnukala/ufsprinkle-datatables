@@ -1,17 +1,9 @@
 {% import "forms/macros/crud-edit.html.twig" as crudEdit %}
 {% import "forms/macros/show-field.html.twig" as _sf %}
-{% set crudformdiv = 'crudform_' ~ dtid ~ '_row.id' %}
+{% set crudformdiv = 'crudform_' ~ dtid ~ '_{row.id}' %}
 <div column_formatter='{{dtid}}_{{forfield is defined ? forfield : '_noteset_'}}'>
 {% block format_body %}
-    <p style="margin: auto;">
-    <strong>row.last_name, row.first_name (ID-row.id, Type-row.member_type)<small>row.status</small></strong>
-        Since : row.join_date, email: <a href="mailto:row.email">row.email</a> | H: row.home_phone | C: row.mobile_phone
-        <br>
-        Addr: row.address_line1, row.city, row.state-row.zip
-        <br>
-        Notes : row.notes. 
-        {{ _ce.generate(dtid,crudformdiv,'Update','genericDTCRUDSuccess') }}
-    </p>
+
 {% endblock %}
 {% block crud_divs %}
     <div id="alerts-{{crudformdiv}}"></div>

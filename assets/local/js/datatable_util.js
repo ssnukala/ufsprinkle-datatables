@@ -207,14 +207,19 @@ $.fn.dataTable.render.format_column = function (column_name) {
           console.log("Line 193 the custom render function is " + meta.settings.oInit.customRenderCallback);
           colhtml = fncallback(row, colhtml, meta);
         }
-        var colhtml = fillFieldTags(colhtml, row);
-        jQuery.each(row, function (key, value) {
-          //console.log("Line 92 replacing this "+'row.' + key);
-          var rowkey = "row." + key;
-          var rowkey1 = new RegExp(rowkey, "g");
-          colhtml = colhtml.replace(rowkey1, value);
-          //console.log("Line 95 the html is "+colhtml);
-        });
+        //var colhtml = fillFieldTags(colhtml, row);
+
+        colhtml = replaceTokensInHTML(colhtml, [row], 'row.', '');
+        // Srinivas 2/1 : replacing this with the {row.} format instead of row. format
+        /*
+                jQuery.each(row, function (key, value) {
+                  //console.log("Line 92 replacing this "+'row.' + key);
+                  var rowkey = "row." + key;
+                  var rowkey1 = new RegExp(rowkey, "g");
+                  colhtml = colhtml.replace(rowkey1, value);
+                  //console.log("Line 95 the html is "+colhtml);
+                });
+        */
         return colhtml;
       }
     }
