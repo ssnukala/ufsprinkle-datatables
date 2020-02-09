@@ -1,8 +1,9 @@
 {% macro generate(dtid,dtfilters) %}
 {% import "forms/macros/select.html.twig" as select %}
 {% import "FormGenerator/macros/hidden.html.twig" as hidden %}
-    <div class="datatable-filters" datatable-id='{{dtid}}'>
-            {# <h3>{{translate(dtfilters.title|default("Select From List"))}}</h3> #}
+    <div class="datatable-filters datatable-crudrow" datatable-id='{{dtid}}'>
+        {# <h3>{{translate(dtfilters.title|default("Select From List"))}}</h3> #}
+        <input type='hidden' class='filter-field' data-source='filter.url' name='filter_url' value='{{dtfilters.url}}'>
         <div class="row">
             {% if (dtfilters.fields|length) == 5 %}
                 {% set divcol = 2 %}
@@ -11,16 +12,16 @@
             {% else %}
                 {% set divcol = 12/(dtfilters.fields|length)%}
             {% endif %}
-            <input type='hidden' class='filter-field' data-source='filter.url' name='filter_url' value='{{dtfilters.url}}'>
             {% for filterid, filterinput in dtfilters.fields %}
-                <div class="col-md-{{divcol}}">
-                    <label class='control-label'>{{filterinput.label}}:
-                    </label>
-                    {% if filterinput.type == 'hidden' %}
-                        {{ hidden.generate(filterinput) }}
-                    {% else %}
-                        {{ select.generate(filterinput) }}
-                    {% endif %}
+                <div class="col-md-{{filterinput.div_cols|default(divcol)}}">
+                    <div class="form-group has-feedback input-base  input-base-{{filterinput.type}} filled formgen_field crud_input" style='width:100%;'>
+                        {% if filterinput.type == 'hidden' %}
+                            {{ hidden.generate(filterinput) }}
+                        {% else %}
+                            {{ select.generate(filterinput) }}
+                        {% endif %}
+                        <span class="input-base-placeholder">{{translate(filterinput.label)}}</span>
+                    </div>
                 </div>
             {% endfor %}
         </div>
