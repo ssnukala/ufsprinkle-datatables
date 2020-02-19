@@ -40,6 +40,6 @@
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
-  padding: auto;
+  padding: inherit;
   margin-left: auto;
 }
