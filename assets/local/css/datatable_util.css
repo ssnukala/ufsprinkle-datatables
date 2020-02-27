@@ -1,45 +1,58 @@
 .dataTables_filter,
 .dataTables_filter label,
 .dataTables_filter input {
-  width: 100% !important;
+    width: 100% !important;
 }
 
 .dataTables_filter input {
-  text-align: center;
+    text-align: center;
 }
 
 .dataTables_length {
-  float: right !important;
+    float: right !important;
 }
 
 .dataTable .odd {
-  background-color: #e1e1e1 !important;
+    background-color: #e1e1e1 !important;
 }
 
 .dt_column .uf_message p {
-  margin: 1px;
-  display: inline-block;
+    margin: 1px;
+    display: inline-block;
 }
 
 .dt_column .uf_message .uf_message_head,
 .dt_column .uf_message .uf_message_footer {
-  display: none;
+    display: none;
 }
 
 .datatable-filters select {
-  /*  display: inline-block;
+    /*  display: inline-block;
   width: auto !important;
   */
 }
 
 .datatable-filters .select2-container--default {
-  /*
+    /*
   display: inline-block;
   width: auto !important;
   */
 }
 
 .dataTables_wrapper .dataTables_paginate .paginate_button {
-  padding: inherit;
-  margin-left: auto;
+    padding: inherit;
+    margin-left: auto;
+}
+
+table.dt-formatter {
+    margin: 0px;
+}
+
+table.dt-formatter td {
+    padding: 2px;
+}
+
+.table.dt-formatter .input-base-select {
+    padding: 0px;
+    margin: 0px;
 }
