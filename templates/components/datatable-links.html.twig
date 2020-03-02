@@ -1,0 +1,13 @@
+{% macro generate(dtid,links) %}
+    {% set link_sep = '' %}
+    <div class='datatable-links'>
+    <strong>Links: </strong>
+        {% for link_url, link_name in links %}
+            {{link_sep}}
+            <a href="#" onclick="reloadDatatableNewURL('{{dtid}}', '{{link_url}}');">
+                {{link_name}}
+            </a>
+            {% set link_sep = ' | ' %}
+        {% endfor %}
+    </div>
+{% endmacro %}
