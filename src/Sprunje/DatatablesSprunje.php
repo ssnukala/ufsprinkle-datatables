@@ -55,7 +55,7 @@ class DatatablesSprunje extends Sprunje
     {
         //Debug::debug("Line 52 the options are ", $this->options);
         $this->options['page'] = ($this->options['start'] / $this->options['length']);
-        $this->options['size'] = $this->options['length'];
+        $this->options['size'] = $this->options['length'] == -1 ? 'all' : $this->options['length'];
         //Debug::debug("Line 55 the options are ", $this->options);
         if (isset($this->options['search']['value']) && $this->options['search']['value'] != '') {
             $this->options['filters']['_all'] = $this->options['search']['value'];

@@ -52,7 +52,6 @@ class DatatablesController extends SimpleController
     {
         //Debug::debug("Line 53 in Datatable Setup DDT class");
         $this->options = array_merge($this->default_options, $options);
-        $this->setFormatters();
         $this->getColumnDefinitions();
         //logarr($cur_ff_table,"Line 34 dtdbcontroller params");
         $this->postDatatableInit();
@@ -140,11 +139,6 @@ class DatatablesController extends SimpleController
         // will be used by the child classes to set additional options
     }
 
-    public function setFormatters()
-    {
-        // will be used by the child classes to set the formatters for various columns
-    }
-
     protected function getSchemaContent()
     {
         // Define the YAML loader
@@ -160,7 +154,6 @@ class DatatablesController extends SimpleController
         $jsonschema = $this->getSchemaContent();
         $this->fields = $jsonschema;
         $this->setColumnDefaults();
-        // will be used by the child classes to set the formatters for various columns
     }
 
     protected function setColumnDefaults($par_tabdef = false)
