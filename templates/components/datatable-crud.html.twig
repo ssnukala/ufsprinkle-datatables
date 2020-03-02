@@ -1,10 +1,11 @@
 {% import "components/datatable-select-filter.html.twig" as dtfilter %}
+{% import "components/datatable-links.html.twig" as dtlinks %}
 <div class="{{cruddt.divclass|default('col-md-12')}} crud-datatable {{cruddt.options.name}}">
     <div class="box box-primary" id="widget-{{cruddt.options.htmlid}}">
         <div class="box-header">
             <h3 class="box-title">
                 {#<i class="fa fa-tasks fa-fw"></i> #}
-                <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>                        
+                <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
                 {{translate(cruddt.options.title)}}</h3>
             <a class='pull-right' href="#" onclick="reloadDatatable('{{ cruddt.options.htmlid }}');">
 {#                        <i aria-hidden="true" class="fa fa-sync"></i> #}
@@ -22,6 +23,11 @@
                 </div>
                 <!-- datatable crud newrow end -->
             {% endif %}
+
+            {% if (cruddt.options.links is iterable and cruddt.options.links|length > 0) %}
+                {{dtlinks.generate(cruddt.options.htmlid,cruddt.options.links)}}
+            {% endif %}
+
             <!-- datatable filters start -->
             {% if (cruddt.options.filters is iterable and cruddt.options.filters|length > 0) %}
             <div class='dt-filters'>
