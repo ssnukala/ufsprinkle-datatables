@@ -159,12 +159,18 @@ function createDatatableOnPage(dtoptions) {
 */
         if (dtoptions.pagelength !== '-1') {
             dtSettings["dom"] =
-                "<'dt-customhead dtable-heading' <'well1 cddatatable-topbox " +
-                "row'<'col-md-8 search dt-search'f><'len-" + dtoptions.pagelength + " col-md-4 text-right dt-pagelength'l>>rt<'row dt-pager'<'col-md-3'i>" +
-                "<'col-md-9 pager1 pager-lg1 text-right tablesorter-pager'p> > >S";
+                "<'dt-fulltable dtable-heading' " +
+                //"  <'dt-customlogo pull-left'><'dt-customtitle pull-right'>" +
+                "<'row dt-topbox cddatatable-topbox '" +
+                "  <'col-md-8 search dt-search'f>" +
+                "  <'col-md-4 text-right dt-pagelength'l>" +
+                ">rt<'row dt-pager'" +
+                "  <'col-md-3 dt-countinfo 'i>" +
+                "  <'col-md-9 dt-pager pager-lg1 text-right tablesorter-pager'p>" +
+                " > >S";
         } else {
             dtSettings["dom"] =
-                "<'dt-customhead dtable-heading' <'row well1 cddatatable-topbox '" +
+                "<'dt-fulltable dtable-heading' <'row dt-topbox cddatatable-topbox '" +
                 "<'col-md-12 search dt-search'f> >rt>S";
         }
     }
@@ -188,7 +194,13 @@ function createDatatableOnPage(dtoptions) {
     oTable = jQuery(datatableID).dataTable(dtSettings);
     /* since  dataTables.bootstrap.js  is creating the Wrapper div we will add our own classes here*/
     jQuery(datatableID + '_wrapper').removeClass('form-inline').addClass('uf-datatables');
+    /*
+        var dtlogo = jQuery('<span>', {
+            class: 'glyphicon glyphicon-tasks'
+        });
 
+        jQuery(datatableID + '_wrapper').find('.dt-customlogo').append(dtlogo);
+    */
     return oTable;
 }
 
