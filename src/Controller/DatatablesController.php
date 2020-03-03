@@ -43,8 +43,8 @@ class DatatablesController extends SimpleController
         "pagelength" => 10,
         "extra_param" => "",
         "visible_columns" => 1,
-        "initial_search" => "",
-        "initial_sort" => [[0, 'asc']] // make first column is always ID even if is hidden?
+        "initial_search" => ""
+        //,"initial_sort" => [[0, 'asc']] // make first column is always ID even if is hidden?
     ];
 
 

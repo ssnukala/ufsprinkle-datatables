@@ -179,6 +179,29 @@ function createDatatableOnPage(dtoptions) {
         dtSettings["formatCallback"] = dtoptions["formatCallback"];
     }
 
+    if (dtoptions.rowGroup !== undefined) {
+        var rowGroup = {};
+        rowGroup.dataSrc = dtoptions.rowGroup.dataSrc;
+        rowGroup.startRender = null;
+        if (dtoptions.rowGroup.startRender !== undefined) {
+            var startRender = window[dtoptions.rowGroup.startRender];
+            if (typeof startRender === "function") {
+                rowGroup.startRender = startRender;
+            }
+        }
+        rowGroup.endRender = null;
+        if (dtoptions.rowGroup.endRender !== undefined) {
+            var endRender = window[dtoptions.rowGroup.endRender];
+            if (typeof endRender === "function") {
+                rowGroup.endRender = endRender;
+            }
+        }
+        if (rowGroup.endRender === null && rowGroup.startRender === null) {
+            console.log("Line 198 Render Functions are null. Skipping rowGroup for " + dtoptions.htmlid);
+        } else {
+            dtSettings["rowGroup"] = rowGroup;
+        }
+    }
     /*
           "<'dtable-heading' <'well1 cddatatable-topbox " +
           "row'<'col-md-9 search'f><'col-md-3 text-right'l>>rt<'row'<'col-md-3'i>" +
@@ -190,6 +213,10 @@ function createDatatableOnPage(dtoptions) {
             "> S";
     */
     // S is for https://datatables.net/extensions/select/ : this plugin is not enabled yet
+
+    if (dtoptions.rowGroup !== undefined) {
+        jQuery(datatableID).removeClass('table-striped');
+    }
 
     oTable = jQuery(datatableID).dataTable(dtSettings);
     /* since  dataTables.bootstrap.js  is creating the Wrapper div we will add our own classes here*/

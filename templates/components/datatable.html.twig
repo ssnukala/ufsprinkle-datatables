@@ -7,7 +7,7 @@
     {% if (crud_params.parentdtid is not empty) %} parentdt="{{crud_params.parentdtid}}" {% endif %} 
     {% if (crud_params.childdtid is not empty) %} childdt="{{crud_params.childdtid}}" {% endif %} 
     {% if (dtoptions.source is not empty) %} data-source="{{dtoptions.source}}" {% endif %}>
-        <thead></thead>
+        <thead class='dt-head'></thead>
         <tbody>
             <tr>
                 <td colspan="{{dtoptions.visible_columns|default(1)}}" class="dataTables_empty">

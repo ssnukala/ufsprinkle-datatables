@@ -1,3 +1,12 @@
+.dataTable .dt-head tr {
+    background: #337ab7;
+    color: white;
+}
+
+.dataTable .dt-rowgroup {
+    background-color: #d9edf7;
+}
+
 .dataTables_filter,
 .dataTables_filter label,
 .dataTables_filter input {
@@ -12,7 +21,7 @@
     float: right !important;
 }
 
-.dataTable .odd {
+.table-striped.dataTable .odd {
     background-color: #e1e1e1 !important;
 }
 

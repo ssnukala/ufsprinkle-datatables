@@ -1,47 +1,48 @@
 {
-  "bundle": {
-    "js/dtutilities": {
-      "scripts": ["local/js/datatable_util.js"],
-      "options": {
-        "result": {
-          "type": {
-            "scripts": "plain"
-          }
+    "bundle": {
+        "js/dtutilities": {
+            "scripts": ["local/js/datatable_util.js"],
+            "options": {
+                "result": {
+                    "type": {
+                        "scripts": "plain"
+                    }
+                }
+            }
+        },
+        "js/datatables": {
+            "scripts": [
+                "vendor/datatables.net/js/jquery.dataTables.min.js",
+                "vendor/datatables.net-bs/js/dataTables.bootstrap.min.js",
+                "vendor/datatables.net-responsive/js/dataTables.responsive.min.js",
+                "vendor/datatables.net-plugins/api/fnReloadAjax.js",
+                "vendor/moment/moment.js",
+                "vendor/datatables.net-plugins/sorting/datetime-moment.js",
+                "vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.js",
+                "vendor/datatables.net-select/js/dataTables.select.min.js",
+                "vendor/datatables.net-rowgroup/js/dataTables.rowGroup.min.js"
+            ],
+            "options": {
+                "result": {
+                    "type": {
+                        "scripts": "plain"
+                    }
+                }
+            }
+        },
+        "css/datatables": {
+            "styles": [
+                "vendor/datatables.net-bs/css/dataTables.bootstrap.min.css",
+                "vendor/datatables.net-dt/css/jquery.dataTables.min.css",
+                "local/css/datatable_util.css"
+            ],
+            "options": {
+                "result": {
+                    "type": {
+                        "styles": "plain"
+                    }
+                }
+            }
         }
-      }
-    },
-    "js/datatables": {
-      "scripts": [
-        "vendor/datatables.net/js/jquery.dataTables.min.js",
-        "vendor/datatables.net-bs/js/dataTables.bootstrap.min.js",
-        "vendor/datatables.net-responsive/js/dataTables.responsive.min.js",
-        "vendor/datatables.net-plugins/api/fnReloadAjax.js",
-        "vendor/moment/moment.js",
-        "vendor/datatables.net-plugins/sorting/datetime-moment.js",
-        "vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.js",
-        "vendor/datatables.net-select/js/dataTables.select.min.js"
-      ],
-      "options": {
-        "result": {
-          "type": {
-            "scripts": "plain"
-          }
-        }
-      }
-    },
-    "css/datatables": {
-      "styles": [
-        "vendor/datatables.net-bs/css/dataTables.bootstrap.min.css",
-        "vendor/datatables.net-dt/css/jquery.dataTables.min.css",
-        "local/css/datatable_util.css"
-      ],
-      "options": {
-        "result": {
-          "type": {
-            "styles": "plain"
-          }
-        }
-      }
     }
-  }
 }
