@@ -157,7 +157,10 @@ function createDatatableOnPage(dtoptions) {
       "row'<'col-md-6'f><'col-md-6'l>r>t<'row'<'col-md-3'i>" +
       "<'col-md-9 pager pager-lg1 text-right tablesorter-pager1'p> > >S";
 */
-        if (dtoptions.pagelength !== '-1') {
+        if (dtoptions.single_row === 'Y') {
+            // this is just a single row, so no need to show search and paging
+            dtSettings["dom"] = "<'dt-fulltable dtable-heading' rt>S";
+        } else if (dtoptions.pagelength !== '-1') {
             dtSettings["dom"] =
                 "<'dt-fulltable dtable-heading' " +
                 //"  <'dt-customlogo pull-left'><'dt-customtitle pull-right'>" +

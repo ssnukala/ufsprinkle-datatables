@@ -25,6 +25,10 @@
     background-color: #e1e1e1 !important;
 }
 
+.table-striped.dataTable .even {
+    background-color: #f9f9f9 !important;
+}
+
 .dt_column .uf_message p {
     margin: 1px;
     display: inline-block;
