@@ -261,8 +261,10 @@ $.fn.dataTable.render.format_column = function (column_name) {
                     colhtml = fncallback(row, colhtml, meta);
                 }
                 //var colhtml = fillFieldTags(colhtml, row);
+                // 3/18/20 SN : First remove the conditional html fragments
+                var thishtml = removeConditionalHTML(colhtml, row, 'row.');
 
-                colhtml = replaceTokensInHTML(colhtml, [row], 'row.', '');
+                var thishtml2 = replaceTokensInHTML(thishtml, [row], 'row.', '');
                 // Srinivas 2/1 : replacing this with the {row.} format instead of row. format
                 /*
                         jQuery.each(row, function (key, value) {
@@ -273,7 +275,7 @@ $.fn.dataTable.render.format_column = function (column_name) {
                           //console.log("Line 95 the html is "+colhtml);
                         });
                 */
-                return colhtml;
+                return thishtml2;
             }
         }
         // Search, order and type can use the original data

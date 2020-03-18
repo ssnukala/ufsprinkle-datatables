@@ -40,6 +40,13 @@ class DatatablesSprunje extends Sprunje
     protected $countFilteredKey = 'recordsFiltered';
 
     /**
+     * Undocumented variable
+     *
+     * @name string - name of the table for this sprunje.
+     */
+    protected $name = 'not_set';
+
+    /**
      * Array key for the actual result set.
      *
      *     "message": "SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status1' in 
@@ -50,6 +57,31 @@ class DatatablesSprunje extends Sprunje
      */
     protected $rowsKey = 'aaData';
     protected $draw = 'draw';
+    protected $destination = 'datatable';
+
+    public function setDestination($value)
+    {
+        $this->destination = $value;
+    }
+
+    public function getDestination()
+    {
+        return $this->destination;
+    }
+
+
+    /**
+     * Set the initial query used by your Sprunje.
+     */
+    protected function baseQuery()
+    {
+        return $this->classMapper->createInstance($this->name)->newQuery();
+    }
+
+    public function setFormat($format)
+    {
+        $this->options['format'] = $format;
+    }
 
     public function getArray()
     {
@@ -84,19 +116,6 @@ class DatatablesSprunje extends Sprunje
             $this->rowsKey => $rows->values()->toArray(),
             $this->listableKey => $this->getListable()
         ];
-    }
-
-    /**
-     * Set the initial query used by your Sprunje.
-     */
-    protected function baseQuery()
-    {
-        return $this->classMapper->createInstance($this->name)->newQuery();
-    }
-
-    public function setFormat($format)
-    {
-        $this->options['format'] = $format;
     }
 
     /**

@@ -1,10 +1,12 @@
 <?php
+
 /**
  * UserFrosting (http://www.userfrosting.com)
  *
  * @link      https://github.com/userfrosting/UserFrosting
  * @license   https://github.com/userfrosting/UserFrosting/blob/master/licenses/UserFrosting.md (MIT License)
  */
+
 namespace UserFrosting\Sprinkle\Datatables\ServicesProvider;
 
 use Birke\Rememberme\Authenticator as RememberMe;
@@ -50,9 +52,9 @@ class ServicesProvider
          */
         $container->extend('view', function ($view, $c) {
             $twig = $view->getEnvironment();
-// Srinivas TO DO : need to understand how to call the controller with CI param in the services provider            
-//            $extension = new DatatablesExtension($c);
-//            $twig->addExtension($extension);
+            // Srinivas TO DO : need to understand how to call the controller with CI param in the services provider            
+            $extension = new DatatablesExtension($c);
+            $twig->addExtension($extension);
 
             return $view;
         });
