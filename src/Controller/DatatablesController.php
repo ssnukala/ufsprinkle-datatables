@@ -58,6 +58,26 @@ class DatatablesController extends SimpleController
         $this->postDatatableInit();
     }
 
+    /**
+     * getList function
+     * Returns the json array to populate the datatable, 
+     * almost 100% of the time this will be overridden in the child class 
+     * @param [type] $request
+     * @param [type] $response
+     * @param [type] $args
+     * @return JSON object to pouplate the datatable
+     */
+    public function getList($request, $response, $args)
+    {
+        $this->setSprunje($request, $response, $args);
+        // Extend query if needed in the child class
+        $this->extendSprunje($request, $response, $args);
+
+        if ($args['format'] === 'json') {
+            return $this->sprunje->toResponse($response);
+        }
+    }
+
     public function getField($field)
     {
         if (isset($this->fields[$field])) {
@@ -217,6 +237,9 @@ class DatatablesController extends SimpleController
                 $params['filters'] = $args['filters'];
             }
         }
+        if (isset($args['format'])) {
+            $params['format'] = $args['format'];
+        }
         //Debug::debug("Line 214 sending sorts to create sprunje",$var_sorts);
         //Debug::debug("Line 188 Sprunje name is ".$this->sprunje_name);
         /** @var UserFrosting\Sprinkle\Account\Authorize\AuthorizationManager $authorizer */
@@ -231,5 +254,18 @@ class DatatablesController extends SimpleController
         $classMapper = $this->ci->classMapper;
         //Debug::debug("Line 234 setting sprunje " . $this->sprunje_name, $params);
         $this->sprunje = $classMapper->createInstance($this->sprunje_name, $classMapper, $params);
+    }
+
+    /**
+     * extendSprunje function
+     * Will be overridden in the child classes to extend the sprunje query
+     *
+     * @param [type] $request
+     * @param [type] $response
+     * @param [type] $args
+     * @return void
+     */
+    public function extendSprunje($request, $response, $args)
+    {
     }
 }

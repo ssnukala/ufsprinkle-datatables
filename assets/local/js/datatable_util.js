@@ -151,12 +151,6 @@ function createDatatableOnPage(dtoptions) {
         dtSettings["paging"] = false;
     } else {
         dtSettings["pageLength"] = dtoptions.pagelength;
-        /*
-    dtSettings["dom"] =
-      "<'dtable-heading' <'well1 cddatatable-topbox " +
-      "row'<'col-md-6'f><'col-md-6'l>r>t<'row'<'col-md-3'i>" +
-      "<'col-md-9 pager pager-lg1 text-right tablesorter-pager1'p> > >S";
-*/
         if (dtoptions.single_row === 'Y') {
             // this is just a single row, so no need to show search and paging
             dtSettings["dom"] = "<'dt-fulltable dtable-heading' rt>S";
@@ -167,14 +161,14 @@ function createDatatableOnPage(dtoptions) {
                 "<'row dt-topbox cddatatable-topbox '" +
                 "  <'col-md-8 search dt-search'f>" +
                 "  <'col-md-4 text-right dt-pagelength'l>" +
-                ">rt<'row dt-pager'" +
+                ">r<'row dt-helpbox'<'col-md-12 dt-help-content'>>t<'row dt-pager'" +
                 "  <'col-md-3 dt-countinfo 'i>" +
                 "  <'col-md-9 dt-pager pager-lg1 text-right tablesorter-pager'p>" +
                 " > >S";
         } else {
             dtSettings["dom"] =
                 "<'dt-fulltable dtable-heading' <'row dt-topbox cddatatable-topbox '" +
-                "<'col-md-12 search dt-search'f> >rt>S";
+                "<'col-md-12 search dt-search'f> >r<'row dt-helpbox'<'col-md-12 dt-help-content'>>t>S";
         }
     }
 
@@ -224,13 +218,7 @@ function createDatatableOnPage(dtoptions) {
     oTable = jQuery(datatableID).dataTable(dtSettings);
     /* since  dataTables.bootstrap.js  is creating the Wrapper div we will add our own classes here*/
     jQuery(datatableID + '_wrapper').removeClass('form-inline').addClass('uf-datatables');
-    /*
-        var dtlogo = jQuery('<span>', {
-            class: 'glyphicon glyphicon-tasks'
-        });
-
-        jQuery(datatableID + '_wrapper').find('.dt-customlogo').append(dtlogo);
-    */
+    moveHelpText(datatableID);
     return oTable;
 }
 
@@ -282,6 +270,25 @@ $.fn.dataTable.render.format_column = function (column_name) {
         return data;
     };
 };
+
+function moveHelpText(datatableID) {
+    var dtcontent = jQuery(datatableID + '_content');
+    var helprow = dtcontent.find('.dt-helprow-top');
+    if (helprow.length) {
+        var headth = jQuery(datatableID + " > thead > tr:first > th");
+        if (headth.length === 1) {
+            headth.append(helprow.html());
+            headth.addClass('dt-helprow-top');
+        } else {
+            var helpdom = dtcontent.find('.dt-help-content');
+            if (helprow.length) {
+                helpdom.html(helprow.html());
+            }
+            helpdom.addClass('dt-helprow-top');
+        }
+        helprow.remove();
+    }
+}
 
 function reloadDatatable(oTableid) {
     var oTable = jQuery("#" + oTableid).dataTable();
@@ -527,57 +534,3 @@ function getDTRowData(thiselem) {
         //thisrt: thistr
     };
 }
-
-/*
-function genericPreDrawFilterDELETE(settings) {
-  var thisurl = settings.ajax.url;
-  var crudbox = jQuery("#" + settings.sTableId).closest("div.crud-datatable");
-  var parentdt = jQuery('#' + settings.sTableId).attr('parentdt');
-
-  var filterbox = crudbox.find("div.datatable-filters");
-  var filterdata = {};
-  var filtersource = {};
-  var returnval = true;
-
-  if (filterbox.length) {
-    var findpattern = "input:text, input:radio, select, input:hidden, textarea";
-    filterbox.find(findpattern).each(function () {
-      thisname = jQuery(this).attr('name');
-      thissource = jQuery(this).attr('data-source');
-      thisval = jQuery(this).val();
-      filterdata[thisname] = thisval;
-      filtersource[thissource] = thisval;
-    });
-    thisurl = filterdata.filter_url;
-    var connector = '?';
-    var qrystring = '';
-    jQuery.each(filterdata, function (key, value) {
-      if (key !== 'filter_url') {
-        qrystring = connector + key + '=' + value;
-        connector = '&';
-      }
-    });
-    var newurl = RemoveQueryPartOf(settings.ajax.url);
-    newurl = newurl + qrystring;
-    settings.ajax.url = newurl;
-    console.log("Line 223 filter url is " + newurl);
-    console.log(filterdata);
-
-    var newhtmlbox = crudbox.find('div.crud-newform, div.crud-template-new');
-    jQuery.each(filtersource, function (key, value) {
-      var findpattern = "[data-source^='" + key + "']";
-      newhtmlbox.find(findpattern).each(function () {
-        if (jQuery(this).is('input')) {
-          jQuery(this).val(value);
-        } else if (jQuery(this).is('select')) {
-          jQuery(this).val(value).prop('selected', true);
-        } else if (jQuery(this).is('textarea')) {
-          jQuery(this).text(value);
-        }
-      });
-    });
-
-  }
-  return returnval;
-}
-*/

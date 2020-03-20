@@ -69,3 +69,13 @@ table.dt-formatter td {
     padding: 0px;
     margin: 0px;
 }
+
+.dt-helprow-top ul,
+.dt-helprow-top p {
+    display: inline;
+}
+
+th.dt-helprow-top .cr-help {
+    display: inline;
+    float: right;
+}
