@@ -14,6 +14,8 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use UserFrosting\Sprinkle\Core\Facades\Debug;
 use UserFrosting\Sprinkle\Core\Sprunje\Sprunje;
 //use Psr\Http\Message\ResponseInterface as Response;
+use Illuminate\Support\Arr;
+use League\Csv\Writer;
 
 /**
  * ActivitySprunje
@@ -40,11 +42,19 @@ class DatatablesSprunje extends Sprunje
     protected $countFilteredKey = 'recordsFiltered';
 
     /**
-     * Undocumented variable
+     * name variable
      *
      * @name string - name of the table for this sprunje.
      */
     protected $name = 'not_set';
+
+    /**
+     * $exportable variable
+     *
+     * @$exportable array - list of fields that should be part of the CSV export.
+     * default is blank so the sprunje will not allow any exports for security reasons
+     */
+    protected $exportable = false;
 
     /**
      * Array key for the actual result set.
@@ -69,6 +79,21 @@ class DatatablesSprunje extends Sprunje
         return $this->destination;
     }
 
+    public function setExportable($fields)
+    {
+        $this->exportable = $fields;
+    }
+
+    /**
+     * getExportable function
+     *
+     * @return false if the array is empty
+     */
+
+    public function getExportable()
+    {
+        return $this->exportable;
+    }
 
     /**
      * Set the initial query used by your Sprunje.
@@ -81,6 +106,55 @@ class DatatablesSprunje extends Sprunje
     public function setFormat($format)
     {
         $this->options['format'] = $format;
+    }
+
+    public function getFormat()
+    {
+        return $this->options['format'];
+    }
+
+    /**
+     * Execute the query and build the results, and append them in the appropriate format to the response.
+     *
+     * @param ResponseInterface $response
+     * @return ResponseInterface
+     */
+    public function toResponse($response)
+    {
+        $format = $this->options['format'];
+        Debug::debug("Line 81 $format is the return format and destination is " . $this->destination);
+        switch ($format) {
+            case 'csv': {
+                    $result = $this->getCsv();
+                    if ($result == false) {
+                        return $response->withStatus(400, 'Noting to export');
+                    } else {
+                        // Prepare response
+                        $settings = http_build_query($this->options);
+                        $date = Carbon::now()->format('Ymd');
+                        $response = $response->withAddedHeader('Content-Disposition', "attachment;filename=$date-{$this->name}-$settings.csv");
+                        $response = $response->withAddedHeader('Content-Type', 'text/csv; charset=utf-8');
+                        return $response->write($result);
+                        // Default to JSON
+                    }
+                }
+            case 'array': {
+                    $result = $this->getArray();
+                    return $result;
+                }
+            case 'dtcsv': {
+                    $result = $this->getDtCsv();
+                    if ($result == false) {
+                        return $response->withStatus(400, 'Noting to export');
+                    } else {
+                        return $response->withJson($result, 200, JSON_PRETTY_PRINT);
+                    }
+                }
+            default: {
+                    $result = $this->getArray();
+                    return $response->withJson($result, 200, JSON_PRETTY_PRINT);
+                }
+        }
     }
 
     public function getArray()
@@ -118,37 +192,132 @@ class DatatablesSprunje extends Sprunje
         ];
     }
 
-    /**
-     * Execute the query and build the results, and append them in the appropriate format to the response.
-     *
-     * @param ResponseInterface $response
-     * @return ResponseInterface
-     */
-    public function toResponse($response)
+    public function getCsv()
     {
-        $format = $this->options['format'];
-        //        Debug::debug("Line 81 $format is the return format");
-        switch ($format) {
-            case 'csv': {
-                    $result = $this->getCsv();
+        $columnNames = $this->getExportable();
+        if ($columnNames === false) {
+            return false;
+        } else {
 
-                    // Prepare response
-                    $settings = http_build_query($this->options);
-                    $date = Carbon::now()->format('Ymd');
-                    $response = $response->withAddedHeader('Content-Disposition', "attachment;filename=$date-{$this->name}-$settings.csv");
-                    $response = $response->withAddedHeader('Content-Type', 'text/csv; charset=utf-8');
-                    return $response->write($result);
-                    // Default to JSON
+            $filteredQuery = clone $this->query;
+
+            // Apply filters
+            $this->applyFilters($filteredQuery);
+
+            // Apply sorts
+            $this->applySorts($filteredQuery);
+
+            $collection = collect($filteredQuery->get());
+
+            // Perform any additional transformations on the dataset
+            $this->applyTransformations($collection);
+
+            $csv = Writer::createFromFileObject(new \SplTempFileObject());
+
+            $columnNames = $this->getExportable();
+            if ($columnNames == '*') {
+                $columnNames = [];
+                // Flatten collection while simultaneously building the column names from the union of each element's keys
+                $collection->transform(function ($item, $key) use (&$columnNames) {
+                    $item = Arr::dot($item->toArray());
+                    foreach ($item as $itemKey => $itemValue) {
+                        if (!in_array($itemKey, $columnNames)) {
+                            $columnNames[] = $itemKey;
+                        }
+                    }
+                    return $item;
+                });
+            }
+            /*
+        // Flatten collection while simultaneously building the column names from the union of each element's keys
+        $collection->transform(function ($item, $key) use (&$columnNames) {
+            $item = Arr::dot($item->toArray());
+            foreach ($item as $itemKey => $itemValue) {
+                if (!in_array($itemKey, $columnNames)) {
+                    $columnNames[] = $itemKey;
                 }
-            case 'array': {
-                    $result = $this->getArray();
-                    return $result;
+            }
+
+            return $item;
+        });
+*/
+            $csv->insertOne($columnNames);
+
+            // Insert the data as rows in the CSV document
+            $collection->each(function ($item) use ($csv, $columnNames) {
+                $row = [];
+                foreach ($columnNames as $itemKey) {
+                    // Only add the value if it is set and not an array.  Laravel's array_dot sometimes creates empty child arrays :(
+                    // See https://github.com/laravel/framework/pull/13009
+                    if (isset($item[$itemKey]) && !is_array($item[$itemKey])) {
+                        $row[] = $item[$itemKey];
+                    } else {
+                        $row[] = '';
+                    }
                 }
-            default: {
-                    $result = $this->getArray();
-                    return $response->withJson($result, 200, JSON_PRETTY_PRINT);
-                }
+
+                $csv->insertOne($row);
+            });
+
+            return $csv;
         }
+    }
+
+    public function getDtCsv()
+    {
+        $columnNames = $this->getExportable();
+        $dtcsv = ['header' => [], 'body' => []];
+        if ($columnNames === false) {
+            return false;
+        } else {
+            $filteredQuery = clone $this->query;
+
+            // Apply filters
+            $this->applyFilters($filteredQuery);
+
+            // Apply sorts
+            $this->applySorts($filteredQuery);
+
+            $collection = collect($filteredQuery->get());
+
+            // Perform any additional transformations on the dataset
+            $this->applyTransformations($collection);
+
+            $columnNames = $this->getExportable();
+            if ($columnNames == '*') {
+                $columnNames = [];
+                // Flatten collection while simultaneously building the column names from the union of each element's keys
+                $collection->transform(function ($item, $key) use (&$columnNames) {
+                    $item = Arr::dot($item->toArray());
+                    foreach ($item as $itemKey => $itemValue) {
+                        if (!in_array($itemKey, $columnNames)) {
+                            $columnNames[] = $itemKey;
+                        }
+                    }
+                    return $item;
+                });
+            }
+
+            if (is_array($columnNames)) {
+                $dtcsv['header'] = $columnNames;
+                // Insert the data as rows in the CSV document
+                foreach ($collection as $item) {
+                    //$collection->each(function ($item) use ($dtcsv, $columnNames) {
+                    $row = [];
+                    foreach ($columnNames as $itemKey) {
+                        // Only add the value if it is set and not an array.  Laravel's array_dot sometimes creates empty child arrays :(
+                        // See https://github.com/laravel/framework/pull/13009
+                        if (isset($item[$itemKey]) && !is_array($item[$itemKey])) {
+                            $row[] = $item[$itemKey];
+                        } else {
+                            $row[] = '';
+                        }
+                    }
+                    $dtcsv['body'][] = $row;
+                }
+            }
+        }
+        return $dtcsv;  // this will return blank array if nothing is exportable
     }
 
     /**

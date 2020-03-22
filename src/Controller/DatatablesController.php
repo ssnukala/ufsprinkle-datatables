@@ -20,6 +20,7 @@ use UserFrosting\Fortress\RequestSchema;
 use UserFrosting\Fortress\ServerSideValidator;
 use UserFrosting\Support\Repository\Loader\YamlFileLoader;
 use UserFrosting\Sprinkle\Core\Facades\Debug;
+use UserFrosting\Sprinkle\UfMessage\Controller\Util\UfMessageUtilController;
 
 /**
  * DatatablesController Class
@@ -33,6 +34,7 @@ class DatatablesController extends SimpleController
 
     //    protected $schema;       // json schema for the datatable definitions
     protected $fields = [];       // datatable field definitions
+    protected $exportable = false;       // fields that are exportable : false if none
     protected $options = [];       // options for the data table
     protected $sprunje_name = 'sprunjenotset';       // Name if the sprunje
     protected $sprunje = 'sprunjenotset';       // Sprunje to be used for data retrieval
@@ -44,7 +46,9 @@ class DatatablesController extends SimpleController
         "extra_param" => "",
         "visible_columns" => 1,
         "initial_search" => "",
-        "single_row" => "N"
+        "single_row" => "N",
+        "export_cols" => false,
+        "export_rows" => 'display',
         //,"initial_sort" => [[0, 'asc']] // make first column is always ID even if is hidden?
     ];
 
@@ -53,29 +57,10 @@ class DatatablesController extends SimpleController
     {
         //Debug::debug("Line 53 in Datatable Setup DDT class");
         $this->options = array_merge($this->default_options, $options);
+        $this->setOption('export_cols', $this->exportable);
         $this->getColumnDefinitions();
         //logarr($cur_ff_table,"Line 34 dtdbcontroller params");
         $this->postDatatableInit();
-    }
-
-    /**
-     * getList function
-     * Returns the json array to populate the datatable, 
-     * almost 100% of the time this will be overridden in the child class 
-     * @param [type] $request
-     * @param [type] $response
-     * @param [type] $args
-     * @return JSON object to pouplate the datatable
-     */
-    public function getList($request, $response, $args)
-    {
-        $this->setSprunje($request, $response, $args);
-        // Extend query if needed in the child class
-        $this->extendSprunje($request, $response, $args);
-
-        if ($args['format'] === 'json') {
-            return $this->sprunje->toResponse($response);
-        }
     }
 
     public function getField($field)
@@ -222,7 +207,7 @@ class DatatablesController extends SimpleController
         if (!is_null($params1)) {
             $params = array_merge($params, $params1);
         }
-        //        Debug::debug("Line 208 The datatable params are ", $params);
+        //Debug::debug("Line 208 The datatable params are ", $params);
         $var_sorts = [];
         foreach ($params1['order'] as $orderrec) {
             $thiscol = $params1['columns'][$orderrec['column']];
@@ -237,8 +222,10 @@ class DatatablesController extends SimpleController
                 $params['filters'] = $args['filters'];
             }
         }
-        if (isset($args['format'])) {
-            $params['format'] = $args['format'];
+
+        if (isset($params['format']) && $params['format'] == 'dtcsv') {
+            $params['format'] = 'json';
+            $args['format'] = 'dtcsv';
         }
         //Debug::debug("Line 214 sending sorts to create sprunje",$var_sorts);
         //Debug::debug("Line 188 Sprunje name is ".$this->sprunje_name);
@@ -254,6 +241,12 @@ class DatatablesController extends SimpleController
         $classMapper = $this->ci->classMapper;
         //Debug::debug("Line 234 setting sprunje " . $this->sprunje_name, $params);
         $this->sprunje = $classMapper->createInstance($this->sprunje_name, $classMapper, $params);
+        if (isset($args['format'])) {
+            $this->sprunje->setFormat($args['format']);
+        }
+        if ($this->exportable !== false) {
+            $this->sprunje->setExportable($this->exportable);
+        }
     }
 
     /**
@@ -267,5 +260,47 @@ class DatatablesController extends SimpleController
      */
     public function extendSprunje($request, $response, $args)
     {
+    }
+
+    /**
+     * getList function
+     * Returns the json array to populate the datatable, 
+     * almost 100% of the time this will be overridden in the child class 
+     * @param [type] $request
+     * @param [type] $response
+     * @param [type] $args
+     * @return JSON object to pouplate the datatable
+     */
+    public function getList($request, $response, $args)
+    {
+        $this->setSprunje($request, $response, $args);
+        // Extend query if needed in the child class
+        $this->extendSprunje($request, $response, $args);
+        return $this->toResponse($response);
+    }
+
+    public function toResponse($response)
+    {
+        if ($this->sprunje->getFormat() === 'dtcsv' && $this->sprunje->getExportable() === false) {
+            $subject = 'CSV Download Error';
+            $text = $this->ci->translator->translate(
+                'DATATABLE.SPRUNJE.NO_EXPORTABLE_ADMIN',
+                ['sprunje_name' => $this->sprunje_name, 'datatable' => get_class($this)]
+            );
+            $msgutil = new UfMessageUtilController($this->ci);
+            $msgutil->sendAdminAlertMessage($subject, $text);
+            // clear the alert stream with old alerts - for the most part this is invoked directly from a route
+            $this->ci->alerts->resetMessageStream();
+            $this->ci->alerts->addMessageTranslated('danger', 'DATATABLE.SPRUNJE.NO_EXPORTABLE');
+            // don't set alert as the execption below will show the message already
+            //$e = new BadRequestException('Exportable array is not defined in ' . $this->sprunje_name);
+            //$e->addUserMessage('DATATABLE.SPRUNJE.NO_EXPORTABLE');
+            //throw $e;
+            return $response->withStatus(
+                400,
+                $this->ci->translator->translate('DATATABLE.SPRUNJE.NO_EXPORTABLE_ADMIN')
+            );
+        }
+        return $this->sprunje->toResponse($response);
     }
 }

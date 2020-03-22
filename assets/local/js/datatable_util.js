@@ -28,12 +28,14 @@ function createDatatableOnPage(dtoptions) {
 
     var sPlaceholder;
     var pLength;
+    var ajaxSettings = getDatatableAjaxSettings(final_dturl, dtoptions);
     var dtSettings = {
         //https://datatables.net/forums/discussion/46752/the-column-render-callback-runs-too-many-times
         autoWidth: false,
         processing: true,
         serverSide: true,
-        ajax: {
+        ajax: ajaxSettings,
+        ajaxDelete: {
             "url": final_dturl,
             "type": "POST",
             "data": function (data) {
@@ -63,7 +65,6 @@ function createDatatableOnPage(dtoptions) {
         oSearch: {
             sSearch: dtoptions.initial_search
         },
-        order: dtoptions.initial_sort,
         columns: dtoptions.columns,
         drawCallback: function (settings) {
             //      var thisapi = this.api();
@@ -111,18 +112,29 @@ function createDatatableOnPage(dtoptions) {
         };
     }
 
-    dtSettings["sWrapper"] = "dataTables_wrapper srinivas uf-datatable dt-bootstrap";
-    // this is over ridden by dataTables.bootstrap.js and the wrapper classes come from there 
-    /*
-      / * Default class modification * /
-      $.extend(DataTable.ext.classes, {
-        sWrapper: "dataTables_wrapper form-inline dt-bootstrap",
-        sFilterInput: "form-control input-sm",
-        sLengthSelect: "form-control input-sm",
-        sProcessing: "dataTables_processing panel panel-default"
-      });
-    */
+    if (dtoptions["export_rows"] !== undefined) {
+        dtSettings['dtExportRows'] = dtoptions["export_rows"];
+    } else {
+        dtSettings['dtExportRows'] = false;
+    }
 
+    if (dtoptions["export_cols"] !== undefined) {
+        dtSettings['dtExportCols'] = dtoptions["export_cols"];
+    } else {
+        dtSettings['dtExportCols'] = false;
+    }
+
+    if (dtoptions["ordering"] !== undefined) {
+        dtSettings["ordering"] = dtoptions["ordering"];
+    } else {
+        dtSettings["ordering"] = true;
+    }
+    if (dtSettings["ordering"] && dtoptions.initial_sort !== undefined) {
+        dtSettings['order'] = dtoptions.initial_sort;
+    }
+
+
+    dtSettings["sWrapper"] = "dataTables_wrapper srinivas uf-datatable dt-bootstrap";
     if (
         dtoptions["searchPlaceholder"] != undefined &&
         dtoptions["searchPlaceholder"] != ""
@@ -145,6 +157,53 @@ function createDatatableOnPage(dtoptions) {
         sLengthMenu: "Show _MENU_"
     };
 
+    dtSettings["buttons"] = ['copyHtml5',
+        {
+            extend: 'print',
+            customize: function (win) {
+                $(win.document.body)
+                    .css('font-size', '10pt')
+                    .prepend(
+                        '<p>RegSevak Internal Use only </p><img src="http://datatables.net/media/images/logo-fade.png" style="position:absolute; top:0; left:0;" />'
+                    );
+                $(win.document.body).find('table')
+                    .addClass('compact')
+                    .css('font-size', 'inherit');
+            },
+        }, {
+            extend: 'pdfHtml5',
+            title: function () {
+                return "RegSevak Internal Use Only";
+            },
+            customizeDel: function (doc) {
+                var colCount = new Array();
+                $(tbl).find('tbody tr:first-child td').each(function () {
+                    if ($(this).attr('colspan')) {
+                        for (var i = 1; i <= $(this).attr('colspan'); $i++) {
+                            colCount.push('*');
+                        }
+                    } else {
+                        colCount.push('*');
+                    }
+                });
+                doc.content[1].table.widths = colCount;
+            },
+            customize: function (doc) {
+
+                var twidths = [];
+                var i;
+                for (i = 0; i < doc.content[1].table.body[0].length; i++) {
+                    twidths.push('auto');
+                }
+                //var twidths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
+                doc.content[1].table.widths = twidths;
+            },
+            orientation: 'landscape',
+            pageSize: 'A2',
+            download: 'open'
+        }, 'excelHtml5', 'csvHtml5'
+    ];
+
     if (dtoptions.scroll == "Y") {
         dtSettings["scrollY"] = 200;
         dtSettings["scrollCollapse"] = true;
@@ -159,15 +218,15 @@ function createDatatableOnPage(dtoptions) {
                 "<'dt-fulltable dtable-heading' " +
                 //"  <'dt-customlogo pull-left'><'dt-customtitle pull-right'>" +
                 "<'row dt-topbox cddatatable-topbox '" +
-                "  <'col-md-8 search dt-search'f>" +
-                "  <'col-md-4 text-right dt-pagelength'l>" +
+                "  <'col-md-6 search dt-search'f><'col-md-4 search dt-search'B>" +
+                "  <'col-md-2 text-right dt-pagelength'l>" +
                 ">r<'row dt-helpbox'<'col-md-12 dt-help-content'>>t<'row dt-pager'" +
                 "  <'col-md-3 dt-countinfo 'i>" +
                 "  <'col-md-9 dt-pager pager-lg1 text-right tablesorter-pager'p>" +
                 " > >S";
         } else {
             dtSettings["dom"] =
-                "<'dt-fulltable dtable-heading' <'row dt-topbox cddatatable-topbox '" +
+                "<'dt-fulltable dtable-heading' B<'row dt-topbox cddatatable-topbox '" +
                 "<'col-md-12 search dt-search'f> >r<'row dt-helpbox'<'col-md-12 dt-help-content'>>t>S";
         }
     }
@@ -222,6 +281,92 @@ function createDatatableOnPage(dtoptions) {
     return oTable;
 }
 
+jQuery.fn.DataTable.Api.register('buttons.exportData()', function (options) {
+    if (this.context.length) {
+        var innerApi = new $.fn.dataTable.Api(this.context[0]);
+        var settings = innerApi.settings()[0];
+        var retdata = [];
+        if (settings.oInit.dtExportRows === false) {
+            retdata = {
+                'header': [],
+                'body': []
+            };
+        } else if (settings.oInit.dtExportRows === 'all') {
+            //dtSettings['dtExportAll']
+            var ajaxurl = innerApi.ajax.url();
+            var ajaxdata = innerApi.ajax.params();
+            retdata = getButtonData(ajaxurl, ajaxdata);
+            /*        ajaxdata.format = 'dtcsv';
+                    var jsonResult = $.ajax({
+                        url: ajaxurl,
+                        async: false,
+                        type: 'POST',
+                        data: ajaxdata,
+                        success: function (result) {
+                            showUFPageAlert();
+                            //Do nothing
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            showUFPageAlert(errorThrown);
+                        }
+                    });
+                    var retdata = jsonResult.responseJSON;
+            */
+        } else {
+            var dtdata = innerApi.data();
+            var expheader = [];
+            if (settings.oInit.dtExportCols !== '*') {
+                expheader = settings.oInit.dtExportCols;
+            } else {
+                jQuery.each(dtdata[0], function (hkey, hvalue) {
+                    expheader.push(hkey);
+                });
+            }
+            var expbody = [];
+            var bodyrow = [];
+            jQuery.each(dtdata, function (dtrowid, dtrow) {
+                bodyrow = [];
+                jQuery.each(expheader, function (fldseq, efield) {
+                    bodyrow.push(dtrow[efield]);
+                });
+                expbody.push(bodyrow);
+            });
+            retdata['header'] = expheader;
+            retdata['body'] = expbody;
+        }
+        return retdata;
+    }
+});
+
+
+function getButtonData(ajaxurl, ajaxdata, format) {
+    if (format === undefined) {
+        format = 'dtcsv';
+    }
+    ajaxdata.format = format;
+    var jsonResult = $.ajax({
+        url: ajaxurl,
+        async: false,
+        type: 'POST',
+        data: ajaxdata,
+        success: function (result) {
+            showUFPageAlert();
+            //Do nothing
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            showUFPageAlert(errorThrown);
+        }
+    });
+    var retdata;
+    if (jsonResult.responseJSON !== undefined) {
+        retdata = jsonResult.responseJSON;
+    } else {
+        retdata = jsonResult;
+    }
+
+    return retdata;
+}
+
 $.fn.dataTable.render.format_column = function (column_name) {
     return function (data, type, row, meta) {
         if (type === "display") {
@@ -271,6 +416,38 @@ $.fn.dataTable.render.format_column = function (column_name) {
     };
 };
 
+
+function getDatatableAjaxSettings(final_dturl, dtoptions) {
+    var settings = {
+        "url": final_dturl,
+        "type": "POST",
+        "data": function (data) {
+            dtpostdata = {
+                request: "get_dtdata",
+                dtoptions: {
+                    id: dtoptions.htmlid,
+                    data_options: dtoptions.data_options
+                },
+            };
+            dtpostdata[site.csrf.keys.name] = site.csrf.name;
+            dtpostdata[site.csrf.keys.value] = site.csrf.value;
+            // Read values
+            // Srinivas Jan 2020 : Will add collecting any where criteria for data here to add to the Ajax Post 
+            // this is will be sent as Filters to the,
+            var filter_data = getDTFilterData(dtoptions.htmlid);
+            if (filter_data !== false) {
+                dtpostdata.filters = filter_data;
+            }
+            // Need to return this as an object or the data does not go thru properly
+            return jQuery.extend({}, data, dtpostdata);
+        },
+        "error": function (jqXHR, textStatus, errorThrown) {
+            showUFPageAlert(errorThrown);
+        }
+    };
+    return settings;
+}
+
 function moveHelpText(datatableID) {
     var dtcontent = jQuery(datatableID + '_content');
     var helprow = dtcontent.find('.dt-helprow-top');
@@ -291,26 +468,34 @@ function moveHelpText(datatableID) {
 }
 
 function reloadDatatable(oTableid) {
-    var oTable = jQuery("#" + oTableid).dataTable();
-    oTable.fnReloadAjax();
+    //var oTable = jQuery("#" + oTableid).dataTable();
+    var oTable = jQuery("#" + oTableid).DataTable();
+    oTable.ajax.reload();
+    //oTable.fnReloadAjax();
 }
 
 function reloadDatatableNewURL(oTableid, dtURL, replaceId) {
-    var oTable = jQuery("#" + oTableid).dataTable();
+    //var oTable = jQuery("#" + oTableid).dataTable();
+    var oTable = jQuery("#" + oTableid).DataTable();
+
     if (replaceId !== undefined) {
         if (replaceId === 'Y') {
-            var newurl = RemoveLastDirectoryPartOf(oTable.api().ajax.url());
+            //var newurl = RemoveLastDirectoryPartOf(oTable.api().ajax.url());
+            var newurl = RemoveLastDirectoryPartOf(oTable.ajax.url());
             dtURL = newurl + dtURL
         }
     }
-    oTable.fnReloadAjax(dtURL, null, true);
+    oTable.ajax.url(dtURL).load();
+    //oTable.fnReloadAjax(dtURL, null, true);
 }
 
 function reloadDatatableNewURLQuery(oTableid, query) {
-    var oTable = jQuery("#" + oTableid).dataTable();
+    var oTable = jQuery("#" + oTableid).DataTable();
+    //var oTable = jQuery("#" + oTableid).dataTable();
     var newurl = RemoveQueryPartOf(oTable.api().ajax.url());
     newurl = newurl + query
-    oTable.fnReloadAjax(newurl, null, true);
+    oTable.ajax.url(newurl).load();
+    //oTable.fnReloadAjax(newurl, null, true);
 }
 
 function testCreatedRow(row, data, dataIndex) {

@@ -20,6 +20,13 @@
                 "vendor/datatables.net-plugins/sorting/datetime-moment.js",
                 "vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.js",
                 "vendor/datatables.net-select/js/dataTables.select.min.js",
+                "vendor/datatables.net-buttons/js/dataTables.buttons.min.js",
+                "vendor/datatables.net-buttons/js/buttons.print.min.js",
+                "vendor/datatables.net-buttons/js/buttons.html5.js",
+                "vendor/datatables.net-buttons/js/buttons.flash.min.js",
+                "vendor/jszip/dist/jszip.min.js",
+                "vendor/pdfmake/build/pdfmake.min.js",
+                "vendor/pdfmake/build/vfs_fonts.js",
                 "vendor/datatables.net-rowgroup/js/dataTables.rowGroup.min.js"
             ],
             "options": {
