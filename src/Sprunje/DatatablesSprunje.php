@@ -122,7 +122,7 @@ class DatatablesSprunje extends Sprunje
     public function toResponse($response)
     {
         $format = $this->options['format'];
-        Debug::debug("Line 81 $format is the return format and destination is " . $this->destination);
+        //Debug::debug("Line 81 $format is the return format and destination is " . $this->destination);
         switch ($format) {
             case 'csv': {
                     $result = $this->getCsv();

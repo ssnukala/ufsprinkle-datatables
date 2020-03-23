@@ -1,13 +1,12 @@
 <!-- datatable div starts -->
-{% set help_position =  crud_params.help.position | default('bottom') %}
+{% set help_position =  crud_params.rs_help.position | default('bottom') %}
 <div id="{{dtoptions.htmlid}}_content" class="dtable-content sn-datatable {{dtoptions.dtclass}}">
     <div class="dt-helprow-top">
         {% if help_position == 'top' %}
-            {% include crud_params.help.template | default('partials/help.html.twig') ignore missing 
-                with { help: crud_params.help } %}
+            {% include crud_params.rs_help.template | default('partials/help.html.twig') ignore missing 
+                with { help: crud_params.rs_help } %}
         {% endif %}
     </div>
-
     <table cellpadding="0" cellspacing="0" style="width:100%!important;" 
         class="table table-striped table-bordered dataTable srinivas {{dtoptions.tableclass}}" 
         border="0" id="{{dtoptions.htmlid}}" data-url="/datatable/testurl" 
@@ -25,11 +24,10 @@
         </tbody>
         <tfoot class='dt-footer'></tfoot>
     </table>
-
     <div class="dt-helprow-bottom">
         {% if help_position == 'bottom' %}
-            {% include crud_params.help.template | default('partials/help.html.twig') ignore missing 
-                with { help: crud_params.help } %}
+            {% include crud_params.rs_help.template | default('partials/help.html.twig') ignore missing 
+                with { help: crud_params.rs_help } %}
         {% endif %}
     </div>
 </div>
