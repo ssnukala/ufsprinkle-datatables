@@ -1,13 +1,23 @@
 <script type="text/javascript" id="datatablejs01_{{dtoptions.htmlid}}">
-{% autoescape 'js' %}
-    jQuery(document).ready(function () {
-    var dtoptions = {{ dtoptions |json_encode(constant('JSON_PRETTY_PRINT'))|raw }} ;
-     dtoptions['columns']=[
-        {% for column in fields %}
-            {% include "components/column.html.twig" %}
-        {% endfor %} ];
-/* Initializing datatable */
-        var dtobject = createDatatableOnPage(dtoptions);
+    if(dtoptions === undefined){
+        var dtoptions =[];
+    }
+    {% autoescape 'js' %}
+        jQuery(document).ready(function () {
+            var thisdt = {{ dtoptions |json_encode(constant('JSON_PRETTY_PRINT'))|raw }} ;
+            thisdt['columns']=[
+            {% for column in fields %}
+                {% include "components/column.html.twig" %}
+            {% endfor %} ];
+            if(thisdt.autoload === undefined){
+                thisdt.autoload=true;
+            }
+            if(thisdt.autoload){
+        /* Initializing datatable */
+                var dtobject = createDatatableOnPage(thisdt);
+            }
+
+            dtoptions['{{dtoptions.htmlid}}'] = thisdt;
         });
-{% endautoescape %}
+    {% endautoescape %}
 </script>

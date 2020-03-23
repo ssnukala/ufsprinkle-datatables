@@ -44,6 +44,7 @@ class DatatablesController extends SimpleController
         "ajax_url" => "/datatable/notsetbyuser",
         "pagelength" => 10,
         "extra_param" => "",
+        "autoload" => true,
         "visible_columns" => 1,
         "initial_search" => "",
         "single_row" => "N",
@@ -189,6 +190,23 @@ class DatatablesController extends SimpleController
             "options" => $this->options
         ];
         return $var_retarr;
+    }
+
+    public function getDatatableComponent($request, $response, $args)
+    {
+        $this->setupDatatable();
+        $dtarr = $this->getDatatableArray();
+
+        /*        $template = 'pages/generic-crud.html.twig';
+        return $this->ci->view->render($response, $template, [
+            'info' => [
+                'environment' => $this->ci->environment,
+                'path' => ['project' => \UserFrosting\ROOT_DIR],
+            ],
+            'crudform' => $formArray,
+            'params' => $params
+        ]);        
+*/
     }
 
     /**

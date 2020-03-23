@@ -469,8 +469,12 @@ function moveHelpText(datatableID) {
 
 function reloadDatatable(oTableid) {
     //var oTable = jQuery("#" + oTableid).dataTable();
-    var oTable = jQuery("#" + oTableid).DataTable();
-    oTable.ajax.reload();
+    if (!$.fn.DataTable.isDataTable("#" + oTableid)) {
+        createDatatableOnPage(dtoptions[oTableid]);
+    } else {
+        var oTable = jQuery("#" + oTableid).DataTable();
+        oTable.ajax.reload();
+    }
     //oTable.fnReloadAjax();
 }
 
