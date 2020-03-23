@@ -156,8 +156,7 @@ function createDatatableOnPage(dtoptions) {
         searchPlaceholder: sPlaceholder,
         sLengthMenu: "Show _MENU_"
     };
-
-    dtSettings["buttons"] = ['copyHtml5',
+    $dtbuttons = [ //'copyHtml5',
         {
             extend: 'print',
             customize: function (win) {
@@ -203,6 +202,11 @@ function createDatatableOnPage(dtoptions) {
             download: 'open'
         }, 'excelHtml5', 'csvHtml5'
     ];
+    dtSettings["buttons"] = [{
+        extend: 'collection',
+        text: 'Export',
+        buttons: $dtbuttons
+    }];
 
     if (dtoptions.scroll == "Y") {
         dtSettings["scrollY"] = 200;
@@ -296,22 +300,6 @@ jQuery.fn.DataTable.Api.register('buttons.exportData()', function (options) {
             var ajaxurl = innerApi.ajax.url();
             var ajaxdata = innerApi.ajax.params();
             retdata = getButtonData(ajaxurl, ajaxdata);
-            /*        ajaxdata.format = 'dtcsv';
-                    var jsonResult = $.ajax({
-                        url: ajaxurl,
-                        async: false,
-                        type: 'POST',
-                        data: ajaxdata,
-                        success: function (result) {
-                            showUFPageAlert();
-                            //Do nothing
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            showUFPageAlert(errorThrown);
-                        }
-                    });
-                    var retdata = jsonResult.responseJSON;
-            */
         } else {
             var dtdata = innerApi.data();
             var expheader = [];

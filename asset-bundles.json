@@ -41,6 +41,7 @@
             "styles": [
                 "vendor/datatables.net-bs/css/dataTables.bootstrap.min.css",
                 "vendor/datatables.net-dt/css/jquery.dataTables.min.css",
+                "vendor/datatables.net-buttons-dt/css/buttons.dataTables.min.css",
                 "local/css/datatable_util.css"
             ],
             "options": {
