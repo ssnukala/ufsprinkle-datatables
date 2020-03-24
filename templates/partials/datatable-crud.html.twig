@@ -1,61 +1,71 @@
 {% import "macros/datatable-select-filter.html.twig" as dtfilter %}
 {% import "macros/datatable-links.html.twig" as dtlinks %}
-<div class="{{cruddt.divclass|default('col-md-12')}} crud-datatable {{cruddt.options.name}}">
-    <div class="box box-primary" id="widget-{{cruddt.options.htmlid}}">
+<div class="{{cruddt.divclass|default('col-md-12')}} crud-datatable {{cruddt.settings.name}}">
+    <div class="box box-primary" id="widget-{{cruddt.settings.htmlid}}">
         <div class="box-header">
             <h3 class="box-title">
                 {#<i class="fa fa-tasks fa-fw"></i> #}
                 <span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>
-                {{translate(cruddt.options.title)}}</h3>
-            <a class='pull-right' href="#" onclick="reloadDatatable('{{ cruddt.options.htmlid }}');">
+                {{translate(cruddt.settings.title)}}</h3>
+            <a class='pull-right' href="#" onclick="reloadDatatable('{{ cruddt.settings.htmlid }}');">
                 {#<i aria-hidden="true" class="fa fa-sync"></i> #}
                 <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span>
             </a>
         </div>
         <div class="box-body">
-            {% if cruddt.options.newrow_template is not empty   %}
+            {% if cruddt.templates.newrow_template is not empty   %}
                 <!-- datatable crud newrow start -->
-                <div class='crud-newrow' id='crud-newrow_{{cruddt.options.htmlid}}'>
-                    {% include cruddt.options.newrow_template with {
-                    'dtoptions' : cruddt.options,
+                <div class='crud-newrow' id='crud-newrow_{{cruddt.settings.htmlid}}'>
+                    {% include cruddt.templates.newrow_template with {
+                    'dtoptions' : cruddt.settings,
                     'crud_params': crud_params
                     } %}
                 </div>
                 <!-- datatable crud newrow end -->
             {% endif %}
 
-            {% if (cruddt.options.links is iterable and cruddt.options.links|length > 0) %}
-                {{dtlinks.generate(cruddt.options.htmlid,cruddt.options.links)}}
+            {% if (cruddt.links is iterable and cruddt.links|length > 0) %}
+                {{dtlinks.generate(cruddt.settings.htmlid,cruddt.links)}}
             {% endif %}
 
             <!-- datatable filters start -->
-            {% if (cruddt.options.filters is iterable and cruddt.options.filters|length > 0) %}
+            {% if (cruddt.filters is iterable and cruddt.filters|length > 0) %}
             <div class='dt-filters'>
                 {# {{cruddt.options.filters|json_encode(JSON_PRETTY_PRINT)}} #}
-                {{dtfilter.generate(cruddt.options.htmlid,cruddt.options.filters)}}
+                {{dtfilter.generate(cruddt.settings.htmlid,cruddt.filters)}}
             </div>
             {% endif %}
             <!-- datatable filters end -->
             {% include 'components/datatable.html.twig' with {
-                    'dtoptions' : cruddt.options,
+                    'dtoptions' : cruddt.settings,
                     'crud_params': crud_params
             } %}
         </div>
     </div>
     <div class='column-formatters' style='display:none;'>
-        {% for colformatter in cruddt.options.formatters %}
-            {% include colformatter with {
-                'options':cruddt.options,
-                'dtid' : cruddt.options.htmlid,
-                'crudformid' : cruddt.options.crudformid,
-                'crudsuccessjs' : cruddt.options.crud_success_js,
+        {% for formatid, colformatter in cruddt.formatters %}
+        <!-- including formatter for {{formatid}} -->
+        {% if colformatter is iterable %}
+            {% set fmttemplate = colformatter.template %}
+            {% set fmt_params = colformatter.params %}
+        Params: {{fmt_params| json_encode}}
+        {% else %}
+            {% set fmttemplate = colformatter %}
+            {% set fmt_params = {} %}
+        {% endif %}
+            {% include fmttemplate with {
+                'fmt_params':fmt_params,
+                'options':cruddt.settings,
+                'dtid' : cruddt.settings.htmlid,
+                'crudformid' : cruddt.settings.crudformid,
+                'crudsuccessjs' : cruddt.settings.crud_success_js,
                 'crud_params': crud_params
             } %}
         {% endfor %}
     </div>
-    {% if cruddt.options.crud_forms is iterable %}
+    {% if cruddt.crud_forms is iterable %}
         <div class='crud-forms' style='display:none;'>
-            {% for dtableid, crudformarr in cruddt.options.crud_forms %}
+            {% for dtableid, crudformarr in cruddt.crud_forms %}
                 <div class='crud-form-group' id='crudfor_{{dtableid}}'>
                     {% for cftype, crudform in crudformarr %}
                         <div class='crud-template-{{cftype}}' id='crudform_{{dtableid}}_{{cftype}}' {% if crudform.forfield|default('') != '' %} data-forfield="{{crudform.forfield}}" {% endif %}>

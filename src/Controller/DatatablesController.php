@@ -39,6 +39,7 @@ class DatatablesController extends SimpleController
     protected $sprunje_name = 'sprunjenotset';       // Name if the sprunje
     protected $sprunje = 'sprunjenotset';       // Sprunje to be used for data retrieval
     protected $protected = true; //if the user needs to be logged in
+    protected $schema = 'not_set';
     protected $default_options = [
         "htmlid" => "notsetbyuser",
         "ajax_url" => "/datatable/notsetbyuser",
@@ -150,7 +151,7 @@ class DatatablesController extends SimpleController
     {
         // Define the YAML loader
         $loader = new YamlFileLoader([]);
-        $loader->addPath($this->options['schema']);
+        $loader->addPath($this->schema);
         return $loader->load();
     }
 
@@ -184,12 +185,23 @@ class DatatablesController extends SimpleController
 
     public function getDatatableArray()
     {
-        //        Debug::debug("Line 155 fields ", $this->fields);
-        $var_retarr = [
-            "fields" => $this->fields,
-            "options" => $this->options
-        ];
-        return $var_retarr;
+        //Debug::debug("Line 188 options ", $this->options);
+        $settings = $this->options;
+        unset($settings['crud_forms']);
+        unset($settings['formatters']);
+        unset($settings['filters']);
+        unset($settings['templates']);
+        unset($settings['links']);
+
+        $retarr = [];
+        $retarr["settings"] = $settings;
+        $retarr["fields"] = $this->fields;
+        $retarr["formatters"] = isset($this->options['formatters']) ? $this->options['formatters'] : [];
+        $retarr["filters"] = isset($this->options['filters']) ? $this->options['filters'] : [];
+        $retarr["links"] = isset($this->options['links']) ? $this->options['links'] : [];
+        $retarr["templates"] = isset($this->options['templates']) ? $this->options['templates'] : [];
+        $retarr["crud_forms"] = isset($this->options['crud_forms']) ? $this->options['crud_forms'] : [];
+        return $retarr;
     }
 
     public function getDatatableComponent($request, $response, $args)
