@@ -71,11 +71,21 @@ table.dt-formatter td {
 }
 
 .dt-helprow-top ul,
-.dt-helprow-top p {
+.dt-helprow-top p,
+.cr-helprow-top ul,
+.cr-helprow-top p {
     display: inline;
 }
 
 th.dt-helprow-top .cr-help {
     display: inline;
     float: right;
+}
+
+.dataTables_filter input {
+    /*border: none;*/
+    /*padding: 6px 12px;*/
+    padding: 0px !important;
+    margin: 0px !important;
+    width: 100%;
 }

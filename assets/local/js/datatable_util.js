@@ -112,18 +112,6 @@ function createDatatableOnPage(dtoptions) {
         };
     }
 
-    if (dtoptions["export_rows"] !== undefined) {
-        dtSettings['dtExportRows'] = dtoptions["export_rows"];
-    } else {
-        dtSettings['dtExportRows'] = false;
-    }
-
-    if (dtoptions["export_cols"] !== undefined) {
-        dtSettings['dtExportCols'] = dtoptions["export_cols"];
-    } else {
-        dtSettings['dtExportCols'] = false;
-    }
-
     if (dtoptions["ordering"] !== undefined) {
         dtSettings["ordering"] = dtoptions["ordering"];
     } else {
@@ -156,57 +144,57 @@ function createDatatableOnPage(dtoptions) {
         searchPlaceholder: sPlaceholder,
         sLengthMenu: "Show _MENU_"
     };
-    $dtbuttons = [ //'copyHtml5',
-        {
-            extend: 'print',
-            customize: function (win) {
-                $(win.document.body)
-                    .css('font-size', '10pt')
-                    .prepend(
-                        '<p>RegSevak Internal Use only </p><img src="http://datatables.net/media/images/logo-fade.png" style="position:absolute; top:0; left:0;" />'
-                    );
-                $(win.document.body).find('table')
-                    .addClass('compact')
-                    .css('font-size', 'inherit');
-            },
-        }, {
-            extend: 'pdfHtml5',
-            title: function () {
-                return "RegSevak Internal Use Only";
-            },
-            customizeDel: function (doc) {
-                var colCount = new Array();
-                $(tbl).find('tbody tr:first-child td').each(function () {
-                    if ($(this).attr('colspan')) {
-                        for (var i = 1; i <= $(this).attr('colspan'); $i++) {
-                            colCount.push('*');
-                        }
-                    } else {
-                        colCount.push('*');
-                    }
-                });
-                doc.content[1].table.widths = colCount;
-            },
-            customize: function (doc) {
 
-                var twidths = [];
-                var i;
-                for (i = 0; i < doc.content[1].table.body[0].length; i++) {
-                    twidths.push('auto');
-                }
-                //var twidths = Array(doc.content[1].table.body[0].length + 1).join('*').split('');
-                doc.content[1].table.widths = twidths;
-            },
-            orientation: 'landscape',
-            pageSize: 'A2',
-            download: 'open'
-        }, 'excelHtml5', 'csvHtml5'
-    ];
-    dtSettings["buttons"] = [{
-        extend: 'collection',
-        text: 'Export',
-        buttons: $dtbuttons
-    }];
+    if (dtoptions["export_rows"] !== undefined) {
+        dtSettings['dtExportRows'] = dtoptions["export_rows"];
+    } else {
+        dtSettings['dtExportRows'] = false;
+    }
+
+    if (dtoptions["export_cols"] !== undefined) {
+        dtSettings['dtExportCols'] = dtoptions["export_cols"];
+    } else {
+        dtSettings['dtExportCols'] = false;
+    }
+    if (dtSettings['dtExportCols'] !== false) {
+        button_dom = 'B'; //set this only if there is something to export
+        $dtbuttons = [ //'copyHtml5',
+            {
+                extend: 'print',
+                customize: function (win) {
+                    $(win.document.body)
+                        .css('font-size', '10pt')
+                        .prepend(
+                            '<p>RegSevak Internal Use only </p><img src="http://datatables.net/media/images/logo-fade.png" style="position:absolute; top:0; left:0;" />'
+                        );
+                    $(win.document.body).find('table')
+                        .addClass('compact')
+                        .css('font-size', 'inherit');
+                },
+            }, {
+                extend: 'pdfHtml5',
+                title: function () {
+                    return "RegSevak Internal Use Only";
+                },
+                customize: function (doc) {
+                    var twidths = [];
+                    var i;
+                    for (i = 0; i < doc.content[1].table.body[0].length; i++) {
+                        twidths.push('auto');
+                    }
+                    doc.content[1].table.widths = twidths;
+                },
+                orientation: 'landscape',
+                pageSize: 'A2',
+                download: 'open'
+            }, 'excelHtml5', 'csvHtml5'
+        ];
+        dtSettings["buttons"] = [{
+            extend: 'collection',
+            text: 'Export',
+            buttons: $dtbuttons
+        }];
+    }
 
     if (dtoptions.scroll == "Y") {
         dtSettings["scrollY"] = 200;
@@ -214,24 +202,38 @@ function createDatatableOnPage(dtoptions) {
         dtSettings["paging"] = false;
     } else {
         dtSettings["pageLength"] = dtoptions.pagelength;
-        if (dtoptions.single_row === 'Y') {
-            // this is just a single row, so no need to show search and paging
-            dtSettings["dom"] = "<'dt-fulltable dtable-heading' rt>S";
-        } else if (dtoptions.pagelength !== '-1') {
-            dtSettings["dom"] =
+    }
+    var schbtn_dom = '';
+    if (dtoptions.single_row === 'Y') {
+        // this is just a single row, so no need to show search and paging
+        dtSettings["dom"] = "<'dt-fulltable dtable-heading' rt>";
+    } else {
+        if (dtoptions.pagelength !== '-1') {
+            if (dtSettings['dtExportCols'] !== false) {
+                schbtn_dom = "<'col-md-8 search dt-search'f><'col-md-2 dt-snexpbtn'B>";
+            } else {
+                schbtn_dom = "<'col-md-10 search dt-search'f>";
+            }
+            var dtdom1 =
                 "<'dt-fulltable dtable-heading' " +
                 //"  <'dt-customlogo pull-left'><'dt-customtitle pull-right'>" +
-                "<'row dt-topbox cddatatable-topbox '" +
-                "  <'col-md-6 search dt-search'f><'col-md-4 search dt-search'B>" +
-                "  <'col-md-2 text-right dt-pagelength'l>" +
-                ">r<'row dt-helpbox'<'col-md-12 dt-help-content'>>t<'row dt-pager'" +
-                "  <'col-md-3 dt-countinfo 'i>" +
-                "  <'col-md-9 dt-pager pager-lg1 text-right tablesorter-pager'p>" +
-                " > >S";
+                "<'row dt-topbox cddatatable-topbox'" + schbtn_dom +
+                "<'col-md-2 text-right dt-pagelength'l>" +
+                ">r<'row dt-helpbox'<'col-md-12 dt-help-content'>>t";
+            //if (scroller === '') 
+            {
+                dtSettings["dom"] = dtdom1 + "<'row dt-pager'<'col-md-3 dt-countinfo'i>" +
+                    "<'col-md-9 dt-pager text-right tablesorter-pager'p>" +
+                    ">>";
+            }
+            /* else {
+                dtSettings["dom"] = dtdom1 + scroller + ">";
+            }*/
         } else {
             dtSettings["dom"] =
-                "<'dt-fulltable dtable-heading' B<'row dt-topbox cddatatable-topbox '" +
-                "<'col-md-12 search dt-search'f> >r<'row dt-helpbox'<'col-md-12 dt-help-content'>>t>S";
+                "<'dt-fulltable dtable-heading'<'row dt-topbox cddatatable-topbox '" +
+                "<'col-md-8 search dt-search'f><'col-md-4 dt-snexpbtn'B> >r" +
+                "<'row dt-helpbox'<'col-md-12 dt-help-content'>>t>S";
         }
     }
 
@@ -282,6 +284,9 @@ function createDatatableOnPage(dtoptions) {
     /* since  dataTables.bootstrap.js  is creating the Wrapper div we will add our own classes here*/
     jQuery(datatableID + '_wrapper').removeClass('form-inline').addClass('uf-datatables');
     moveHelpText(datatableID);
+
+
+    stylePageLength(datatableID);
     return oTable;
 }
 
@@ -452,6 +457,31 @@ function moveHelpText(datatableID) {
             helpdom.addClass('dt-helprow-top');
         }
         helprow.remove();
+    }
+}
+
+// this is not working well so not using it
+function stylePageLength(datatableID) {
+    var dtsearch = jQuery(datatableID + '_filter');
+    dtsearch.find('input').unwrap();
+    dtsearch.find('input').addClass('input-base-elem');
+    //dtsearch.addClass(' form-group '); //has-feedback input-base  input-base-filled formgen_field crud_input');
+    dtsearch.addClass('form-group has-feedback input-base  input-base-select filled formgen_field crud_input');
+    dtsearch.append('<span class="input-base-placeholder">Search...</span>');
+    var dtlength = jQuery(datatableID + '_length');
+    if (dtlength.length) {
+        dtlength.addClass('form-group has-feedback input-base  input-base-select filled formgen_field crud_input');
+        //var selecthtml = dtlength.find('select').outerHTML();
+        var selecthtml1 = dtlength.find('label').html();
+        var selecthtml2 = selecthtml1.replace('Show', '');
+        dtlength.html('');
+        dtlength.append(selecthtml2);
+        dtlength.append('<span class="input-base-placeholder">Show</span>');
+        dtlength.find('select').select2({
+            minimumResultsForSearch: Infinity
+        });
+        //dataTables_length form-group has-feedback input-base  input-base-select filled formgen_field crud_input
+        // "form-group has-feedback input-base  input-base-select filled formgen_field crud_input"
     }
 }
 
