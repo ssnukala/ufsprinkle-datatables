@@ -45,6 +45,17 @@ class DatatablesExtension extends \Twig_Extension implements \Twig_Extension_Glo
         return 'userfrosting/datatables';
     }
 
+    public function randomString($length = 10)
+    {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
     public function getFunctions()
     {
         return array(
@@ -59,6 +70,10 @@ class DatatablesExtension extends \Twig_Extension implements \Twig_Extension_Glo
             new \Twig_SimpleFunction('unsetKey', function ($inputarr, $key) {
                 unset($inputarr[$key]);
                 return $inputarr;
+            }),
+            new \Twig_SimpleFunction('randomStr', function ($size = 7) {
+                $suggestion = $this->randomString($size);
+                return $suggestion;
             })
         );
     }

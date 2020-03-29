@@ -48,7 +48,6 @@
         {% if colformatter is iterable %}
             {% set fmttemplate = colformatter.template %}
             {% set fmt_params = colformatter.params %}
-        Params: {{fmt_params| json_encode}}
         {% else %}
             {% set fmttemplate = colformatter %}
             {% set fmt_params = {} %}
@@ -76,4 +75,4 @@
             {% endfor %}
         </div>
     {% endif %}
-</div>
+</div><!-- datatable col div -->

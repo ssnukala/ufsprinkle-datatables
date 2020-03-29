@@ -66,27 +66,6 @@ function createDatatableOnPage(dtoptions) {
             sSearch: dtoptions.initial_search
         },
         columns: dtoptions.columns,
-        drawCallback: function (settings) {
-            //      var thisapi = this.api();
-            var fncallback = window[dtoptions.drawCallback];
-            if (typeof fncallback === "function") {
-                fncallback(settings);
-            }
-        },
-        preDrawCallback: function (settings) {
-            //      var thisapi = this.api();
-            var fncallback = window[dtoptions.preDrawCallback];
-            if (typeof fncallback === "function") {
-                fncallback(settings);
-            }
-        },
-        rowCallback: function (row, data) {
-            //      var thisapi = this.api();
-            var fncallback = window[dtoptions.rowCallback];
-            if (typeof fncallback === "function") {
-                fncallback(row, data);
-            }
-        },
         createdRow: function (row, data, index) {
             //      var thisapi = this.api();
             var fncallback = window[dtoptions.createdRow];
@@ -106,6 +85,38 @@ function createDatatableOnPage(dtoptions) {
         },
         customRenderCallback: dtoptions.customRenderCallback,
     };
+    if (dtoptions.initComplete !== undefined) {
+        var fncallback1 = window[dtoptions.initComplete];
+        if (typeof fncallback1 === "function") {
+            dtSettings['initComplete'] = function (settings, json) {
+                fncallback1(settings, json);
+            }
+        }
+    }
+    if (dtoptions.drawCallback !== undefined) {
+        var fncallback2 = window[dtoptions.drawCallback];
+        if (typeof fncallback2 === "function") {
+            dtSettings['drawCallback'] = function (settings) {
+                fncallback2(settings);
+            }
+        }
+    }
+    if (dtoptions.preDrawCallback !== undefined) {
+        var fncallback3 = window[dtoptions.preDrawCallback];
+        if (typeof fncallback3 === "function") {
+            dtSettings['preDrawCallback'] = function (settings) {
+                fncallback3(settings);
+            }
+        }
+    }
+    if (dtoptions.rowCallback !== undefined) {
+        var fncallback = window[dtoptions.rowCallback];
+        if (typeof fncallback === "function") {
+            dtSettings['rowCallback'] = function (row, data) {
+                fncallback(row, data);
+            }
+        }
+    }
     if (dtoptions["select"] != undefined && dtoptions["select"] != "") {
         dtoptions["select"] = {
             style: 'single'
@@ -205,9 +216,11 @@ function createDatatableOnPage(dtoptions) {
     }
     var schbtn_dom = '';
     if (dtoptions.single_row === 'Y') {
+        dtSettings['single_row'] = 'Y'; // carry this into the frontend settings
         // this is just a single row, so no need to show search and paging
         dtSettings["dom"] = "<'dt-fulltable dtable-heading' rt>";
     } else {
+        dtSettings['single_row'] = 'N'; // carry this into the frontend settings
         if (dtoptions.pagelength !== '-1') {
             if (dtSettings['dtExportCols'] !== false) {
                 schbtn_dom = "<'col-md-8 search dt-search'f><'col-md-2 dt-snexpbtn'B>";
