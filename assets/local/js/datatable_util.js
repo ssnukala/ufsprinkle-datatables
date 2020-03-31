@@ -29,39 +29,18 @@ function createDatatableOnPage(dtoptions) {
     var sPlaceholder;
     var pLength;
     var ajaxSettings = getDatatableAjaxSettings(final_dturl, dtoptions);
+
+    // autolookup variables initialized here 
+    var schbtn_dom = '';
+    var lkpoptions = dtoptions.auto_lookup
+    var lkpcols = 3; //hardcoding this here
+
     var dtSettings = {
         //https://datatables.net/forums/discussion/46752/the-column-render-callback-runs-too-many-times
         autoWidth: false,
         processing: true,
         serverSide: true,
         ajax: ajaxSettings,
-        ajaxDelete: {
-            "url": final_dturl,
-            "type": "POST",
-            "data": function (data) {
-                dtpostdata = {
-                    request: "get_dtdata",
-                    dtoptions: {
-                        id: dtoptions.htmlid,
-                        data_options: dtoptions.data_options
-                    },
-                };
-                dtpostdata[site.csrf.keys.name] = site.csrf.name;
-                dtpostdata[site.csrf.keys.value] = site.csrf.value;
-                // Read values
-                // Srinivas Jan 2020 : Will add collecting any where criteria for data here to add to the Ajax Post 
-                // this is will be sent as Filters to the,
-                var filter_data = getDTFilterData(dtoptions.htmlid);
-                if (filter_data !== false) {
-                    dtpostdata.filters = filter_data;
-                }
-                // Need to return this as an object or the data does not go thru properly
-                return jQuery.extend({}, data, dtpostdata);
-            },
-            "error": function (jqXHR, textStatus, errorThrown) {
-                showUFPageAlert(errorThrown);
-            }
-        },
         oSearch: {
             sSearch: dtoptions.initial_search
         },
@@ -85,6 +64,9 @@ function createDatatableOnPage(dtoptions) {
         },
         customRenderCallback: dtoptions.customRenderCallback,
     };
+
+    dtSettings = setDTCallbacks(dtSettings);
+    /*
     if (dtoptions.initComplete !== undefined) {
         var fncallback1 = window[dtoptions.initComplete];
         if (typeof fncallback1 === "function") {
@@ -117,6 +99,7 @@ function createDatatableOnPage(dtoptions) {
             }
         }
     }
+    */
     if (dtoptions["select"] != undefined && dtoptions["select"] != "") {
         dtoptions["select"] = {
             style: 'single'
@@ -156,6 +139,109 @@ function createDatatableOnPage(dtoptions) {
         sLengthMenu: "Show _MENU_"
     };
 
+    dtSettings = setDatatableExport(dtoptions, dtSettings);
+
+    if (dtoptions.scroll == "Y") {
+        dtSettings["scrollY"] = 200;
+        dtSettings["scrollCollapse"] = true;
+        dtSettings["paging"] = false;
+    } else {
+        dtSettings["pageLength"] = dtoptions.pagelength;
+    }
+
+    dtSettings = setDatatableDOM(dtoptions, dtSettings);
+
+    if (dtoptions["formatCallback"] != undefined && dtoptions["formatCallback"] != "") {
+        dtSettings["formatCallback"] = dtoptions["formatCallback"];
+    }
+
+    if (dtoptions.rowGroup !== undefined) {
+        dtSettings["rowGroup"] = setRowGroups(dtoptions);
+    }
+
+    if (dtoptions.rowGroup !== undefined) {
+        jQuery(datatableID).removeClass('table-striped');
+    }
+
+    oTable = jQuery(datatableID).dataTable(dtSettings);
+    /* since  dataTables.bootstrap.js  is creating the Wrapper div we will add our own classes here*/
+    jQuery(datatableID + '_wrapper').removeClass('form-inline').addClass('uf-datatables');
+    moveHelpText(datatableID);
+    if (lkpoptions !== undefined) {
+        addAutoLookupToDt(dtoptions.htmlid, lkpoptions);
+    }
+    stylePageLength(datatableID);
+    return oTable;
+}
+
+jQuery.fn.DataTable.Api.register('buttons.exportData()', function (options) {
+    if (this.context.length) {
+        var innerApi = new $.fn.dataTable.Api(this.context[0]);
+        var settings = innerApi.settings()[0];
+        var retdata = [];
+        if (settings.oInit.dtExportRows === false) {
+            retdata = {
+                'header': [],
+                'body': []
+            };
+        } else if (settings.oInit.dtExportRows === 'all') {
+            //dtSettings['dtExportAll']
+            var ajaxurl = innerApi.ajax.url();
+            var ajaxdata = innerApi.ajax.params();
+            retdata = getButtonData(ajaxurl, ajaxdata);
+        } else {
+            var dtdata = innerApi.data();
+            var expheader = [];
+            if (settings.oInit.dtExportCols !== '*') {
+                expheader = settings.oInit.dtExportCols;
+            } else {
+                jQuery.each(dtdata[0], function (hkey, hvalue) {
+                    expheader.push(hkey);
+                });
+            }
+            var expbody = [];
+            var bodyrow = [];
+            jQuery.each(dtdata, function (dtrowid, dtrow) {
+                bodyrow = [];
+                jQuery.each(expheader, function (fldseq, efield) {
+                    bodyrow.push(dtrow[efield]);
+                });
+                expbody.push(bodyrow);
+            });
+            retdata['header'] = expheader;
+            retdata['body'] = expbody;
+        }
+        return retdata;
+    }
+});
+
+function setDTCallbacks(dtSettings) {
+    dtSettings = setValidCallback(dtoptions.initComplete, 'initComplete', dtSettings);
+    dtSettings = setValidCallback(dtoptions.drawCallback, 'drawCallback', dtSettings);
+    dtSettings = setValidCallback(dtoptions.preDrawCallback, 'preDrawCallback', dtSettings);
+    dtSettings = setValidCallback(dtoptions.rowCallback, 'rowCallback', dtSettings);
+    return dtSettings;
+}
+
+function setValidCallback(callback, fname, dtSettings) {
+    var retFn = false;
+    if (callback !== undefined) {
+        var fncallback3 = window[callback];
+        if (typeof fncallback3 === "function") {
+            retFn = function (settings) {
+                fncallback3(settings);
+            }
+        }
+    }
+    if (dtSettings !== undefined) {
+        dtSettings[fname] = retFn;
+        return dtSettings;
+    } else {
+        return retFn;
+    }
+}
+
+function setDatatableExport(dtoptions, dtSettings) {
     if (dtoptions["export_rows"] !== undefined) {
         dtSettings['dtExportRows'] = dtoptions["export_rows"];
     } else {
@@ -206,26 +292,36 @@ function createDatatableOnPage(dtoptions) {
             buttons: $dtbuttons
         }];
     }
+    return dtSettings;
+}
 
-    if (dtoptions.scroll == "Y") {
-        dtSettings["scrollY"] = 200;
-        dtSettings["scrollCollapse"] = true;
-        dtSettings["paging"] = false;
-    } else {
-        dtSettings["pageLength"] = dtoptions.pagelength;
-    }
+function setDatatableDOM(dtoptions, dtSettings) {
+    // autolookup variables initialized here 
     var schbtn_dom = '';
+    var lkpoptions = dtoptions.auto_lookup
+    var lkpcols = 3; //hardcoding this here
+
     if (dtoptions.single_row === 'Y') {
         dtSettings['single_row'] = 'Y'; // carry this into the frontend settings
         // this is just a single row, so no need to show search and paging
         dtSettings["dom"] = "<'dt-fulltable dtable-heading' rt>";
     } else {
         dtSettings['single_row'] = 'N'; // carry this into the frontend settings
+
+        // Adding the auto lookup filter to the datatable
+        var searchcol = 10;
+        var alhtml = '';
+        if (lkpoptions !== undefined) {
+            dtSettings['auto_lookup'] = lkpoptions;
+            alhtml = "<'dt-autolookup-div col-md-" + lkpcols + "'>";
+            searchcol = searchcol - lkpcols; // = 7
+        }
         if (dtoptions.pagelength !== '-1') {
             if (dtSettings['dtExportCols'] !== false) {
-                schbtn_dom = "<'col-md-8 search dt-search'f><'col-md-2 dt-snexpbtn'B>";
+                searchcol = searchcol - 2; //to account for export buttons
+                schbtn_dom = alhtml + "<'col-md-" + searchcol + " search dt-search'f><'col-md-2 dt-snexpbtn'B>";
             } else {
-                schbtn_dom = "<'col-md-10 search dt-search'f>";
+                schbtn_dom = alhtml + "<'col-md-" + searchcol + " search dt-search'f>";
             }
             var dtdom1 =
                 "<'dt-fulltable dtable-heading' " +
@@ -245,105 +341,40 @@ function createDatatableOnPage(dtoptions) {
         } else {
             dtSettings["dom"] =
                 "<'dt-fulltable dtable-heading'<'row dt-topbox cddatatable-topbox '" +
-                "<'col-md-8 search dt-search'f><'col-md-4 dt-snexpbtn'B> >r" +
+                alhtml + "<'col-md-" + searchcol + " search dt-search'f><'col-md-2 dt-snexpbtn'B> >r" +
                 "<'row dt-helpbox'<'col-md-12 dt-help-content'>>t>S";
         }
     }
-
-    if (dtoptions["formatCallback"] != undefined && dtoptions["formatCallback"] != "") {
-        dtSettings["formatCallback"] = dtoptions["formatCallback"];
-    }
-
-    if (dtoptions.rowGroup !== undefined) {
-        var rowGroup = {};
-        rowGroup.dataSrc = dtoptions.rowGroup.dataSrc;
-        rowGroup.startRender = null;
-        if (dtoptions.rowGroup.startRender !== undefined) {
-            var startRender = window[dtoptions.rowGroup.startRender];
-            if (typeof startRender === "function") {
-                rowGroup.startRender = startRender;
-            }
-        }
-        rowGroup.endRender = null;
-        if (dtoptions.rowGroup.endRender !== undefined) {
-            var endRender = window[dtoptions.rowGroup.endRender];
-            if (typeof endRender === "function") {
-                rowGroup.endRender = endRender;
-            }
-        }
-        if (rowGroup.endRender === null && rowGroup.startRender === null) {
-            console.log("Line 198 Render Functions are null. Skipping rowGroup for " + dtoptions.htmlid);
-        } else {
-            dtSettings["rowGroup"] = rowGroup;
-        }
-    }
-    /*
-          "<'dtable-heading' <'well1 cddatatable-topbox " +
-          "row'<'col-md-9 search'f><'col-md-3 text-right'l>>rt<'row'<'col-md-3'i>" +
-          "<'col-md-9 pager1 pager-lg1 text-right tablesorter-pager'p> > >S";
-      "<'dtable-heading'" +
-            "<'well1 cddatatable-topbox row'<'col-md-9 search'f><'col-md-3 text-right'l>>" +
-            "<'row'<'col-md-12'rt>>" +
-            "<'row'<'col-md-3'i><'col-md-9 pager1 pager-lg1 text-right tablesorter-pager'p>>" +
-            "> S";
-    */
     // S is for https://datatables.net/extensions/select/ : this plugin is not enabled yet
-
-    if (dtoptions.rowGroup !== undefined) {
-        jQuery(datatableID).removeClass('table-striped');
-    }
-
-    oTable = jQuery(datatableID).dataTable(dtSettings);
-    /* since  dataTables.bootstrap.js  is creating the Wrapper div we will add our own classes here*/
-    jQuery(datatableID + '_wrapper').removeClass('form-inline').addClass('uf-datatables');
-    moveHelpText(datatableID);
-
-
-    stylePageLength(datatableID);
-    return oTable;
+    return dtSettings;
 }
 
-jQuery.fn.DataTable.Api.register('buttons.exportData()', function (options) {
-    if (this.context.length) {
-        var innerApi = new $.fn.dataTable.Api(this.context[0]);
-        var settings = innerApi.settings()[0];
-        var retdata = [];
-        if (settings.oInit.dtExportRows === false) {
-            retdata = {
-                'header': [],
-                'body': []
-            };
-        } else if (settings.oInit.dtExportRows === 'all') {
-            //dtSettings['dtExportAll']
-            var ajaxurl = innerApi.ajax.url();
-            var ajaxdata = innerApi.ajax.params();
-            retdata = getButtonData(ajaxurl, ajaxdata);
-        } else {
-            var dtdata = innerApi.data();
-            var expheader = [];
-            if (settings.oInit.dtExportCols !== '*') {
-                expheader = settings.oInit.dtExportCols;
-            } else {
-                jQuery.each(dtdata[0], function (hkey, hvalue) {
-                    expheader.push(hkey);
-                });
-            }
-            var expbody = [];
-            var bodyrow = [];
-            jQuery.each(dtdata, function (dtrowid, dtrow) {
-                bodyrow = [];
-                jQuery.each(expheader, function (fldseq, efield) {
-                    bodyrow.push(dtrow[efield]);
-                });
-                expbody.push(bodyrow);
-            });
-            retdata['header'] = expheader;
-            retdata['body'] = expbody;
+function setRowGroups(dtoptions) {
+    var rowGroup = {};
+    rowGroup.dataSrc = dtoptions.rowGroup.dataSrc;
+    rowGroup.startRender = null;
+    if (dtoptions.rowGroup.startRender !== undefined) {
+        var startRender = window[dtoptions.rowGroup.startRender];
+        if (typeof startRender === "function") {
+            rowGroup.startRender = startRender;
         }
-        return retdata;
     }
-});
-
+    rowGroup.endRender = null;
+    if (dtoptions.rowGroup.endRender !== undefined) {
+        var endRender = window[dtoptions.rowGroup.endRender];
+        if (typeof endRender === "function") {
+            rowGroup.endRender = endRender;
+        }
+    }
+    var retval = false;
+    if (rowGroup.endRender === null && rowGroup.startRender === null) {
+        console.log("Line 198 Render Functions are null. Skipping rowGroup for " + dtoptions.htmlid);
+    } else {
+        retval = rowGroup;
+        //dtSettings["rowGroup"] = rowGroup;
+    }
+    return retval;
+}
 
 function getButtonData(ajaxurl, ajaxdata, format) {
     if (format === undefined) {
@@ -448,6 +479,7 @@ function getDatatableAjaxSettings(final_dturl, dtoptions) {
             return jQuery.extend({}, data, dtpostdata);
         },
         "error": function (jqXHR, textStatus, errorThrown) {
+            $('#' + dtoptions.htmlid + '_processing ').hide();
             showUFPageAlert(errorThrown);
         }
     };
@@ -496,6 +528,15 @@ function stylePageLength(datatableID) {
         //dataTables_length form-group has-feedback input-base  input-base-select filled formgen_field crud_input
         // "form-group has-feedback input-base  input-base-select filled formgen_field crud_input"
     }
+}
+
+function reInitDatatable(oTableid) {
+    //var oTable = jQuery("#" + oTableid).dataTable();
+    if ($.fn.DataTable.isDataTable("#" + oTableid)) {
+        jQuery("#" + oTableid).DataTable().clear().destroy()
+        createDatatableOnPage(dtoptions[oTableid]);
+    }
+    //oTable.fnReloadAjax();
 }
 
 function reloadDatatable(oTableid) {

@@ -333,4 +333,35 @@ class DatatablesController extends SimpleController
         }
         return $this->sprunje->toResponse($response);
     }
+
+    public function getLookup($request, $response, $args)
+    {
+        $params1 = $request->getParsedBody();
+        $params = $request->getQueryParams();
+        if (isset($params1['q'])) {
+            $args['filters'] = ['lookup' => $params1['q']];
+        }
+        $offset = isset($params1['page']) ? ($params1['q'] * 10) : 0;
+
+        //Debug::debug("Line 136 the lookup args are ", $args);
+        //Debug::debug("Line 137 the post pody args are ", $params1);
+
+        $this->setSprunje($request, $response, $args);
+        $this->sprunje->setDestination('lookup');
+        $this->sprunje->addFilterable('lookup');
+        $this->extendSprunje($request, $response, $args);
+        $this->sprunje->extendQuery(function ($query) use ($offset) {
+            if ($offset > 0) {
+                $query->offset($offset);
+            }
+            //Debug::debug("Line 150 args offset $offset - and args", $args);
+            return $query;
+        });
+        //return $this->sprunje->toResponse($response);
+        Debug::debug("Line 361 getLookup getting array now");
+        $result = $this->sprunje->getArray();
+        Debug::debug("Line 363 after GetArray");
+        $result['pagination'] = ['more' => ($result['recordsFiltered'] > 10)];
+        return $response->withJson($result, 200, JSON_PRETTY_PRINT);
+    }
 }

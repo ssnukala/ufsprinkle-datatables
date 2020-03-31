@@ -93,3 +93,7 @@ th.dt-helprow-top .cr-help {
 .dataTables_filter .input-base-placeholder {
     padding: inherit !important;
 }
+
+.dt-head-image {
+    height: 40px;
+}

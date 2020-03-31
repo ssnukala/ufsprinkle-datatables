@@ -69,6 +69,44 @@ class DatatablesSprunje extends Sprunje
     protected $draw = 'draw';
     protected $destination = 'datatable';
 
+    /**
+     * $lookup 
+     * Array of fields that will be used to filter when lookup is initiated,
+     * so "lookup" will become a filterable field. 
+     * Useful when building Autolookup via Ajax from the frontend
+     *
+     * @var array
+     */
+    protected $lookup = [];
+
+    /**
+     * $lookup_return 
+     * Array of fields that will be returned in the Lookup Ajax call,
+     * Provide a mapping to the fields to be used to map the lookup return values
+     * needs to have the following {id,title,text,selection}
+     * Useful when building Autolookup via Ajax from the frontend
+     *
+     * @var array
+     */
+    protected $lookup_map = [
+        'id' => 'id', 'title' => 'not-set', 'text' => 'not-set', 'selection' => 'not-set'
+    ];
+
+
+    public function addFilterable($field)
+    {
+        if (!array_key_exists($field, (array) $this->filterable)) {
+            $this->filterable[] = $field;
+        }
+    }
+
+    public function addLookup($field)
+    {
+        if (!array_key_exists($field, (array) $this->lookup)) {
+            $this->lookup[] = $field;
+        }
+    }
+
     public function setDestination($value)
     {
         $this->destination = $value;
@@ -112,6 +150,23 @@ class DatatablesSprunje extends Sprunje
     {
         return $this->options['format'];
     }
+
+    /**
+     * Set any transformations you wish to apply to the collection, after the query is executed.
+     *
+     * @param \Illuminate\Database\Eloquent\Collection $collection
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    protected function applyTransformations($collection)
+    {
+        //Debug::debug("Line 164 in ApplyTransformations DatatableSprunje Destination" . $this->destination);
+        if ($this->destination == 'lookup') {
+            $collection = $this->transformLookup($collection);
+        }
+        return $collection;
+    }
+
 
     /**
      * Execute the query and build the results, and append them in the appropriate format to the response.
@@ -179,8 +234,9 @@ class DatatablesSprunje extends Sprunje
                 return $query;
             });
         }
-
+        Debug::debug("Line 238 getting models now");
         list($count, $countFiltered, $rows) = $this->getModels();
+        Debug::debug("Line 240 aftergetting models getting models now");
 
         // Return sprunjed results
         return [
@@ -358,6 +414,52 @@ class DatatablesSprunje extends Sprunje
             return $thiscount;
         } else {
             return $query->count();
+        }
+    }
+
+    // Add Lookup Methods - this will feed the Autolookup for Select2 in the frontend
+
+    protected function filterLookup($query, $value)
+    {
+        //Debug::debug("Line 423 in filterLookup with $value", $this->lookup);
+        // Split value on separator for OR queries
+        $values = explode($this->orSeparator, $value);
+        $lookup = $this->lookup;
+        $query->where(function ($query) use ($values, $lookup) {
+            foreach ($values as $value) {
+                foreach ($lookup as $lfield) {
+                    $query->orLike($lfield, $value);
+                }
+            }
+        });
+        return $this;
+    }
+
+    public function transformLookup($collection)
+    {
+        //Debug::debug("Line 438 in ApplyTransformations DatatableSprunje Destination" . $this->destination);
+
+        if ($this->destination == 'lookup') {
+            $lookup_map = $this->lookup_map;
+            //Debug::debug("Line 438 in ApplyTransformations DatatableSprunje Lookup Map ", $lookup_map);
+            $collection->transform(function ($item, $key) use ($lookup_map) {
+                $lookuprec = [];
+                foreach ($lookup_map as $lookup_field => $db_field) {
+                    $lookuprec[$lookup_field] = $item->$db_field;
+                }
+                return $lookuprec;
+            });
+            return $collection;
+            /* $collection->transform(function ($family, $key) {
+                $lookupfields = [
+                    'id', 'first_name', 'last_name', 'full_name', 'short_name', 'type',
+                    'email', 'mobile_phone'
+                ];
+                $filtered = $family->only($lookupfields);
+                $filtered['text'] = $family->short_name;
+                return $filtered;
+            });
+            */
         }
     }
 }
