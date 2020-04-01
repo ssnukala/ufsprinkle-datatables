@@ -1,6 +1,6 @@
 <!-- datatable div starts -->
 {#{% set help_position =  crud_params.rs_help.position | default('bottom') %}#}
-<div id="{{dtoptions.htmlid}}_content" class="dtable-content sn-datatable {{dtoptions.dtclass}}">
+<div id="{{dtoptions.htmlid}}_content" class="table-responsive dtable-content sn-datatable {{dtoptions.dtclass}}">
 {#}
     <div class="dt-helprow-top">
         {% if help_position == 'top' %}

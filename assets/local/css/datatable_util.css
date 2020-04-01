@@ -97,3 +97,21 @@ th.dt-helprow-top .cr-help {
 .dt-head-image {
     height: 40px;
 }
+
+@media (max-width: 425px) {
+
+    .dt-search,
+    .dt-snexpbtn,
+    .dt-pagelength {
+        padding: 0px;
+    }
+
+    .dt-buttons .dt-export-btn {
+        margin: 7px !important;
+    }
+
+    .dataTables_length {
+        margin: 7px !important;
+        float: left !important;
+    }
+}

@@ -3,11 +3,13 @@
 <div class="{{cruddt.divclass|default('col-md-12')}} crud-datatable {{cruddt.settings.name}}">
     <div class="box box-primary" id="widget-{{cruddt.settings.htmlid}}">
         <div class="box-header">
+        {% if (cruddt.settings.title is not empty) %}
             <h3 class="box-title">
                 {#<i class="fa fa-tasks fa-fw"></i> #}
                 <img class="dt-head-image img-circle" src="{{assets.url('assets://local/images/cm-aum-flower04.png')}}" alt="Datatable">
                 {#<span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>#}
                 {{translate(cruddt.settings.title)}}</h3>
+        {% endif %}
                 <div class='dt-utilactions pull-right'>
                     <a class='pull-left' href="#" onclick="reloadDatatable('{{ cruddt.settings.htmlid }}');">
                         {#<i aria-hidden="true" class="fa fa-sync"></i> #}

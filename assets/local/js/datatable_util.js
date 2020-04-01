@@ -66,40 +66,7 @@ function createDatatableOnPage(dtoptions) {
     };
 
     dtSettings = setDTCallbacks(dtSettings);
-    /*
-    if (dtoptions.initComplete !== undefined) {
-        var fncallback1 = window[dtoptions.initComplete];
-        if (typeof fncallback1 === "function") {
-            dtSettings['initComplete'] = function (settings, json) {
-                fncallback1(settings, json);
-            }
-        }
-    }
-    if (dtoptions.drawCallback !== undefined) {
-        var fncallback2 = window[dtoptions.drawCallback];
-        if (typeof fncallback2 === "function") {
-            dtSettings['drawCallback'] = function (settings) {
-                fncallback2(settings);
-            }
-        }
-    }
-    if (dtoptions.preDrawCallback !== undefined) {
-        var fncallback3 = window[dtoptions.preDrawCallback];
-        if (typeof fncallback3 === "function") {
-            dtSettings['preDrawCallback'] = function (settings) {
-                fncallback3(settings);
-            }
-        }
-    }
-    if (dtoptions.rowCallback !== undefined) {
-        var fncallback = window[dtoptions.rowCallback];
-        if (typeof fncallback === "function") {
-            dtSettings['rowCallback'] = function (row, data) {
-                fncallback(row, data);
-            }
-        }
-    }
-    */
+
     if (dtoptions["select"] != undefined && dtoptions["select"] != "") {
         dtoptions["select"] = {
             style: 'single'
@@ -289,6 +256,7 @@ function setDatatableExport(dtoptions, dtSettings) {
         dtSettings["buttons"] = [{
             extend: 'collection',
             text: 'Export',
+            className: 'dt-export-btn btn btn-xs',
             buttons: $dtbuttons
         }];
     }
@@ -313,26 +281,28 @@ function setDatatableDOM(dtoptions, dtSettings) {
         var alhtml = '';
         if (lkpoptions !== undefined) {
             dtSettings['auto_lookup'] = lkpoptions;
-            alhtml = "<'dt-autolookup-div col-md-" + lkpcols + "'>";
+            alhtml = "<'dt-autolookup-div col-md-" + lkpcols + " col-xs-" + lkpcols + "'>";
             searchcol = searchcol - lkpcols; // = 7
         }
         if (dtoptions.pagelength !== '-1') {
             if (dtSettings['dtExportCols'] !== false) {
                 searchcol = searchcol - 2; //to account for export buttons
-                schbtn_dom = alhtml + "<'col-md-" + searchcol + " search dt-search'f><'col-md-2 dt-snexpbtn'B>";
+                schbtn_dom = alhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 2) +
+                    " search dt-search'f><'col-md-2 col-xs-3 dt-snexpbtn'B>";
             } else {
-                schbtn_dom = alhtml + "<'col-md-" + searchcol + " search dt-search'f>";
+                schbtn_dom = alhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 2) +
+                    " search dt-search'f>";
             }
             var dtdom1 =
                 "<'dt-fulltable dtable-heading' " +
                 //"  <'dt-customlogo pull-left'><'dt-customtitle pull-right'>" +
                 "<'row dt-topbox cddatatable-topbox'" + schbtn_dom +
-                "<'col-md-2 text-right dt-pagelength'l>" +
-                ">r<'row dt-helpbox'<'col-md-12 dt-help-content'>>t";
+                "<'col-md-2 col-xs-3 text-right dt-pagelength'l>" +
+                ">r<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>t";
             //if (scroller === '') 
             {
-                dtSettings["dom"] = dtdom1 + "<'row dt-pager'<'col-md-3 dt-countinfo'i>" +
-                    "<'col-md-9 dt-pager text-right tablesorter-pager'p>" +
+                dtSettings["dom"] = dtdom1 + "<'row dt-pager'<'col-md-3 col-xs-3 dt-countinfo'i>" +
+                    "<'col-md-9 col-xs-9 dt-pager text-right tablesorter-pager'p>" +
                     ">>";
             }
             /* else {
@@ -341,8 +311,9 @@ function setDatatableDOM(dtoptions, dtSettings) {
         } else {
             dtSettings["dom"] =
                 "<'dt-fulltable dtable-heading'<'row dt-topbox cddatatable-topbox '" +
-                alhtml + "<'col-md-" + searchcol + " search dt-search'f><'col-md-2 dt-snexpbtn'B> >r" +
-                "<'row dt-helpbox'<'col-md-12 dt-help-content'>>t>S";
+                alhtml + "<'col-md-" + searchcol +
+                " search dt-search'f><'col-md-2 col-xs-2 dt-snexpbtn'B> >r" +
+                "<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>t>S";
         }
     }
     // S is for https://datatables.net/extensions/select/ : this plugin is not enabled yet
