@@ -281,7 +281,7 @@ function setDatatableDOM(dtoptions, dtSettings) {
         var alhtml = '';
         if (lkpoptions !== undefined) {
             dtSettings['auto_lookup'] = lkpoptions;
-            alhtml = "<'dt-autolookup-div col-md-" + lkpcols + " col-xs-" + lkpcols + "'>";
+            alhtml = "<'dt-autolookup-div col-md-" + lkpcols + " col-xs-12 " + "'>";
             searchcol = searchcol - lkpcols; // = 7
         }
         if (dtoptions.pagelength !== '-1') {
@@ -311,7 +311,7 @@ function setDatatableDOM(dtoptions, dtSettings) {
         } else {
             dtSettings["dom"] =
                 "<'dt-fulltable dtable-heading'<'row dt-topbox cddatatable-topbox '" +
-                alhtml + "<'col-md-" + searchcol +
+                alhtml + "<'col-md-" + searchcol + "col-xs-" + searchcol +
                 " search dt-search'f><'col-md-2 col-xs-2 dt-snexpbtn'B> >r" +
                 "<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>t>S";
         }
