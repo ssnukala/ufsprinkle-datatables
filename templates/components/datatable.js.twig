@@ -18,6 +18,21 @@
             }
 
             dtoptions['{{dtoptions.htmlid}}'] = thisdt;
+            /*            
+            {% if dtfilters is iterable %}
+                var thisdtfilter = {{ dtfilters |json_encode(constant('JSON_PRETTY_PRINT'))|raw }} ;
+            {% endif %}
+            if(thisdtfilter !== undefined){
+                jQuery.each(thisdtfilter.fields, function (key, filterfield) {
+                    if(filterfield.select2_options !== undefined){
+                        jQuery('#dtbodybox_{{dtoptions.htmlid}}').find('.dt-filters select').select2({
+                            data: filterfield.select2_options,
+                            minimumResultsForSearch: Infinity
+                        });
+                    }
+                });
+            }
+            */
         });
     {% endautoescape %}
 </script>

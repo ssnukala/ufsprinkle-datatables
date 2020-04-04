@@ -24,10 +24,11 @@
                     {% endif %}
                 </div>
         </div>
-        <div class="box-body">
+        <div class="box-body dt-datatable-body" id='{{cruddt.settings.htmlid}}_dtbox'>
             {% if cruddt.templates.newrow_template is not empty   %}
                 <!-- datatable crud newrow start -->
-                <div class='crud-newrow' id='crud-newrow_{{cruddt.settings.htmlid}}'>
+                <div class='crud-newrow' id='crud-newrow_{{cruddt.settings.htmlid}}' 
+                    data-dtname='{{cruddt.settings.name}}' data-dtid='{{cruddt.settings.htmlid}}'>
                     {% include cruddt.templates.newrow_template with {
                     'dtoptions' : cruddt.settings,
                     'crud_params': crud_params
@@ -42,10 +43,9 @@
 
             <!-- datatable filters start -->
             {% if (cruddt.filters is iterable and cruddt.filters|length > 0) %}
-            <div class='dt-filters'>
-                {# {{cruddt.options.filters|json_encode(JSON_PRETTY_PRINT)}} #}
-                {{dtfilter.generate(cruddt.settings.htmlid,cruddt.filters)}}
-            </div>
+                <div class='dt-filters' id='{{cruddt.settings.htmlid}}_dtfilter'>
+                    {{dtfilter.generate(cruddt.settings.htmlid,cruddt.filters)}}
+                </div>
             {% endif %}
             <!-- datatable filters end -->
             {% include 'components/datatable.html.twig' with {
@@ -54,7 +54,8 @@
             } %}
         </div>
     </div>
-    <div class='column-formatters' style='display:none;'>
+    <div class='column-formatters' style='display:none;'
+        data-dtname='{{cruddt.settings.name}}' data-dtid='{{cruddt.settings.htmlid}}'>
         {% for formatid, colformatter in cruddt.formatters %}
         <!-- including formatter for {{formatid}} -->
         {% if colformatter is iterable %}
@@ -68,6 +69,7 @@
                 'fmt_params':fmt_params,
                 'options':cruddt.settings,
                 'dtid' : cruddt.settings.htmlid,
+                'dtname' : cruddt.settings.name,
                 'crudformid' : cruddt.settings.crudformid,
                 'crudsuccessjs' : cruddt.settings.crud_success_js,
                 'crud_params': crud_params
@@ -75,11 +77,15 @@
         {% endfor %}
     </div>
     {% if cruddt.crud_forms is iterable %}
-        <div class='crud-forms' style='display:none;'>
+        <div class='crud-forms' style='display:none;'
+            data-dtname='{{cruddt.settings.name}}' data-dtid='{{cruddt.settings.htmlid}}' >
             {% for dtableid, crudformarr in cruddt.crud_forms %}
-                <div class='crud-form-group' id='crudfor_{{dtableid}}'>
+                <div class='crud-form-group' id='crudfor_{{dtableid}}'
+                    data-dtname='{{cruddt.settings.name}}' data-dtid='{{cruddt.settings.htmlid}}'>
                     {% for cftype, crudform in crudformarr %}
-                        <div class='crud-template-{{cftype}}' id='crudform_{{dtableid}}_{{cftype}}' {% if crudform.forfield|default('') != '' %} data-forfield="{{crudform.forfield}}" {% endif %}>
+                        <div class='crud-template-{{cftype}}' id='crudform_{{dtableid}}_{{cftype}}' 
+                            data-dtname='{{cruddt.settings.name}}' data-dtid='{{cruddt.settings.htmlid}}'
+                        {% if crudform.forfield|default('') != '' %} data-forfield="{{crudform.forfield}}" {% endif %}>
                             {% include "forms/crud-form.html.twig" with {form : crudform, 'crud_params' : crud_params} %}
                         </div>
                     {% endfor %}

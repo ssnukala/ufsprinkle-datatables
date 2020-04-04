@@ -3,7 +3,8 @@
 {% import "FormGenerator/macros/hidden.html.twig" as hidden %}
     <div class="datatable-filters datatable-crudrow" datatable-id='{{dtid}}'>
         {# <h3>{{translate(dtfilters.title|default("Select From List"))}}</h3> #}
-        <input type='hidden' class='filter-field' data-source='filter.url' name='filter_url' value='{{dtfilters.url}}'>
+        <input type='hidden' class='filter-field' data-source='filter.url' 
+            name='filter_url' value='{{dtfilters.url}}'>
         <div class="row">
             {% if (dtfilters.fields|length) == 5 %}
                 {% set divcol = 2 %}

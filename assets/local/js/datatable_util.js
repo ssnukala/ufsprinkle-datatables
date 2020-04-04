@@ -15,8 +15,6 @@ function createDatatableOnPage(dtoptions) {
     var datatableID = "#" + dtoptions.htmlid;
     var dtbase_url = dtoptions.ajax_url;
     var fe_filter = "";
-    //  var csrf_keyname = site.csrf.name;
-    //  var csrf_key = site.csrf.value;
     if (jQuery("#" + dtoptions.htmlid + "_filter").length) {
         fe_filter = "&fe_filter=" + fe_filter;
     }
@@ -28,7 +26,7 @@ function createDatatableOnPage(dtoptions) {
 
     var sPlaceholder;
     var pLength;
-    var ajaxSettings = getDatatableAjaxSettings(final_dturl, dtoptions);
+    var ajaxSettings = getDatatableAjaxSettings(final_dturl, dtoptions.htmlid);
 
     // autolookup variables initialized here 
     var schbtn_dom = '';
@@ -64,6 +62,12 @@ function createDatatableOnPage(dtoptions) {
         },
         customRenderCallback: dtoptions.customRenderCallback,
     };
+    dtSettings['dtcustom'] = {};
+    dtSettings['dtcustom']['ajax_url'] = final_dturl;
+    dtSettings['dtcustom']['customRenderCallback'] = dtoptions.customRenderCallback;
+    dtSettings['dtcustom']['name'] = dtoptions.name;
+    // this is a custom setting to send the ajax url that came from the backend
+    // this value will be used by the ajaxByFunction being set in the ajaxSettings variable above
 
     dtSettings = setDTCallbacks(dtSettings);
 
@@ -137,6 +141,13 @@ function createDatatableOnPage(dtoptions) {
     if (lkpoptions !== undefined) {
         addAutoLookupToDt(dtoptions.htmlid, lkpoptions);
     }
+    var filterpos = dtoptions.filter_placement;
+    if (filterpos !== undefined && filterpos.search_box !== undefined) {
+        moveCustomFilters(datatableID);
+    } else {
+        setDTFilterSelect2(datatableID);
+    }
+
     stylePageLength(datatableID);
     return oTable;
 }
@@ -146,12 +157,12 @@ jQuery.fn.DataTable.Api.register('buttons.exportData()', function (options) {
         var innerApi = new $.fn.dataTable.Api(this.context[0]);
         var settings = innerApi.settings()[0];
         var retdata = [];
-        if (settings.oInit.dtExportRows === false) {
+        if (settings.oInit.dtcustom.dtExportRows === false) {
             retdata = {
                 'header': [],
                 'body': []
             };
-        } else if (settings.oInit.dtExportRows === 'all') {
+        } else if (settings.oInit.dtcustom.dtExportRows === 'all') {
             //dtSettings['dtExportAll']
             var ajaxurl = innerApi.ajax.url();
             var ajaxdata = innerApi.ajax.params();
@@ -159,8 +170,8 @@ jQuery.fn.DataTable.Api.register('buttons.exportData()', function (options) {
         } else {
             var dtdata = innerApi.data();
             var expheader = [];
-            if (settings.oInit.dtExportCols !== '*') {
-                expheader = settings.oInit.dtExportCols;
+            if (settings.oInit.dtcustom.dtExportCols !== '*') {
+                expheader = settings.oInit.dtcustom.dtExportCols;
             } else {
                 jQuery.each(dtdata[0], function (hkey, hvalue) {
                     expheader.push(hkey);
@@ -210,17 +221,21 @@ function setValidCallback(callback, fname, dtSettings) {
 
 function setDatatableExport(dtoptions, dtSettings) {
     if (dtoptions["export_rows"] !== undefined) {
-        dtSettings['dtExportRows'] = dtoptions["export_rows"];
+        dtSettings['dtcustom']['dtExportRows'] = dtoptions["export_rows"];
+        //dtSettings['dtExportRows'] = dtoptions["export_rows"];
     } else {
-        dtSettings['dtExportRows'] = false;
+        dtSettings['dtcustom']['dtExportRows'] = false;
+        //dtSettings['dtExportRows'] = false;
     }
 
     if (dtoptions["export_cols"] !== undefined) {
-        dtSettings['dtExportCols'] = dtoptions["export_cols"];
+        dtSettings['dtcustom']['dtExportCols'] = dtoptions["export_cols"];
+        //dtSettings['dtExportCols'] = dtoptions["export_cols"];
     } else {
-        dtSettings['dtExportCols'] = false;
+        dtSettings['dtcustom']['dtExportCols'] = false;
+        //dtSettings['dtExportCols'] = false;
     }
-    if (dtSettings['dtExportCols'] !== false) {
+    if (dtSettings['dtcustom']['dtExportCols'] !== false) {
         button_dom = 'B'; //set this only if there is something to export
         $dtbuttons = [ //'copyHtml5',
             {
@@ -270,34 +285,56 @@ function setDatatableDOM(dtoptions, dtSettings) {
     var lkpcols = 3; //hardcoding this here
 
     if (dtoptions.single_row === 'Y') {
-        dtSettings['single_row'] = 'Y'; // carry this into the frontend settings
+        dtSettings['dtcustom']['single_row'] = 'Y';
+        //dtSettings['single_row'] = 'Y'; // carry this into the frontend settings
         // this is just a single row, so no need to show search and paging
         dtSettings["dom"] = "<'dt-fulltable dtable-heading' rt>";
     } else {
-        dtSettings['single_row'] = 'N'; // carry this into the frontend settings
+        dtSettings['dtcustom']['single_row'] = 'N';
+        //dtSettings['single_row'] = 'N'; // carry this into the frontend settings
 
         // Adding the auto lookup filter to the datatable
-        var searchcol = 10;
+        var searchcol = 11;
         var alhtml = '';
         if (lkpoptions !== undefined) {
-            dtSettings['auto_lookup'] = lkpoptions;
+            //dtSettings['auto_lookup'] = lkpoptions;
+            dtSettings['dtcustom']['auto_lookup'] = lkpoptions;
             alhtml = "<'dt-autolookup-div col-md-" + lkpcols + " col-xs-12 " + "'>";
             searchcol = searchcol - lkpcols; // = 7
         }
+        var filterhtml = '';
+        var filterpos = dtoptions.filter_placement;
+        //if (filterpos !== undefined && filterpos === 'search_box') {
+        if (filterpos !== undefined && filterpos.search_box !== undefined) {
+            //filterhtml = "<'dt-customfilter'>";
+            var filtercols = filterpos.search_box; //number of columns 
+            filterhtml = "<'dt-customfilter-div col-md-" + filtercols + " col-xs-" + filtercols + " '>";
+            searchcol = searchcol - filtercols; // = 7
+        }
+
         if (dtoptions.pagelength !== '-1') {
-            if (dtSettings['dtExportCols'] !== false) {
-                searchcol = searchcol - 2; //to account for export buttons
-                schbtn_dom = alhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 2) +
-                    " search dt-search'f><'col-md-2 col-xs-3 dt-snexpbtn'B>";
+            if (dtSettings['dtcustom']['dtExportCols'] !== false) {
+                searchcol = searchcol - 1; //to account for export buttons
+                schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 2) +
+                    " search dt-search'f><'col-md-1 col-xs-2 dt-snexpbtn'B>";
             } else {
-                schbtn_dom = alhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 2) +
+                schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 2) +
                     " search dt-search'f>";
             }
+
+            /*
+            schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 2) +
+                " search dt-search'f>";
+
+            */
+
+            //var hasexp = (dtSettings['dtcustom']['dtExportCols'] !== false) ? 'B' : '';
+            //    "<'col-md-2 col-xs-3 text-right dt-pagelength'" + hasexp + "l>" +
             var dtdom1 =
                 "<'dt-fulltable dtable-heading' " +
                 //"  <'dt-customlogo pull-left'><'dt-customtitle pull-right'>" +
                 "<'row dt-topbox cddatatable-topbox'" + schbtn_dom +
-                "<'col-md-2 col-xs-3 text-right dt-pagelength'l>" +
+                "<'col-md-1 col-xs-2 text-right dt-pagelength'l>" +
                 ">r<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>t";
             //if (scroller === '') 
             {
@@ -311,7 +348,7 @@ function setDatatableDOM(dtoptions, dtSettings) {
         } else {
             dtSettings["dom"] =
                 "<'dt-fulltable dtable-heading'<'row dt-topbox cddatatable-topbox '" +
-                alhtml + "<'col-md-" + searchcol + "col-xs-" + searchcol +
+                alhtml + "<'col-md-" + searchcol + " col-xs-" + searchcol +
                 " search dt-search'f><'col-md-2 col-xs-2 dt-snexpbtn'B> >r" +
                 "<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>t>S";
         }
@@ -396,9 +433,9 @@ $.fn.dataTable.render.format_column = function (column_name) {
             if (jQuery(colDiv).length) {
                 //      var colhtml = jQuery(colDiv).html();
                 var colhtml = colDiv.html();
-                var fncallback = window[meta.settings.oInit.customRenderCallback];
+                var fncallback = window[meta.settings.oInit.dtcustom.customRenderCallback];
                 if (typeof fncallback === "function") {
-                    console.log("Line 193 the custom render function is " + meta.settings.oInit.customRenderCallback);
+                    console.log("Line 193 the custom render function is " + meta.settings.oInit.dtcustom.customRenderCallback);
                     colhtml = fncallback(row, colhtml, meta);
                 }
                 //var colhtml = fillFieldTags(colhtml, row);
@@ -424,8 +461,37 @@ $.fn.dataTable.render.format_column = function (column_name) {
     };
 };
 
+function getDatatableAjaxSettings(final_dturl, dtid) {
+    var settings = {
+        "url": final_dturl,
+        "type": "POST",
+        "data": function (data) {
+            return extendAjaxPostData(data, dtid)
+        },
+        "error": function (jqXHR, textStatus, errorThrown) {
+            $('#' + dtid + '_processing ').hide();
+            showUFPageAlert(errorThrown);
+        }
+    };
+    return settings;
+}
 
-function getDatatableAjaxSettings(final_dturl, dtoptions) {
+function extendAjaxPostData(data, dtid) {
+    dtpostdata = {};
+    dtpostdata[site.csrf.keys.name] = site.csrf.name;
+    dtpostdata[site.csrf.keys.value] = site.csrf.value;
+    // Read values
+    // Srinivas Jan 2020 : Will add collecting any where criteria for data here to add to the Ajax Post 
+    // this is will be sent as Filters to the,
+    var filter_data = getDTFilterData(dtid);
+    if (filter_data !== false) {
+        dtpostdata.filters = filter_data;
+    }
+    // Need to return this as an object or the data does not go thru properly
+    return jQuery.extend({}, data, dtpostdata);
+}
+
+function DELETEgetDatatableAjaxSettings(final_dturl, dtoptions) {
     var settings = {
         "url": final_dturl,
         "type": "POST",
@@ -474,6 +540,50 @@ function moveHelpText(datatableID) {
         }
         helprow.remove();
     }
+}
+
+function moveCustomFilters(datatableID) {
+
+    /**
+     * TODO - need to figure out a cleaner way of doing this 
+     * 
+     */
+    var custfilter = jQuery(datatableID + '_dtfilter');
+    var filterhtml = '';
+    if (custfilter.length) {
+        //TODO - need to figure out a cleaner way of doing this
+        custfilter.find('select').each(function () {
+            if (jQuery(this).hasClass("select2-hidden-accessible")) {
+                jQuery(this).select2('destroy');
+            }
+        });
+        var filterhtml = custfilter.html();
+        if (filterhtml !== undefined && filterhtml !== '') {
+            var crudbox = custfilter.closest("div.crud-datatable");
+            var destbox = crudbox.find('.dt-customfilter-div');
+            if (destbox.length) {
+                destbox.html(filterhtml);
+                custfilter.remove();
+            }
+            //TODO - need to figure out a cleaner way of doing this
+            setDTFilterSelect2(datatableID);
+        }
+    }
+}
+
+function setDTFilterSelect2(datatableID) {
+    var crudbox = jQuery(datatableID).closest("div.crud-datatable");
+    // Enable Filter Selection Datatable Refresh now
+
+    crudbox.find("div.datatable-filters select").select2({
+        minimumResultsForSearch: Infinity,
+        placeholder: '--select--'
+    }).on('select2:select', function (e) {
+        var filterbox = jQuery(this).closest("div.datatable-filters");
+        var oTableid = filterbox.attr('datatable-id');
+        reloadDatatable(oTableid)
+    });
+
 }
 
 // this is not working well so not using it

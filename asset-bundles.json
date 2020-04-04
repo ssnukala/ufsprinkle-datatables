@@ -1,7 +1,9 @@
 {
     "bundle": {
         "js/dtutilities": {
-            "scripts": ["local/js/datatable_util.js"],
+            "scripts": [
+                "local/js/datatable_util.js"
+            ],
             "options": {
                 "result": {
                     "type": {
