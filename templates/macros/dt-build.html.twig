@@ -1,0 +1,90 @@
+{% macro columns(dtoptions) %}
+{% import _self as dtmacro %}
+    "columns": [
+    {% for dtcolumn in dtoptions.fields %}
+        {% if(dtcolumn.visible) %}
+            {{dtmacro.column(dtcolumn)}}
+        {% endif %}
+    {% endfor %}
+    ]
+{% endmacro %}
+
+{% macro column(column) %}
+    {
+    {% block common %}
+        "name": "{{ column.name }}", "title": "{{ translate(column.title)|raw }}",
+        {% if column.type is not empty %}
+            "type": "{{ column.type }}",
+        {% endif %}
+        {#    
+        {% if column.type =='datetime' %}
+                    "def":       function () { return new Date(); },
+                    "format":    'MM-DD-YYYY h:mm A',
+                    "fieldInfo": 'US style m-d-y date input with 12 hour clock',    
+        {% endif %}
+    #}
+        {% if column.default is not empty %}
+            "defaultContent": "{{ column.default }}",
+        {% endif %}
+        "orderable":{{(column.orderable|default(false))?'true':'false'}}, "searchable":{{(column.searchable|default(false))? 'true':'false'}}, "visible":{{(column.visible|default(false)) ? 'true':'false'}}, "className":"{{(column.visible|default(false)) ? '':'never '}}{{column.class }}",
+        {% if column.padding is not empty %}
+            "contentPadding": "{{ column.padding }}",
+        {% endif %}
+        {% if column.width is not empty %}
+            "width": "{{ column.width }}",
+        {% endif %}
+        "render": function(data){
+        return moment(data).format('MMMM Do YYYY');
+        }$.fn.dataTable.render.format_column("{{ column.name }}"),
+    {% endblock %}
+    {% block data %}
+        "data": "{{ column.data|default(column.name) }}"
+    {% endblock %}
+    },
+{% endmacro %}
+
+
+{% macro links(dtid,links) %}
+    {% set link_sep = '' %}
+    <div class='datatable-links'>
+    <strong>Links: </strong>
+        {% for link_url, link_name in links %}
+            {{link_sep}}
+            <a href="#" onclick="reloadDatatableNewURL('{{dtid}}', '{{link_url}}');">
+                {{link_name}}
+            </a>
+            {% set link_sep = ' | ' %}
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+{% macro custom_filter(dtid,dtfilters) %}
+{% import "forms/macros/select.html.twig" as select %}
+{% import "FormGenerator/macros/hidden.html.twig" as hidden %}
+    <div class="datatable-filters datatable-crudrow" datatable-id='{{dtid}}'>
+        {# <h3>{{translate(dtfilters.title|default("Select From List"))}}</h3> #}
+        <input type='hidden' class='filter-field' data-source='filter.url' 
+            name='filter_url' value='{{dtfilters.url}}'>
+        <div class="row">
+            {% if (dtfilters.fields|length) == 5 %}
+                {% set divcol = 2 %}
+            {% elseif (dtfilters.fields|length) > 6 %}
+                {% set divcol = 1 %}
+            {% else %}
+                {% set divcol = 12/(dtfilters.fields|length)%}
+            {% endif %}
+            {% for filterid, filterinput in dtfilters.fields %}
+                <div class="col-md-{{filterinput.div_cols|default(divcol)}}">
+                    <div class="form-group has-feedback input-base  input-base-{{filterinput.type}} filled formgen_field crud_input" style='width:100%;'>
+                        {% if filterinput.type == 'hidden' %}
+                            {{ hidden.generate(filterinput) }}
+                        {% else %}
+                            {{ select.generate(filterinput) }}
+                        {% endif %}
+                        <span class="input-base-placeholder">{{translate(filterinput.label)}}</span>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endmacro %}
