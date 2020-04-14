@@ -234,9 +234,9 @@ class DatatablesSprunje extends Sprunje
                 return $query;
             });
         }
-        Debug::debug("Line 238 getting models now");
+        //Debug::debug("Line 238 getting models now");
         list($count, $countFiltered, $rows) = $this->getModels();
-        Debug::debug("Line 240 aftergetting models getting models now");
+        //Debug::debug("Line 240 aftergetting models getting models now");
 
         // Return sprunjed results
         return [

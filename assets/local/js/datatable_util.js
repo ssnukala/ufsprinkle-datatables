@@ -26,7 +26,7 @@ function createDatatableOnPage(dtoptions) {
 
     var sPlaceholder;
     var pLength;
-    var ajaxSettings = getDatatableAjaxSettings(final_dturl, dtoptions.htmlid);
+    var ajaxSettings = getDatatableAjaxSettings(final_dturl, dtoptions.htmlid, dtoptions.filterDataCallback);
 
     // autolookup variables initialized here 
     var schbtn_dom = '';
@@ -62,7 +62,12 @@ function createDatatableOnPage(dtoptions) {
         },
         customRenderCallback: dtoptions.customRenderCallback,
     };
-    dtSettings['dtcustom'] = {};
+    if (dtoptions.dtcustom === undefined) {
+        dtSettings['dtcustom'] = {};
+    } else {
+        dtSettings['dtcustom'] = dtoptions.dtcustom;
+    }
+    //dtSettings['dtcustom'] = {};
     dtSettings['dtcustom']['ajax_url'] = final_dturl;
     dtSettings['dtcustom']['customRenderCallback'] = dtoptions.customRenderCallback;
     dtSettings['dtcustom']['name'] = dtoptions.name;
@@ -143,9 +148,9 @@ function createDatatableOnPage(dtoptions) {
     }
     var filterpos = dtoptions.filter_placement;
     if (filterpos !== undefined && filterpos.search_box !== undefined) {
-        moveCustomFilters(datatableID);
+        moveCustomFilters(dtoptions.htmlid);
     } else {
-        setDTFilterSelect2(datatableID);
+        setDTFilterSelect2(dtoptions.htmlid);
     }
 
     stylePageLength(datatableID);
@@ -461,15 +466,27 @@ $.fn.dataTable.render.format_column = function (column_name) {
     };
 };
 
-function getDatatableAjaxSettings(final_dturl, dtid) {
+/**
+ * getDatatableAjaxSettings - sets the ajax call settings for the datatable
+ * @param {*} dtURL - url for the ajax call
+ * @param {*} dtId - datatable id
+ * @param {*} filterDataCallback - optional callback function where the user can manipulate the ajax data
+ * before it is sent for ajax call
+ */
+
+function getDatatableAjaxSettings(dtURL, dtId, filterDataCallback) {
     var settings = {
-        "url": final_dturl,
+        "url": dtURL,
         "type": "POST",
         "data": function (data) {
-            return extendAjaxPostData(data, dtid)
+            var retdata = extendAjaxPostData(data, dtId);
+            if (typeof filterDataCallback === "function") {
+                retdata = filterDataCallback(dtId, retdata);
+            }
+            return retdata;
         },
         "error": function (jqXHR, textStatus, errorThrown) {
-            $('#' + dtid + '_processing ').hide();
+            $('#' + dtId + '_processing ').hide();
             showUFPageAlert(errorThrown);
         }
     };
@@ -491,37 +508,6 @@ function extendAjaxPostData(data, dtid) {
     return jQuery.extend({}, data, dtpostdata);
 }
 
-function DELETEgetDatatableAjaxSettings(final_dturl, dtoptions) {
-    var settings = {
-        "url": final_dturl,
-        "type": "POST",
-        "data": function (data) {
-            dtpostdata = {
-                request: "get_dtdata",
-                dtoptions: {
-                    id: dtoptions.htmlid,
-                    data_options: dtoptions.data_options
-                },
-            };
-            dtpostdata[site.csrf.keys.name] = site.csrf.name;
-            dtpostdata[site.csrf.keys.value] = site.csrf.value;
-            // Read values
-            // Srinivas Jan 2020 : Will add collecting any where criteria for data here to add to the Ajax Post 
-            // this is will be sent as Filters to the,
-            var filter_data = getDTFilterData(dtoptions.htmlid);
-            if (filter_data !== false) {
-                dtpostdata.filters = filter_data;
-            }
-            // Need to return this as an object or the data does not go thru properly
-            return jQuery.extend({}, data, dtpostdata);
-        },
-        "error": function (jqXHR, textStatus, errorThrown) {
-            $('#' + dtoptions.htmlid + '_processing ').hide();
-            showUFPageAlert(errorThrown);
-        }
-    };
-    return settings;
-}
 
 function moveHelpText(datatableID) {
     var dtcontent = jQuery(datatableID + '_content');
@@ -542,13 +528,13 @@ function moveHelpText(datatableID) {
     }
 }
 
-function moveCustomFilters(datatableID) {
-
+function moveCustomFilters(dthtmlid) {
     /**
      * TODO - need to figure out a cleaner way of doing this 
      * 
      */
-    var custfilter = jQuery(datatableID + '_dtfilter');
+    //var datatableID = ;
+    var custfilter = jQuery("#" + dthtmlid + '_dtfilter');
     var filterhtml = '';
     if (custfilter.length) {
         //TODO - need to figure out a cleaner way of doing this
@@ -566,22 +552,37 @@ function moveCustomFilters(datatableID) {
                 custfilter.remove();
             }
             //TODO - need to figure out a cleaner way of doing this
-            setDTFilterSelect2(datatableID);
+            setDTFilterSelect2(dthtmlid);
         }
     }
 }
 
-function setDTFilterSelect2(datatableID) {
-    var crudbox = jQuery(datatableID).closest("div.crud-datatable");
+function setDTFilterSelect2(dthtmlid) {
+    var crudbox = jQuery("#" + dthtmlid).closest("div.crud-datatable");
     // Enable Filter Selection Datatable Refresh now
 
     crudbox.find("div.datatable-filters select").select2({
         minimumResultsForSearch: Infinity,
         placeholder: '--select--'
     }).on('select2:select', function (e) {
-        var filterbox = jQuery(this).closest("div.datatable-filters");
-        var oTableid = filterbox.attr('datatable-id');
-        reloadDatatable(oTableid)
+        reloadDatatable(dthtmlid);
+
+        //var filterbox = jQuery(this).closest("div.datatable-filters");
+        //var oTableids1 = filterbox.attr('datatable-id');
+        var thiselem = jQuery(this);
+        var thisdata = thiselem.data();
+        var filterdata = {};
+        filterdata[thiselem.attr('name')] = thiselem.val();
+
+        //var oTableids1 = filterbox.attr('datatable-id');
+        if (thisdata.refresh_dts !== undefined) {
+            var oTableids = thisdata.refresh_dts.split(',');
+            jQuery.each(oTableids, function (key, oTableid) {
+                //console.log("Line 92 replacing this " + oTableid);
+                setDTFilterData(oTableid, filterdata)
+                reloadDatatable(oTableid)
+            });
+        }
     });
 
 }
@@ -629,6 +630,19 @@ function reloadDatatable(oTableid) {
         oTable.ajax.reload();
     }
     //oTable.fnReloadAjax();
+}
+
+function reloadDatatableNewId(oTableid, newId) {
+    //var oTable = jQuery("#" + oTableid).dataTable();
+    var oTable = jQuery("#" + oTableid).DataTable();
+    var dtURL = oTable.ajax.url();
+
+    if (newId !== undefined) {
+        //var newurl = RemoveLastDirectoryPartOf(oTable.ajax.url());
+        dtURL = oTable.oInit.dtcustom.ajax_url + '/' + newId;
+    }
+    oTable.ajax.url(dtURL).load();
+    //oTable.fnReloadAjax(dtURL, null, true);
 }
 
 function reloadDatatableNewURL(oTableid, dtURL, replaceId) {
@@ -755,6 +769,20 @@ function getDTFilterData(sTableId) {
     return filterdata;
 }
 
+function setDTFilterData(sTableId, data) {
+    var crudbox = jQuery("#" + sTableId).closest("div.crud-datatable");
+    var filterbox = crudbox.find("div.datatable-filters");
+    if (filterbox.length) {
+        var findpattern = "input:text, input:radio, select, input:hidden, textarea";
+        filterbox.find(findpattern).each(function () {
+            thisname = jQuery(this).attr('name');
+            if (data[thisname] !== undefined) {
+                jQuery(this).val(data[thisname]);
+            }
+        });
+    }
+}
+
 function toggleSelectOnRowClick(oTableid) {
     jQuery('#' + oTableid + ' tbody').on('click', 'tr', function () {
         if (jQuery(this).hasClass('selected')) {
@@ -799,57 +827,6 @@ function getSelectedDTRow(oTableid) {
     var thisdttr = jQuery('#' + oTableid + ' tr.selected');
     var row = oTable.row(thisdttr);
     return row;
-}
-
-
-/**
- * Delete
- */
-function genericPreDrawFilterURLDELETE(settings) {
-    var thisurl = settings.ajax.url;
-    var crudbox = jQuery("#" + settings.sTableId).closest("div.crud-datatable");
-    var parentdt = jQuery('#' + settings.sTableId).attr('parentdt');
-
-    var filterbox = crudbox.find("div.datatable-filters");
-    var filterdata = {};
-    var filtersource = {};
-    var returnval = true;
-
-    if (filterbox.length) {
-        var findpattern = "input:text, input:radio, select, input:hidden, textarea";
-        filterbox.find(findpattern).each(function () {
-            thisname = jQuery(this).attr('name');
-            thissource = jQuery(this).attr('data-source');
-            thisval = jQuery(this).val();
-            filterdata[thisname] = thisval;
-            filtersource[thissource] = thisval;
-        });
-        thisurl = filterdata.filter_url;
-        jQuery.each(filterdata, function (key, value) {
-            //      console.log("Line 231 the data is " + value)
-            thisurl = thisurl.replace(('/' + key), ('/' + value));
-        });
-
-        settings.ajax.url = thisurl;
-        console.log("Line 223 filter url is " + thisurl);
-        console.log(filterdata);
-
-        var newhtmlbox = crudbox.find('div.crud-newform, div.crud-template-new');
-        jQuery.each(filtersource, function (key, value) {
-            var findpattern = "[data-source^='" + key + "']";
-            newhtmlbox.find(findpattern).each(function () {
-                if (jQuery(this).is('input')) {
-                    jQuery(this).val(value);
-                } else if (jQuery(this).is('select')) {
-                    jQuery(this).val(value).prop('selected', true);
-                } else if (jQuery(this).is('textarea')) {
-                    jQuery(this).text(value);
-                }
-            });
-        });
-
-    }
-    return returnval;
 }
 
 function getDTRowData(thiselem) {

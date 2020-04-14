@@ -39,6 +39,7 @@ class DatatablesController extends SimpleController
     protected $sprunje_name = 'sprunjenotset';       // Name if the sprunje
     protected $sprunje = 'sprunjenotset';       // Sprunje to be used for data retrieval
     protected $protected = true; //if the user needs to be logged in
+    protected $permissions = []; // the permissions needed to access data, leave blank if open for all
     protected $schema = 'not_set';
     protected $default_options = [
         "htmlid" => "notsetbyuser",
@@ -96,6 +97,7 @@ class DatatablesController extends SimpleController
         }
     }
 
+    /*
     public function getProtected()
     {
         return $this->protected;
@@ -104,6 +106,20 @@ class DatatablesController extends SimpleController
     public function setProtected($protected)
     {
         $this->protected = $protected;
+    }
+    */
+
+    public function verifyPermission()
+    {
+        if (count($this->permissions) > 0) {
+            $authorizer = $this->ci->authorizer;
+            $currentUser = $this->ci->currentUser;
+            foreach ($this->permissions as $permission) {
+                if (!$authorizer->checkAccess($currentUser, $permission)) {
+                    throw new ForbiddenException();
+                }
+            }
+        }
     }
 
     public function getSprunjeName()
@@ -293,6 +309,19 @@ class DatatablesController extends SimpleController
     }
 
     /**
+     * extendSprunje function
+     * Will be overridden in the child classes to extend the sprunje query
+     *
+     * @param [type] $request
+     * @param [type] $response
+     * @param [type] $args
+     * @return void
+     */
+    public function confirmAccess($request, $response, $args)
+    {
+    }
+
+    /**
      * getList function
      * Returns the json array to populate the datatable, 
      * almost 100% of the time this will be overridden in the child class 
@@ -303,6 +332,7 @@ class DatatablesController extends SimpleController
      */
     public function getList($request, $response, $args)
     {
+        $this->verifyPermission();
         $this->setSprunje($request, $response, $args);
         // Extend query if needed in the child class
         $this->extendSprunje($request, $response, $args);

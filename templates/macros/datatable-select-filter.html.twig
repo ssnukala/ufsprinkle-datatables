@@ -15,14 +15,14 @@
             {% endif %}
             {% for filterid, filterinput in dtfilters.fields %}
                 <div class="col-md-{{filterinput.div_cols|default(divcol)}}">
-                    <div class="form-group has-feedback input-base  input-base-{{filterinput.type}} filled formgen_field crud_input" style='width:100%;'>
-                        {% if filterinput.type == 'hidden' %}
-                            {{ hidden.generate(filterinput) }}
-                        {% else %}
+                    {% if filterinput.type == 'hidden' %}
+                        {{ hidden.generate(filterinput) }}
+                    {% else %}
+                        <div class="form-group has-feedback input-base  input-base-{{filterinput.type}} filled formgen_field crud_input" style='width:100%;'>
                             {{ select.generate(filterinput) }}
-                        {% endif %}
-                        <span class="input-base-placeholder">{{translate(filterinput.label)}}</span>
-                    </div>
+                            <span class="input-base-placeholder">{{translate(filterinput.label)}}</span>
+                        </div>
+                    {% endif %}
                 </div>
             {% endfor %}
         </div>

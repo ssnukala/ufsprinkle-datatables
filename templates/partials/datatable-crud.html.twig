@@ -8,7 +8,7 @@
                 {#<i class="fa fa-tasks fa-fw"></i> #}
                 <img class="dt-head-image img-circle" src="{{assets.url('assets://local/images/cm-aum-flower04.png')}}" alt="Datatable">
                 {#<span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>#}
-                {{translate(cruddt.settings.title)}}</h3>
+                {{translate(cruddt.settings.title|default('CRUD_DATATABLE'))}}</h3>
         {% endif %}
                 <div class='dt-utilactions pull-right'>
                     <a class='pull-left' href="#" onclick="reloadDatatable('{{ cruddt.settings.htmlid }}');">
@@ -24,6 +24,7 @@
                     {% endif %}
                 </div>
         </div>
+
         <div class="box-body dt-datatable-body" id='{{cruddt.settings.htmlid}}_dtbox'>
             {% if cruddt.templates.newrow_template is not empty   %}
                 <!-- datatable crud newrow start -->
@@ -40,7 +41,6 @@
             {% if (cruddt.links is iterable and cruddt.links|length > 0) %}
                 {{dtlinks.generate(cruddt.settings.htmlid,cruddt.links)}}
             {% endif %}
-
             <!-- datatable filters start -->
             {% if (cruddt.filters is iterable and cruddt.filters|length > 0) %}
                 <div class='dt-filters' id='{{cruddt.settings.htmlid}}_dtfilter'>

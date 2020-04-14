@@ -9,9 +9,10 @@
 
 namespace UserFrosting\Sprinkle\Datatables\Twig;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use UserFrosting\Support\Repository\Repository as Config;
 use UserFrosting\Sprinkle\Datatables\Controller\DatatablesController as DatatablesController;
+use UserFrosting\Sprinkle\Core\Facades\Debug;
 
 /**
  * Extends Twig functionality for the Datatable sprinkle.
@@ -74,6 +75,11 @@ class DatatablesExtension extends \Twig_Extension implements \Twig_Extension_Glo
             new \Twig_SimpleFunction('randomStr', function ($size = 7) {
                 $suggestion = $this->randomString($size);
                 return $suggestion;
+            }),
+            new \Twig_SimpleFunction('logError', function ($text) {
+                Debug::debug("TWIG Mesg: $text");
+                //return true;
+                //return $suggestion;
             })
         );
     }
