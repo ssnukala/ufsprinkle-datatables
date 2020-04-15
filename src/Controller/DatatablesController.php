@@ -111,15 +111,22 @@ class DatatablesController extends SimpleController
 
     public function verifyPermission()
     {
+        // ToDO : Srinivas : 4/14 : need to think thru this and set the appropriate permissions
+        // will comment this for now. 
+        // Can also handle this based on query also 
+        // The datatable query will restrict what the user can see based on role
+        /*
         if (count($this->permissions) > 0) {
             $authorizer = $this->ci->authorizer;
             $currentUser = $this->ci->currentUser;
             foreach ($this->permissions as $permission) {
                 if (!$authorizer->checkAccess($currentUser, $permission)) {
+                    Debug::debug("Line 119 throwing forbidden exception for - $permission");
                     throw new ForbiddenException();
                 }
             }
         }
+        */
     }
 
     public function getSprunjeName()
