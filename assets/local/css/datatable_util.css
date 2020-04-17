@@ -123,3 +123,17 @@ th.dt-helprow-top .cr-help {
         float: left !important;
     }
 }
+
+.dt-pager-row {
+    font-size: small;
+}
+
+.dataTables_paginate .pagination>li>a {
+    background: #fafafa;
+    color: #666;
+    padding: 3px 5px !important;
+}
+
+.dt-pager-countinfo {
+    float: left;
+}

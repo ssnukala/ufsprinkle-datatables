@@ -343,8 +343,8 @@ function setDatatableDOM(dtoptions, dtSettings) {
                 ">r<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>t";
             //if (scroller === '') 
             {
-                dtSettings["dom"] = dtdom1 + "<'row dt-pager-row'<'col-md-3 col-xs-12 hidden-xs1 dt-pager-countinfo'i>" +
-                    "<'col-md-9 col-xs-12 dt-pager-pages text-right tablesorter-pager'p>" +
+                dtSettings["dom"] = dtdom1 + "<'dt-pager-row'" +
+                    "<'dt-pager-pages text-right tablesorter-pager'p><'dt-pager-countinfo'i>" +
                     ">>";
             }
             /* else {
