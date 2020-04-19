@@ -5,24 +5,25 @@
 {% set qe = dtoptions.quick_edit %}
     <div class="dt-quickedit pull-right" id="{{dtoptions.htmlid}}_quickedit_div" >
         {% set qeprefix = qe.prefix|default('quick_edit') %}
-        <form method='post' class="dt-quickedit-form rs-editform form-inline crud-fieldform"
+        <form method='post' class="dt-quickedit-form rs-editform form-inline"
             id="{{dtoptions.htmlid}}_qeform" action='{{qe.url}}' style='display:none;'
             onSubmit='onQuickEditSubmit(this,"{{qeprefix}}");'>
             {% include "forms/csrf.html.twig" %}
-            <div class='editfield'>
+            <div class='dt-quickedit-mesg pull-left'>
+                <strong>{{ translate('DATATABLE.QUICK_EDIT_MESSAGE') }}</strong>
             </div>
-            <div class="form-group rs-editform-btn">
+            <div class="form-group pull-right rs-editform-btn">
                 <button type="submit" class="btn btn-sm rs-editform-ok btn-success">
-                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"> </span> Save
                 </button>
                 <button type="reset" class="btn btn-sm rs-editform-cancel btn-warning"
                     onClick='genericQuickEditCancel(this);return false;'>
-                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"> </span> Cancel
                 </button>
             </div>
         </form>
 
-        <label class='dt-quickedit-check' for="{{dtoptions.htmlid}}_quickedit">Quick Edit
+        <label class='dt-quickedit-check pull-right' for="{{dtoptions.htmlid}}_quickedit">Quick Edit
             <input type="checkbox" class="dt-quickedit-check" name="dt_quickedit" value=""
             id="{{dtoptions.htmlid}}_quickedit_check" 
             onClick="{{qe.onClick|default('genericDTQuickEdit')}}(this, '{{qe.prefix}}')">

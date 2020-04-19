@@ -55,9 +55,16 @@ function genericDTQuickEdit(thiselem, prefix) {
                 var thisdata = fielddata[rowid];
                 //var thishtml = colhtml.replace('{row.id}', thisdata.id);
                 var thishtml = replaceTokensInHTML(colhtml, [thisdata], 'row.', '');
-                jQuery(fieldcoljq).html(thishtml);
+                var qeblock = jQuery(fieldcoljq).find('.dt-quickedit-block');
+                if (qeblock.length) {
+                    qeblock.html(thishtml);
+                } else {
+                    jQuery(fieldcoljq).html(thishtml);
+                }
                 jQuery(fieldcoljq).find('select').each(function () {
-                    jQuery(this).val(thisdata[thisfld]);
+                    var datafld = jQuery(this).attr('data-source').replace(prefix + '.', '').replace('.', '_').trim();
+                    var tfldval = (thisdata[datafld] === 'null' || thisdata[datafld] === undefined) ? '' : thisdata[datafld];
+                    jQuery(this).val(tfldval);
                     jQuery(this).select2({
                         minimumResultsForSearch: Infinity,
                         placeholder: '--select--'

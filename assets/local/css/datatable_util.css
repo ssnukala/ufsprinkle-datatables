@@ -140,8 +140,21 @@ th.dt-helprow-top .cr-help {
     background: orange !important;
 }
 
-th.dt-column {
-    background-image: none;
+th.dt_column {
+    background-image: none !important;
+    padding: 10px 5px !important;
+    text-align: center;
+}
+
+.dt-quickedit {
+    /*border: 1px solid #d2d6de; 
+    padding: 5px;*/
+    width: 100%;
+}
+
+.dt-quickedit-control {
+    background: white !important;
+    color: black;
 }
 
 /*
