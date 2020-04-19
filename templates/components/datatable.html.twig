@@ -1,7 +1,34 @@
 <!-- datatable div starts -->
 {#{% set help_position =  crud_params.rs_help.position | default('bottom') %}#}
 <div id="{{dtoptions.htmlid}}_content" class="table-responsive dtable-content sn-datatable {{dtoptions.dtclass}}">
+{% if dtoptions.quick_edit is iterable %}
+{% set qe = dtoptions.quick_edit %}
+    <div class="dt-quickedit pull-right" id="{{dtoptions.htmlid}}_quickedit_div" >
+        {% set qeprefix = qe.prefix|default('quick_edit') %}
+        <form method='post' class="dt-quickedit-form rs-editform form-inline crud-fieldform"
+            id="{{dtoptions.htmlid}}_qeform" action='{{qe.url}}' style='display:none;'
+            onSubmit='onQuickEditSubmit(this,"{{qeprefix}}");'>
+            {% include "forms/csrf.html.twig" %}
+            <div class='editfield'>
+            </div>
+            <div class="form-group rs-editform-btn">
+                <button type="submit" class="btn btn-sm rs-editform-ok btn-success">
+                    <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                </button>
+                <button type="reset" class="btn btn-sm rs-editform-cancel btn-warning"
+                    onClick='genericQuickEditCancel(this);return false;'>
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+            </div>
+        </form>
 
+        <label class='dt-quickedit-check' for="{{dtoptions.htmlid}}_quickedit">Quick Edit
+            <input type="checkbox" class="dt-quickedit-check" name="dt_quickedit" value=""
+            id="{{dtoptions.htmlid}}_quickedit_check" 
+            onClick="{{qe.onClick|default('genericDTQuickEdit')}}(this, '{{qe.prefix}}')">
+        </label>
+    </div>
+{% endif %}
     <table cellpadding="0" cellspacing="0" style="width:100%!important;" 
         class="table table-striped table-bordered dataTable srinivas {{dtoptions.tableclass}}" 
         border="0" id="{{dtoptions.htmlid}}" data-url="/datatable/testurl" data-name='{{dtoptions.name}}'

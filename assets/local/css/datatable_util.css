@@ -129,11 +129,28 @@ th.dt-helprow-top .cr-help {
 }
 
 .dataTables_paginate .pagination>li>a {
-    background: #fafafa;
-    color: #666;
     padding: 3px 5px !important;
 }
 
 .dt-pager-countinfo {
     float: left;
 }
+
+.dt-editing tr {
+    background: orange !important;
+}
+
+th.dt-column {
+    background-image: none;
+}
+
+/*
+.cddatatable-topbox .dt-search {
+    padding: 0px;
+}
+
+.cddatatable-topbox .dt-pagelength,
+.cddatatable-topbox .dt-snexpbtn {
+    padding: 0px;
+}
+*/

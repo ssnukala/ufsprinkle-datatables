@@ -2,7 +2,8 @@
     "bundle": {
         "js/dtutilities": {
             "scripts": [
-                "local/js/datatable_util.js"
+                "local/js/datatable_util.js",
+                "local/js/datatable_quickedit.js"
             ],
             "options": {
                 "result": {

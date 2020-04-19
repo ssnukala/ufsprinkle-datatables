@@ -52,6 +52,7 @@ class DatatablesController extends SimpleController
         "single_row" => "N",
         "export_cols" => false,
         "export_rows" => 'display',
+        'rowId' => 'id'
         //,"initial_sort" => [[0, 'asc']] // make first column is always ID even if is hidden?
     ];
 
