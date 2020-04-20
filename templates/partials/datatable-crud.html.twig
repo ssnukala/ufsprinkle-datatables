@@ -26,6 +26,16 @@
         </div>
 
         <div class="box-body dt-datatable-body" id='{{cruddt.settings.htmlid}}_dtbox'>
+            {% if (cruddt.links is iterable and cruddt.links|length > 0) %}
+                {{dtlinks.generate(cruddt.settings.htmlid,cruddt.links)}}
+            {% endif %}
+            <!-- datatable filters start -->
+            {% if (cruddt.filters is iterable and cruddt.filters|length > 0) %}
+                <div class='dt-filters' id='{{cruddt.settings.htmlid}}_dtfilter'>
+                    {{dtfilter.generate(cruddt.settings.htmlid,cruddt.filters)}}
+                </div>
+            {% endif %}
+            <!-- datatable filters end -->
             {% if cruddt.templates.newrow_template is not empty   %}
                 <!-- datatable crud newrow start -->
                 <div class='crud-newrow' id='crud-newrow_{{cruddt.settings.htmlid}}' 
@@ -38,16 +48,6 @@
                 <!-- datatable crud newrow end -->
             {% endif %}
 
-            {% if (cruddt.links is iterable and cruddt.links|length > 0) %}
-                {{dtlinks.generate(cruddt.settings.htmlid,cruddt.links)}}
-            {% endif %}
-            <!-- datatable filters start -->
-            {% if (cruddt.filters is iterable and cruddt.filters|length > 0) %}
-                <div class='dt-filters' id='{{cruddt.settings.htmlid}}_dtfilter'>
-                    {{dtfilter.generate(cruddt.settings.htmlid,cruddt.filters)}}
-                </div>
-            {% endif %}
-            <!-- datatable filters end -->
             {% include 'components/datatable.html.twig' with {
                     'dtoptions' : cruddt.settings,
                     'crud_params': crud_params

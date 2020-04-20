@@ -741,9 +741,9 @@ function genericCreatedRow(row, data, dataIndex) {
 function getDTFilterData(sTableId) {
     var crudbox = jQuery("#" + sTableId).closest("div.crud-datatable");
     var filterbox = crudbox.find("div.datatable-filters");
+    // Srinivas : This HAS TO BE AN OBJECT :-)
     var filterdata = {};
     //var filtersource = {};
-    var returnval = {};
     var thisurl = '';
     if (filterbox.length) {
         var findpattern = "input:text, input:radio, select, input:hidden, textarea";

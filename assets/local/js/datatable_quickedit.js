@@ -98,14 +98,30 @@ function onQuickEditSubmit(thisform, prefix) {
     var thistable = jQuery(cruddtdiv).find("table.dataTable");
     var findpattern = "input:text, input:radio, select, input:hidden, textarea";
     var thisjq = jQuery(thisform);
+    var ids = '';
+    var delim = '';
     thistable.find('.dt-quickedit-field ' + findpattern).each(function () {
         var newelem = jQuery('<input>', {
             type: 'hidden',
             name: jQuery(this).attr('name'),
             value: jQuery(this).val()
         });
+        /*
+        if ((this).attr('data-source') === prefix + '.id') {
+            ids = ids + delim + jQuery(this).val();
+            delim = ',';
+        }
+        */
         thisjq.append(newelem);
     });
+    /*
+    var idelem = jQuery('<input>', {
+        type: 'hidden',
+        name: jQuery(this).attr('ids'),
+        value: jQuery(this).val()
+    });
+    */
+
 }
 
 function genericQuickEditCancel(cancelbutton) {
