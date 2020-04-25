@@ -140,7 +140,9 @@ function createDatatableOnPage(dtoptions) {
     }
 
     if (dtoptions.rowGroup !== undefined) {
-        jQuery(datatableID).removeClass('table-striped');
+        if (dtoptions.rowGroup.table_striped === 'N') {
+            jQuery(datatableID).removeClass('table-striped');
+        }
     }
 
     oTable = jQuery(datatableID).dataTable(dtSettings);
@@ -602,7 +604,10 @@ function stylePageLength(datatableID) {
         dtlength.append('<span class="input-base-placeholder">Show</span>');
         dtlength.find('select').select2({
             minimumResultsForSearch: Infinity
+        }).on('select2:select', function (e) {
+            jQuery(datatableID).DataTable().page.len(jQuery(this).val()).draw();
         });
+
         //dataTables_length form-group has-feedback input-base  input-base-select filled formgen_field crud_input
         // "form-group has-feedback input-base  input-base-select filled formgen_field crud_input"
     }
