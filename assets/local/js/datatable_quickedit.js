@@ -3,7 +3,7 @@ function setupQuickEdit(dtoptions) {
         //moveQuickEditCheckbox(dtoptions.htmlid);
         jQuery('#' + dtoptions.htmlid + '_qeform').ufForm({
             validator: {},
-            msgTarget: $("#alerts-page"),
+            msgTarget: $("#cr-crudpage-alerts"),
             showAlertOnSuccess: true,
             binaryCheckboxes: false
         }).on("submitSuccess.ufForm", function (event, data, textStatus, jqXHR) {

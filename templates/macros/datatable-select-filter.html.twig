@@ -5,6 +5,7 @@
         {# <h3>{{translate(dtfilters.title|default("Select From List"))}}</h3> #}
         <input type='hidden' class='filter-field' data-source='filter.url' 
             name='filter_url' value='{{dtfilters.url}}'>
+            {#{{dtfilters.fields | json_encode(constant('JSON_PRETTY_PRINT')) | raw}}#}
         <div class="row">
             {% if (dtfilters.fields|length) == 5 %}
                 {% set divcol = 2 %}
