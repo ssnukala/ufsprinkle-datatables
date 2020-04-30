@@ -10,12 +10,10 @@
 return [
     'timezone' => 'America/Chicago',
     'site' => [
-        'title' => 'Chinmaya',
-        'author' => 'Registration Sevak'
-    ]
-    ,
+        'title' => 'Datatables Sprinkle for UserFrosting',
+        'author' => 'Srinivas Nukala'
+    ],
     'debug' => [
         'queries' => false
     ]
-        ]
-;
+];
