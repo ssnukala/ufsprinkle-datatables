@@ -239,11 +239,12 @@ class DatatablesSprunje extends Sprunje
         //Debug::debug("Line 240 aftergetting models getting models now");
 
         // Return sprunjed results
+        $rowkeys = count($rows) > 0 ? $rows->values()->toArray() : [];
         return [
             $this->draw => $this->options['draw'],
             $this->countKey => $count,
             $this->countFilteredKey => $countFiltered,
-            $this->rowsKey => $rows->values()->toArray(),
+            $this->rowsKey => $rowkeys,
             $this->listableKey => $this->getListable()
         ];
     }

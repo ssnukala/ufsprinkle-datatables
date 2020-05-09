@@ -11,15 +11,17 @@ namespace UserFrosting\Sprinkle\Datatables\Twig;
 
 use Psr\Container\ContainerInterface;
 use UserFrosting\Support\Repository\Repository as Config;
-use UserFrosting\Sprinkle\Datatables\Controller\DatatablesController as DatatablesController;
+use UserFrosting\Sprinkle\Datatables\Controller\DatatablesController;
 use UserFrosting\Sprinkle\Core\Facades\Debug;
+use Twig\Extension\AbstractExtension;
+use Twig\Extension\GlobalsInterface;
 
 /**
  * Extends Twig functionality for the Datatable sprinkle.
  *
  * @author Srinivas Nukala
  */
-class DatatablesExtension extends \Twig_Extension implements \Twig_Extension_GlobalsInterface
+class DatatablesExtension  extends AbstractExtension implements GlobalsInterface
 {
     /**
      * @var ContainerInterface

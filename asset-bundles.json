@@ -1,9 +1,9 @@
 {
     "bundle": {
-        "js/dtutilities": {
+        "js/dt/util": {
             "scripts": [
-                "local/js/datatable_util.js",
-                "local/js/datatable_quickedit.js"
+                "dt/js/datatable_util.js",
+                "dt/js/datatable_quickedit.js"
             ],
             "options": {
                 "result": {
@@ -13,7 +13,7 @@
                 }
             }
         },
-        "js/datatables": {
+        "js/dt/vendor": {
             "scripts": [
                 "vendor/datatables.net/js/jquery.dataTables.min.js",
                 "vendor/datatables.net-bs/js/dataTables.bootstrap.min.js",
@@ -36,7 +36,7 @@
                 }
             }
         },
-        "js/dtbuttons": {
+        "js/dt/buttons": {
             "scripts": [
                 "vendor/datatables.net-buttons/js/buttons.flash.min.js",
                 "vendor/jszip/dist/jszip.min.js",
@@ -51,12 +51,12 @@
                 }
             }
         },
-        "css/datatables": {
+        "css/dt/styles": {
             "styles": [
                 "vendor/datatables.net-bs/css/dataTables.bootstrap.min.css",
                 "vendor/datatables.net-dt/css/jquery.dataTables.min.css",
                 "vendor/datatables.net-buttons-dt/css/buttons.dataTables.min.css",
-                "local/css/datatable_util.css"
+                "dt/css/datatable_util.css"
             ],
             "options": {
                 "result": {
