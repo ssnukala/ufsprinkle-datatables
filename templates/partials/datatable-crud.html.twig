@@ -2,13 +2,28 @@
 {% import "macros/datatable-links.html.twig" as dtlinks %}
 <div class="{{cruddt.divclass|default('col-md-12')}} crud-datatable {{cruddt.settings.name}}">
     <div class="box box-primary" id="widget-{{cruddt.settings.htmlid}}">
+        {% if cruddt.templates.pulldown_header is not empty   %}
+                <div class='dt-pulldown-header text-center' data-dtid='{{cruddt.settings.htmlid}}'>
+                    {% include cruddt.templates.pulldown_header with {
+                    'dtoptions' : cruddt.settings,
+                    'crud_params': crud_params
+                    } %}
+                </div>
+            <div class=''>
+            </div>
+        {% endif %}
         <div class="box-header">
         {% if (cruddt.settings.title is not empty) %}
             <h3 class="box-title">
                 {#<i class="fa fa-tasks fa-fw"></i> #}
                 <img class="dt-head-image img-circle" src="{{assets.url('assets://dt/images/cm-aum-flower04.png')}}" alt="Datatable">
                 {#<span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>#}
-                {{translate(cruddt.settings.title|default('CRUD_DATATABLE'))}}</h3>
+                {% if cruddt.settings.title is not empty %}
+                    {{translate(cruddt.settings.title|default('CRUD_DATATABLE'))}}
+                {% else %}
+                    CRUD Datatable
+                {% endif %}
+                </h3>
         {% endif %}
                 <div class='dt-utilactions pull-right'>
                     <a class='pull-left' href="#" onclick="reloadDatatable('{{ cruddt.settings.htmlid }}');">

@@ -330,6 +330,29 @@ class DatatablesController extends SimpleController
     }
 
     /**
+     * addStatusFilter function
+     * Child will use this to set filters
+     *
+     * @param [array] $dtprop
+     * @return array
+     */
+    public function addFilter($dtprop, $options)
+    {
+        if (!is_array($options)) {
+            $options = $dtprop['fields'][$options]['options'];
+        }
+        $filter2['options'] = $options['options'];
+        $filter2['type'] = 'select';
+        $filter2['id'] = 'sflt_' . $dtprop['htmlid'];
+        $filter2['label'] = $options['label'];
+        $filter2['name'] = $options['name'];
+        $filter2['value'] = $options['value'];
+        $filter2['data-source'] = $options['source'];
+        $filter2['class'] = "form-control js-select2 input-sm";
+        $dtprop['filters']['fields'][] = $filter2;
+        return $dtprop;
+    }
+    /**
      * getList function
      * Returns the json array to populate the datatable, 
      * almost 100% of the time this will be overridden in the child class 
