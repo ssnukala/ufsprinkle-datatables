@@ -157,6 +157,13 @@ th.dt_column {
     color: black;
 }
 
+.dt-pulldown-header {
+    position: absolute;
+    /*z-index: 900; */
+    left: 0;
+    right: 0;
+}
+
 /*
 .cddatatable-topbox .dt-search {
     padding: 0px;

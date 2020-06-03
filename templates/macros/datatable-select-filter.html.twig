@@ -6,22 +6,35 @@
         <input type='hidden' class='filter-field' data-source='filter.url' 
             name='filter_url' value='{{dtfilters.url}}'>
             {#{{dtfilters.fields | json_encode(constant('JSON_PRETTY_PRINT')) | raw}}#}
+        {% if  dtfilters.fields.hidden is iterable %}
+            {% for filterid, filterinput in dtfilters.fields.hidden %}
+                {{ hidden.generate(filterinput) }}
+            {% endfor %}
+        {% endif %}
         <div class="row">
-            {% if (dtfilters.fields|length) == 5 %}
+        {% if  dtfilters.fields.select is iterable %}
+            {% set selectfilters = dtfilters.fields.select %}
+            {% set totalfilters = dtfilters.fields.select | length %}
+        {% else %}
+            {% set selectfilters = dtfilters.fields %}
+            {% set totalfilters = dtfilters.fields | length %}
+        {% endif %}
+
+            {% if totalfilters == 5 %}
                 {% set divcol = 2 %}
-            {% elseif (dtfilters.fields|length) > 6 %}
+            {% elseif totalfilters > 6 %}
                 {% set divcol = 1 %}
             {% else %}
-                {% set divcol = 12/(dtfilters.fields|length)%}
+                {% set divcol = 12/totalfilters %}
             {% endif %}
-            {% for filterid, filterinput in dtfilters.fields %}
+            {% for filterid, filterinput in selectfilters %}
                 <div class="col-md-{{filterinput.div_cols|default(divcol)}}">
                     {% if filterinput.type == 'hidden' %}
                         {{ hidden.generate(filterinput) }}
                     {% else %}
                         <div class="form-group has-feedback input-base  input-base-{{filterinput.type}} filled formgen_field crud_input" style='width:100%;'>
                             {{ select.generate(filterinput) }}
-                            <span class="input-base-placeholder">{{translate(filterinput.label)}}</span>
+                            <span class="input-base-placeholder">{{translate(filterinput.label|default('Filter'))}}</span>
                         </div>
                     {% endif %}
                 </div>

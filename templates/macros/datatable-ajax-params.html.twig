@@ -1,0 +1,7 @@
+{% macro generate(dtid,ajaxparams) %}
+    {% if  ajaxparams is iterable %}
+        {% for fieldid, ajaxfield in ajaxparams %}
+            <input{% for type,value in ajaxfield %} {{type}}="{{value}}"{% endfor %}></input>
+        {% endfor %}
+    {% endif %}
+{% endmacro %}

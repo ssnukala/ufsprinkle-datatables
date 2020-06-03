@@ -60,6 +60,18 @@ function createDatatableOnPage(dtoptions) {
                 fncallback(row, data, index);
             }
         },
+        drawCallback: function (settings) {
+            var thisapi = this.api();
+            var listable = thisapi.ajax.json().listable;
+            if (listable !== undefined) {
+                setListableFilter(settings.sTableId, listable);
+            }
+            //console.log("Line 72 this data is ");
+            var fncallback = window[dtoptions.drawCallback];
+            if (typeof fncallback === "function") {
+                fncallback(settings);
+            }
+        },
         customRenderCallback: dtoptions.customRenderCallback,
     };
     if (dtoptions.dtcustom === undefined) {
@@ -206,9 +218,31 @@ jQuery.fn.DataTable.Api.register('buttons.exportData()', function (options) {
     }
 });
 
+function setListableFilter(dthtmlid, listable) {
+    var custfilter = jQuery("#" + dthtmlid + '_dtfilter');
+    jQuery.each(listable, function (key, filteropts) {
+        custfilter.find("select[name='" + key + "']").each(function () {
+            if (jQuery(this).hasClass("select2-hidden-accessible")) {
+                jQuery(this).empty();
+                jQuery(this).select2({
+                    minimumResultsForSearch: Infinity,
+                    data: filteropts
+                });
+                //jQuery(this).select2("data", filteropts, true)
+            } else {
+                jQuery(this).select2({
+                    minimumResultsForSearch: Infinity,
+                    placeholder: '--select--',
+                    data: filteropts
+                });
+            }
+        });
+    });
+}
+
 function setDTCallbacks(dtSettings) {
     dtSettings = setValidCallback(dtoptions.initComplete, 'initComplete', dtSettings);
-    dtSettings = setValidCallback(dtoptions.drawCallback, 'drawCallback', dtSettings);
+    //dtSettings = setValidCallback(dtoptions.drawCallback, 'drawCallback', dtSettings);
     dtSettings = setValidCallback(dtoptions.preDrawCallback, 'preDrawCallback', dtSettings);
     dtSettings = setValidCallback(dtoptions.rowCallback, 'rowCallback', dtSettings);
     return dtSettings;
@@ -503,6 +537,11 @@ function extendAjaxPostData(data, dtid) {
     if (filter_data !== false) {
         dtpostdata.filters = filter_data;
     }
+
+    var param_data = getDTParamsData(dtid);
+    if (param_data !== false) {
+        dtpostdata.datatable = param_data;
+    }
     // Need to return this as an object or the data does not go thru properly
     return jQuery.extend({}, data, dtpostdata);
 }
@@ -563,6 +602,10 @@ function setDTFilterSelect2(dthtmlid) {
         minimumResultsForSearch: Infinity,
         placeholder: '--select--'
     }).on('select2:select', function (e) {
+        // Set the Hidden filter values based on this selection
+        var seldata = $(e.params.data.element).data();
+        setDTFilterData(dthtmlid, seldata);
+
         reloadDatatable(dthtmlid);
 
         //var filterbox = jQuery(this).closest("div.datatable-filters");
@@ -577,8 +620,9 @@ function setDTFilterSelect2(dthtmlid) {
             var oTableids = thisdata.refresh_dts.split(',');
             jQuery.each(oTableids, function (key, oTableid) {
                 //console.log("Line 92 replacing this " + oTableid);
-                setDTFilterData(oTableid, filterdata)
-                reloadDatatable(oTableid)
+                setDTFilterData(oTableid, filterdata);
+                var loadlistable = true;
+                reloadDatatable(oTableid, loadlistable);
             });
         }
     });
@@ -622,7 +666,20 @@ function reInitDatatable(oTableid) {
     //oTable.fnReloadAjax();
 }
 
-function reloadDatatable(oTableid) {
+function reloadDatatable(oTableid, getListable) {
+    if (getListable === undefined) {
+        getListable = false;
+    }
+    var oldlistval = '';
+    if (getListable) {
+        //var dtparams = jQuery('#' + oTableid + '_dtparams');
+        var pattern = "#" + oTableid + '_dtparams ' + "  input[name='get_listable']";
+        var listable = jQuery(pattern);
+        if (listable.length) {
+            oldlistval = listable.val();
+            listable.val('Y');
+        }
+    }
     //var oTable = jQuery("#" + oTableid).dataTable();
     if (!$.fn.DataTable.isDataTable("#" + oTableid)) {
         createDatatableOnPage(dtoptions[oTableid]);
@@ -630,6 +687,10 @@ function reloadDatatable(oTableid) {
         var oTable = jQuery("#" + oTableid).DataTable();
         oTable.ajax.reload();
     }
+    if (getListable && listable.length) {
+        listable.val(oldlistval);
+    }
+
     //oTable.fnReloadAjax();
 }
 
@@ -741,6 +802,30 @@ function genericCreatedRow(row, data, dataIndex) {
     }).replaceWith(function () {
         return $(this).contents().clone();
     });
+}
+
+function getDTParamsData(sTableId) {
+    //var crudbox = jQuery("#" + sTableId).closest("div.crud-datatable");
+    var paramsbox = jQuery("#" + sTableId + '_dtparams');
+    // Srinivas : This HAS TO BE AN OBJECT :-)
+    var paramdata = {};
+    //var filtersource = {};
+    var thisurl = '';
+    var thisname = '';
+    var thissource = '';
+    var thisval = '';
+    if (paramsbox.length) {
+        var findpattern = "input:text, input:radio, select, input:hidden, textarea";
+        paramsbox.find(findpattern).each(function () {
+            thisname = jQuery(this).attr('name');
+            thisval = jQuery(this).val();
+            paramdata[thisname] = thisval;
+            //filtersource[thissource] = thisval;
+        });
+    } else {
+        paramdata = false; //just return false if no filters exist
+    }
+    return paramdata;
 }
 
 function getDTFilterData(sTableId) {
