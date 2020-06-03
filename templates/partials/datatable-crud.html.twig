@@ -1,4 +1,5 @@
 {% import "macros/datatable-select-filter.html.twig" as dtfilter %}
+{% import "macros/datatable-ajax-params.html.twig" as dtparams %}
 {% import "macros/datatable-links.html.twig" as dtlinks %}
 <div class="{{cruddt.divclass|default('col-md-12')}} crud-datatable {{cruddt.settings.name}}">
     <div class="box box-primary" id="widget-{{cruddt.settings.htmlid}}">
@@ -43,6 +44,16 @@
         <div class="box-body dt-datatable-body" id='{{cruddt.settings.htmlid}}_dtbox'>
             {% if (cruddt.links is iterable and cruddt.links|length > 0) %}
                 {{dtlinks.generate(cruddt.settings.htmlid,cruddt.links)}}
+            {% endif %}
+            {# this will generate a set of hidden fields to be used to send parameters to the 
+            datatable ajax submit. We will use something like listable = 'Y' to 
+            instruct the sprunje to send listable array if this is set to 'N' (default) 
+            listable values will not be sent. Listable is an example on how this can be used.
+            Check out LessonPlanDTController / SyllabusUnitDTController on how this is being used.#}
+            {% if (cruddt.ajax_params is iterable and cruddt.ajax_params|length > 0) %}
+                <div class='dt-params' id='{{cruddt.settings.htmlid}}_dtparams'>
+                    {{dtparams.generate(cruddt.settings.htmlid,cruddt.ajax_params)}}
+                </div>
             {% endif %}
             <!-- datatable filters start -->
             {% if (cruddt.filters is iterable and cruddt.filters|length > 0) %}

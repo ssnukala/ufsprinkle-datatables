@@ -14,8 +14,10 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use UserFrosting\Sprinkle\Core\Facades\Debug;
 use UserFrosting\Sprinkle\Core\Sprunje\Sprunje;
 //use Psr\Http\Message\ResponseInterface as Response;
+use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use League\Csv\Writer;
+
 
 /**
  * ActivitySprunje
@@ -240,13 +242,19 @@ class DatatablesSprunje extends Sprunje
 
         // Return sprunjed results
         $rowkeys = count($rows) > 0 ? $rows->values()->toArray() : [];
-        return [
+        $retarr =  [
             $this->draw => $this->options['draw'],
             $this->countKey => $count,
             $this->countFilteredKey => $countFiltered,
-            $this->rowsKey => $rowkeys,
-            $this->listableKey => $this->getListable()
+            $this->rowsKey => $rowkeys
         ];
+        if (isset($this->options['datatable']) && $this->options['datatable']['get_listable'] == 'Y') {
+            Debug::debug("Line 252 getting listable");
+            $retarr[$this->listableKey] = $this->getListable();
+        } else {
+            $retarr[$this->listableKey] = [];
+        }
+        return $retarr;
     }
 
     public function getCsv()

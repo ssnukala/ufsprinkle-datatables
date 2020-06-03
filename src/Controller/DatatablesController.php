@@ -52,7 +52,8 @@ class DatatablesController extends SimpleController
         "single_row" => "N",
         "export_cols" => false,
         "export_rows" => 'display',
-        'rowId' => 'id'
+        'rowId' => 'id',
+        'ajax_params' => ['listable' => ['type' => 'hidden', 'name' => 'get_listable', 'value' => 'N']]
         //,"initial_sort" => [[0, 'asc']] // make first column is always ID even if is hidden?
     ];
 
@@ -225,6 +226,11 @@ class DatatablesController extends SimpleController
         $retarr["links"] = isset($this->options['links']) ? $this->options['links'] : [];
         $retarr["templates"] = isset($this->options['templates']) ? $this->options['templates'] : [];
         $retarr["crud_forms"] = isset($this->options['crud_forms']) ? $this->options['crud_forms'] : [];
+
+        // Setting default for the Listable this can be overridden 
+        $listable = ['listable' => ['type' => 'hidden', 'name' => 'get_listable', 'value' => 'N']];
+        $retarr['ajax_params'] = isset($this->options['ajax_params']) ? $this->options['ajax_params'] : $listable;
+
         return $retarr;
     }
 
@@ -276,6 +282,14 @@ class DatatablesController extends SimpleController
                 $params['filters'] = $args['filters'];
             }
         }
+
+        if (!isset($params['datatable'])) {
+            $params['datatable'] = [];
+        }
+        if (!isset($params['datatable']['get_listable'])) {
+            $params['datatable']['get_listable'] = 'Y';
+        }
+        Debug::debug("Line 292 the datatable array is ", $params['datatable']);
 
         if (isset($params['format']) && $params['format'] == 'dtcsv') {
             $params['format'] = 'json';
