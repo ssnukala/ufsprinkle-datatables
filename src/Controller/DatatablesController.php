@@ -289,7 +289,7 @@ class DatatablesController extends SimpleController
         if (!isset($params['datatable']['get_listable'])) {
             $params['datatable']['get_listable'] = 'Y';
         }
-        Debug::debug("Line 292 the datatable array is ", $params['datatable']);
+        //Debug::debug("Line 292 the datatable array is ", $params['datatable']);
 
         if (isset($params['format']) && $params['format'] == 'dtcsv') {
             $params['format'] = 'json';
