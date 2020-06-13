@@ -173,7 +173,7 @@ function createDatatableOnPage(dtoptions) {
 
     setupQuickEdit(dtoptions);
 
-    stylePageLength(datatableID);
+    stylePageLength(datatableID, dtoptions.pagelength);
     return oTable;
 }
 
@@ -630,7 +630,7 @@ function setDTFilterSelect2(dthtmlid) {
 }
 
 // this is not working well so not using it
-function stylePageLength(datatableID) {
+function stylePageLength(datatableID, pageLength) {
     var dtsearch = jQuery(datatableID + '_filter');
     dtsearch.find('input').unwrap();
     dtsearch.find('input').addClass('input-base-elem');
@@ -646,12 +646,22 @@ function stylePageLength(datatableID) {
         dtlength.html('');
         dtlength.append(selecthtml2);
         dtlength.append('<span class="input-base-placeholder">Show</span>');
-        dtlength.find('select').select2({
-            minimumResultsForSearch: Infinity
-        }).on('select2:select', function (e) {
-            jQuery(datatableID).DataTable().page.len(jQuery(this).val()).draw();
-        });
 
+        dtlength.find('select').each(function () {
+            jQuery(this).select2({
+                minimumResultsForSearch: Infinity
+            }).on('select2:select', function (e) {
+                jQuery(datatableID).DataTable().page.len(jQuery(this).val()).draw();
+            });
+            jQuery(this).val(pageLength);
+        });
+        /*
+                dtlength.find('select').select2({
+                    minimumResultsForSearch: Infinity
+                }).on('select2:select', function (e) {
+                    jQuery(datatableID).DataTable().page.len(jQuery(this).val()).draw();
+                });
+        */
         //dataTables_length form-group has-feedback input-base  input-base-select filled formgen_field crud_input
         // "form-group has-feedback input-base  input-base-select filled formgen_field crud_input"
     }

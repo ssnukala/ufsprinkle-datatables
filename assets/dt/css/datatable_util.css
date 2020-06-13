@@ -159,9 +159,10 @@ th.dt_column {
 
 .dt-pulldown-header {
     position: absolute;
-    /*z-index: 900; */
+    z-index: 900;
     left: 0;
     right: 0;
+    top: 0;
 }
 
 /*
