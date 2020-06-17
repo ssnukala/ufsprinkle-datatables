@@ -249,7 +249,7 @@ class DatatablesSprunje extends Sprunje
             $this->rowsKey => $rowkeys
         ];
         if (isset($this->options['datatable']) && $this->options['datatable']['get_listable'] == 'Y') {
-            Debug::debug("Line 252 getting listable");
+            //Debug::debug("Line 252 getting listable");
             $retarr[$this->listableKey] = $this->getListable();
         } else {
             $retarr[$this->listableKey] = [];
