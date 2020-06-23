@@ -32,6 +32,7 @@ use UserFrosting\Sprinkle\UfMessage\Controller\Util\UfMessageUtilController;
 class DatatablesController extends SimpleController
 {
 
+    protected $destination;
     //    protected $schema;       // json schema for the datatable definitions
     protected $fields = [];       // datatable field definitions
     protected $exportable = false;       // fields that are exportable : false if none
@@ -51,11 +52,21 @@ class DatatablesController extends SimpleController
         "initial_search" => "",
         "single_row" => "N",
         "export_cols" => false,
-        "export_rows" => 'display',
+        "export_rows" => 'none',
         'rowId' => 'id',
         'ajax_params' => ['listable' => ['type' => 'hidden', 'name' => 'get_listable', 'value' => 'N']]
         //,"initial_sort" => [[0, 'asc']] // make first column is always ID even if is hidden?
     ];
+
+    public function setDestination($destination)
+    {
+        $this->destination = $destination;
+    }
+
+    public function getDestination()
+    {
+        return $this->destination;
+    }
 
 
     public function setupDatatable($options = [])
