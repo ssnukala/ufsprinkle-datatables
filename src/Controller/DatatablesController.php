@@ -21,6 +21,7 @@ use UserFrosting\Fortress\ServerSideValidator;
 use UserFrosting\Support\Repository\Loader\YamlFileLoader;
 use UserFrosting\Sprinkle\Core\Facades\Debug;
 use UserFrosting\Sprinkle\UfMessage\Controller\Util\UfMessageUtilController;
+use Psr\Container\ContainerInterface;
 
 /**
  * DatatablesController Class
@@ -57,6 +58,23 @@ class DatatablesController extends SimpleController
         'ajax_params' => ['listable' => ['type' => 'hidden', 'name' => 'get_listable', 'value' => 'N']]
         //,"initial_sort" => [[0, 'asc']] // make first column is always ID even if is hidden?
     ];
+
+    /**
+     * Constructor.
+     *
+     * @param ContainerInterface $ci The global container object, which holds all your services.
+     */
+    public function __construct(ContainerInterface $ci)
+    {
+        $authenticator = $ci->authenticator;
+        // Redirect if user is already logged in
+        if (!$authenticator->check()) {
+            throw new ForbiddenException();
+        }
+        $return = parent::__construct($ci);
+        return $return;
+    }
+
 
     public function setDestination($destination)
     {
