@@ -130,9 +130,10 @@ function createDatatableOnPage(dtoptions) {
         infoEmpty: "0 entries",
         infoFiltered: ""
     };
-
-    dtSettings = setDatatableExport(dtoptions, dtSettings);
-
+    console.log("Line 133 export rows is " + dtoptions["export_rows"]);
+    if (dtoptions["export_rows"] === 'page' || dtoptions["export_rows"] === 'all') {
+        dtSettings = setDatatableExport(dtoptions, dtSettings);
+    }
     if (dtoptions.scroll == "Y") {
         dtSettings["scrollY"] = 200;
         dtSettings["scrollCollapse"] = true;
@@ -358,11 +359,16 @@ function setDatatableDOM(dtoptions, dtSettings) {
             filterhtml = "<'dt-customfilter-div col-md-" + filtercols + " col-xs-" + filtercols + " '>";
             searchcol = searchcol - filtercols; // = 7
         }
+        var buttondom = '';
+        if (dtoptions.export_rows === 'page' || dtoptions.export_rows === 'all') {
+            buttondom = 'B';
+        }
+
         if (dtoptions.pagelength !== '-1') {
             if (dtSettings['dtcustom']['dtExportCols'] !== false) {
                 //searchcol = searchcol - 2; //to account for export buttons
                 schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 1) +
-                    " search dt-search'f><'col-md-4 col-xs-5 dt-pagelength dt-snexpbtn'Bl>";
+                    " search dt-search'f><'col-md-4 col-xs-5 dt-pagelength dt-snexpbtn'" + buttondom + "l>";
             } else {
                 schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 1) +
                     " search dt-search'f><'col-md-4 col-xs-5 dt-pagelength dt-snexpbtn'l>";
@@ -381,7 +387,7 @@ function setDatatableDOM(dtoptions, dtSettings) {
             dtSettings["dom"] =
                 "<'dt-fulltable dtable-heading'<'row dt-topbox cddatatable-topbox '" +
                 alhtml + "<'col-md-" + searchcol + " col-xs-" + searchcol +
-                " search dt-search'f><'col-md-2 col-xs-2 dt-snexpbtn'B> >r" +
+                " search dt-search'f><'col-md-2 col-xs-2 dt-snexpbtn'" + buttondom + "> >r" +
                 "<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>t>S";
         }
     }
