@@ -130,7 +130,7 @@ function createDatatableOnPage(dtoptions) {
         infoEmpty: "0 entries",
         infoFiltered: ""
     };
-    console.log("Line 133 export rows is " + dtoptions["export_rows"]);
+    //console.log("Line 133 export rows is " + dtoptions["export_rows"]);
     if (dtoptions["export_rows"] === 'page' || dtoptions["export_rows"] === 'all') {
         dtSettings = setDatatableExport(dtoptions, dtSettings);
     }
