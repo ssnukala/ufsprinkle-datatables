@@ -175,6 +175,10 @@ function createDatatableOnPage(dtoptions) {
     setupQuickEdit(dtoptions);
 
     stylePageLength(datatableID, dtoptions.pagelength);
+
+    if (dtoptions["showRowPage"] !== undefined) {
+        clickSelectRowShowPage(dtoptions.htmlid, dtoptions["showRowPage"]);
+    }
     return oTable;
 }
 
@@ -904,6 +908,47 @@ function selectRowOnClick(oTableid) {
         }
     });
 }
+
+// This will show the selected row
+// will initiate this from datatable init function based on datatable setting
+function clickSelectRowShowPage(oTableid, showRowPage) {
+    jQuery('#' + oTableid + ' tbody').on('click', 'tr', function () {
+        var isselected = jQuery(this).hasClass('selected');
+        if (!isselected) {
+            jQuery('#' + oTableid + ' tr.selected').removeClass('selected');
+            var thisRowJq = jQuery(this);
+            thisRowJq.addClass('selected');
+            var fnRowPage = showRowPage.fnRowPage;
+            var fncallback = window[fnRowPage];
+            if (typeof fncallback === "function") {
+                console.log("Line 931 calling the rowpage function");
+                fncallback(oTableid, thisRowJq, showRowPage);
+            } else {
+                genericShowRowPage(oTableid, thisRowJq, showRowPage);
+            }
+        }
+    });
+}
+
+function genericShowRowPage(oTableid, thisRowJq, showRowPage) {
+    var oTable = jQuery("#" + oTableid)
+        .dataTable()
+        .api();
+    var row = oTable.row(thisRowJq);
+    thisdata = row.data();
+    //jQuery("#" + oTableid + '_pagerow').html(thisdata[showRowPage.showField]);
+    thisRowJq.find('td').each(function () {
+        jQuery("#" + oTableid + '_pagerow_body').html("");
+        var tdhtml = jQuery(this).html();
+        var fncallback = window[showRowPage.fnCleanHTML];
+        if (typeof fncallback === "function") {
+            console.log("Line 931 calling the cleanhtml function");
+            tdhtml = fncallback(oTableid, jQuery(this));
+        }
+        jQuery("#" + oTableid + '_pagerow_body').append(tdhtml);
+    });
+}
+
 
 function clickSelectRowReloadChild(oTableid, childDTid) {
     jQuery('#' + oTableid + ' tbody').on('click', 'tr', function () {
