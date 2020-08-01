@@ -170,6 +170,11 @@ th.dt_column {
     background-color: #f9f9f9 !important;
 }
 
+.dt-pagerow-body {
+    max-height: 1200px;
+    overflow: scroll;
+}
+
 /*
 .cddatatable-topbox .dt-search {
     padding: 0px;

@@ -72,6 +72,60 @@ function createDatatableOnPage(dtoptions) {
                 fncallback(settings);
             }
         },
+        preDrawCallback: function (settings) {
+            //var thisapi = this.api();
+            if (dtoptions.showRowPage !== undefined) {
+                var altview = jQuery("#" + settings.sTableId + '_wrapper').closest('.crdt-tabpane').find('.dt-pagerow-body');
+                //var altview = jQuery("#" + settings.sTableId + '_wrapper').find('.dt-pagerow-body');
+                if (!altview.length) {
+                    altview = jQuery("#" + settings.sTableId + '_wrapper').find('.dt-altview-content');
+                }
+                if (altview.length) {
+                    console.log("Line 77 clearing the dt-altview-content div " + "#" + settings.sTableId + '_wrapper');
+                    altview.html('');
+                }
+            }
+            var fncallback = window[dtoptions.preDrawCallback];
+            if (typeof fncallback === "function") {
+                fncallback(settings);
+            }
+        },
+
+        rowCallback: function (row, data, displayNum, displayIndex, dataIndex) {
+            //var thisapi = this.api();
+            var dtid = dtoptions.htmlid;
+            if (dtoptions.showRowPage !== undefined) {
+                var fncallback2 = window[dtoptions.showRowPage.fnCleanHTML];
+                console.log("Line 499 the rowCallback function ");
+                var viewclass = 'dt-pageview-row';
+                if (data.id !== undefined) {
+                    viewclass = viewclass + ' dt-viewrow-' + data.id;
+                }
+                var htmlcontainer = jQuery('<div class="' + viewclass + '">');
+                var bookhtml = '';
+                if (typeof fncallback2 === "function") {
+                    bookhtml = fncallback2(dtid, jQuery(row));
+                } else {
+                    jQuery(row).find('.rs-pageview-control').each(function () {
+                        bookhtml = bookhtml + jQuery(this).html();
+                    });
+                }
+                htmlcontainer.html(bookhtml);
+                var altview = jQuery("#" + dtid + '_wrapper').closest('.crdt-tabpane').find('.dt-pagerow-body');
+                if (!altview.length) {
+                    altview = jQuery("#" + dtid + '_wrapper').find('.dt-altview-content');
+                }
+                if (altview.length) {
+                    altview.append(htmlcontainer);
+                    //jQuery('#' + dtid + '_wrapper').find('.dt-altview-content').append(htmlcontainer);
+                }
+            }
+            var fncallback = window[dtoptions.rowCallback];
+            if (typeof fncallback === "function") {
+                fncallback(row, data, displayNum, displayIndex, dataIndex);
+            }
+        },
+
         customRenderCallback: dtoptions.customRenderCallback,
     };
     if (dtoptions.dtcustom === undefined) {
@@ -83,6 +137,10 @@ function createDatatableOnPage(dtoptions) {
     dtSettings['dtcustom']['ajax_url'] = final_dturl;
     dtSettings['dtcustom']['customRenderCallback'] = dtoptions.customRenderCallback;
     dtSettings['dtcustom']['name'] = dtoptions.name;
+    if (dtoptions["showRowPage"] != undefined) {
+        dtSettings['dtcustom']["showRowPage"] = dtoptions["showRowPage"];
+    }
+
     // this is a custom setting to send the ajax url that came from the backend
     // this value will be used by the ajaxByFunction being set in the ajaxSettings variable above
 
@@ -176,9 +234,11 @@ function createDatatableOnPage(dtoptions) {
 
     stylePageLength(datatableID, dtoptions.pagelength);
 
+    /*
     if (dtoptions["showRowPage"] !== undefined) {
         clickSelectRowShowPage(dtoptions.htmlid, dtoptions["showRowPage"]);
     }
+    */
     return oTable;
 }
 
@@ -248,8 +308,8 @@ function setListableFilter(dthtmlid, listable) {
 function setDTCallbacks(dtSettings) {
     dtSettings = setValidCallback(dtoptions.initComplete, 'initComplete', dtSettings);
     //dtSettings = setValidCallback(dtoptions.drawCallback, 'drawCallback', dtSettings);
-    dtSettings = setValidCallback(dtoptions.preDrawCallback, 'preDrawCallback', dtSettings);
-    dtSettings = setValidCallback(dtoptions.rowCallback, 'rowCallback', dtSettings);
+    //dtSettings = setValidCallback(dtoptions.preDrawCallback, 'preDrawCallback', dtSettings);
+    //dtSettings = setValidCallback(dtoptions.rowCallback, 'rowCallback', dtSettings);
     return dtSettings;
 }
 
@@ -382,7 +442,8 @@ function setDatatableDOM(dtoptions, dtSettings) {
                 //"  <'dt-customlogo pull-left'><'dt-customtitle pull-right'>" +
                 "<'row dt-topbox cddatatable-topbox'" + schbtn_dom +
                 //"<'col-md-2 col-xs-2 text-right dt-pagelength'l>" +
-                ">r<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>t";
+                ">r<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>" +
+                "<'row dt-altview'<'col-md-12 col-xs-12 dt-altview-content'>>t";
             dtSettings["dom"] = dtdom1 + "<'dt-pager-row'" +
                 "<'dt-pager-pages text-right tablesorter-pager'p><'dt-pager-countinfo'i>" +
                 ">>";
@@ -392,7 +453,8 @@ function setDatatableDOM(dtoptions, dtSettings) {
                 "<'dt-fulltable dtable-heading'<'row dt-topbox cddatatable-topbox '" +
                 alhtml + "<'col-md-" + searchcol + " col-xs-" + searchcol +
                 " search dt-search'f><'col-md-2 col-xs-2 dt-snexpbtn'" + buttondom + "> >r" +
-                "<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>t>S";
+                "<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>" +
+                "<'row dt-altview'<'col-md-12 col-xs-12 dt-altview-content'>>t>S";
         }
     }
     // S is for https://datatables.net/extensions/select/ : this plugin is not enabled yet
@@ -485,6 +547,32 @@ $.fn.dataTable.render.format_column = function (column_name) {
                 var thishtml = removeConditionalHTML(colhtml, row, 'row.');
 
                 var thishtml2 = replaceTokensInHTML(thishtml, [row], 'row.', '');
+                /*
+                    if (meta.settings.oInit.dtcustom.showRowPage !== undefined) {
+                        if (column_name === meta.settings.oInit.dtcustom.showRowPage.showField) {
+                            var fncallback2 = window[meta.settings.oInit.dtcustom.showRowPage.fnCleanHTML];
+                            console.log("Line 499 the showRowPageClean function " + meta.settings.oInit.dtcustom.showRowPage.fnCleanHTML);
+                            var viewclass = 'dt-pageview-row';
+                            if (row.id !== undefined) {
+                                viewclass = viewclass + ' dt-viewrow-' + row.id;
+                            }
+                            var htmlcontainer;
+                            if (typeof fncallback2 === "function") {
+                                htmlcontainer = jQuery('<div class="' + viewclass + '">').html(thishtml2);
+                                htmlcontainer.html(fncallback2(dtid, htmlcontainer));
+                                jQuery('#' + dtid + '_wrapper').find('.dt-altview-content').append(htmlcontainer);
+                            } else {
+                                var bookhtml = '';
+                                htmlcontainer = jQuery('<div class="' + viewclass + '">');
+                                jQuery('<div>').html(thishtml2).find('.rs-pageview-control').each(function () {
+                                    bookhtml = bookhtml + jQuery(this).html();
+                                });
+                                htmlcontainer.html(bookhtml);
+                                jQuery('#' + dtid + '_wrapper').find('.dt-altview-content').append(htmlcontainer);
+                            }
+                        }
+                    }
+                */
                 return thishtml2;
             }
         }
