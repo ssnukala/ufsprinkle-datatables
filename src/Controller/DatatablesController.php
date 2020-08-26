@@ -344,6 +344,7 @@ class DatatablesController extends SimpleController
         if ($this->exportable !== false) {
             $this->sprunje->setExportable($this->exportable);
         }
+        $this->sprunje->setCurrentUser($this->ci->currentUser); // set the current user 
     }
 
     /**

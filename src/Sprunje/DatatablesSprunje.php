@@ -30,6 +30,15 @@ class DatatablesSprunje extends Sprunje
 {
 
     /**
+     * Current Logged in User so we can use this to figure out roles etc 
+     * this will help in filtering the data based on the user's role
+     * 
+     * @var string
+     */
+    protected $currentUser;
+
+
+    /**
      * Array key for the total unfiltered object count.
      *
      * @var string
@@ -94,6 +103,15 @@ class DatatablesSprunje extends Sprunje
         'id' => 'id', 'title' => 'not-set', 'text' => 'not-set', 'selection' => 'not-set'
     ];
 
+    public function setCurrentUser($value)
+    {
+        $this->currentUser = $value;
+    }
+
+    public function getCurrentUser()
+    {
+        return $this->currentUser;
+    }
 
     public function addFilterable($field)
     {
