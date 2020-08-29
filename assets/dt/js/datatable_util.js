@@ -406,7 +406,7 @@ function setDatatableDOM(dtoptions, dtSettings) {
         //dtSettings['single_row'] = 'N'; // carry this into the frontend settings
 
         // Adding the auto lookup filter to the datatable
-        var searchcol = 8;
+        var searchcol = 9;
         var alhtml = '';
         if (lkpoptions !== undefined) {
             //dtSettings['auto_lookup'] = lkpoptions;
@@ -432,10 +432,10 @@ function setDatatableDOM(dtoptions, dtSettings) {
             if (dtSettings['dtcustom']['dtExportCols'] !== false) {
                 //searchcol = searchcol - 2; //to account for export buttons
                 schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 1) +
-                    " search dt-search'f><'col-md-4 col-xs-5 dt-pagelength dt-snexpbtn'" + buttondom + "l>";
+                    " search dt-search'f><'col-md-3 col-xs-4 dt-pagelength dt-snexpbtn'" + buttondom + "l>";
             } else {
                 schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 1) +
-                    " search dt-search'f><'col-md-4 col-xs-5 dt-pagelength dt-snexpbtn'l>";
+                    " search dt-search'f><'col-md-3 col-xs-4 dt-pagelength dt-snexpbtn'l>";
             }
 
             var dtdom1 = "<'dt-fulltable dtable-heading' " +
