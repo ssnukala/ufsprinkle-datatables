@@ -81,7 +81,7 @@ function createDatatableOnPage(dtoptions) {
                     altview = jQuery("#" + settings.sTableId + '_wrapper').find('.dt-altview-content');
                 }
                 if (altview.length) {
-                    console.log("Line 77 clearing the dt-altview-content div " + "#" + settings.sTableId + '_wrapper');
+                    //console.log("Line 77 clearing the dt-altview-content div " + "#" + settings.sTableId + '_wrapper');
                     altview.html('');
                 }
             }
