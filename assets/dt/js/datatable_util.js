@@ -67,6 +67,14 @@ function createDatatableOnPage(dtoptions) {
                 setListableFilter(settings.sTableId, listable);
             }
             //console.log("Line 72 this data is ");
+            jQuery('.rs-select2').each(function () {
+                if (!jQuery(this).hasClass("select2-hidden-accessible")) {
+                    jQuery(this).select2({
+                        minimumResultsForSearch: Infinity
+                    });
+                }
+            });
+
             var fncallback = window[dtoptions.drawCallback];
             if (typeof fncallback === "function") {
                 fncallback(settings);
@@ -909,6 +917,7 @@ function genericCreatedRow(row, data, dataIndex) {
         }
     }).replaceWith(function () {
         return $(this).contents().clone();
+        //return $(this).html();
     });
 }
 
