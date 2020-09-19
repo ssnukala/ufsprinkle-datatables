@@ -489,4 +489,17 @@ class DatatablesSprunje extends Sprunje
             */
         }
     }
+
+    public function filterStatus($query, $value)
+    {
+        if ($value != '' && $value != 'ALL') {
+            $values = explode($this->orSeparator, $value);
+            $query->where(function ($query) use ($values) {
+                foreach ($values as $value) {
+                    $query->orWhere('status', $value);
+                }
+            });
+            //$query->orWhere('status', $value);
+        }
+    }
 }
