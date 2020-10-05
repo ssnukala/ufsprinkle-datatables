@@ -296,8 +296,7 @@ class DatatablesSprunje extends Sprunje
             $this->applyTransformations($collection);
 
             $csv = Writer::createFromFileObject(new \SplTempFileObject());
-
-            $columnNames = $this->getExportable();
+            //$columnNames = $this->getExportable();
             if ($columnNames == '*') {
                 $columnNames = [];
                 // Flatten collection while simultaneously building the column names from the union of each element's keys
@@ -366,7 +365,7 @@ class DatatablesSprunje extends Sprunje
             // Perform any additional transformations on the dataset
             $this->applyTransformations($collection);
 
-            $columnNames = $this->getExportable();
+            //$columnNames = $this->getExportable();
             if ($columnNames == '*') {
                 $columnNames = [];
                 // Flatten collection while simultaneously building the column names from the union of each element's keys

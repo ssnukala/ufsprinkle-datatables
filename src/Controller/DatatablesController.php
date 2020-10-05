@@ -12,8 +12,6 @@ namespace UserFrosting\Sprinkle\Datatables\Controller;
 
 use Carbon\Carbon;
 use UserFrosting\Sprinkle\Core\Controller\SimpleController;
-use UserFrosting\Support\Exception\BadRequestException;
-use UserFrosting\Support\Exception\ForbiddenException;
 use UserFrosting\Sprinkle\Core\Util\EnvironmentInfo;
 use UserFrosting\Fortress\RequestDataTransformer;
 use UserFrosting\Fortress\RequestSchema;
@@ -22,6 +20,9 @@ use UserFrosting\Support\Repository\Loader\YamlFileLoader;
 use UserFrosting\Sprinkle\Core\Facades\Debug;
 use UserFrosting\Sprinkle\UfMessage\Controller\Util\UfMessageUtilController;
 use Psr\Container\ContainerInterface;
+use UserFrosting\Support\Exception\NotFoundException;
+use UserFrosting\Support\Exception\BadRequestException;
+use UserFrosting\Support\Exception\ForbiddenException;
 
 /**
  * DatatablesController Class
@@ -55,7 +56,8 @@ class DatatablesController extends SimpleController
         "export_cols" => false,
         "export_rows" => 'none',
         'rowId' => 'id',
-        'ajax_params' => ['listable' => ['type' => 'hidden', 'name' => 'get_listable', 'value' => 'N']]
+        'ajax_params' => ['listable' => ['type' => 'hidden', 'name' => 'get_listable', 'value' => 'N']],
+        'createdRow' => 'genericCreatedRow'
         //,"initial_sort" => [[0, 'asc']] // make first column is always ID even if is hidden?
     ];
 
@@ -69,10 +71,17 @@ class DatatablesController extends SimpleController
         $authenticator = $ci->authenticator;
         // Redirect if user is already logged in
         if (!$authenticator->check()) {
-            throw new ForbiddenException();
+            $this->denyAccess();
+            //throw new ForbiddenException();
         }
         $return = parent::__construct($ci);
         return $return;
+    }
+
+    public function denyAccess($message = '')
+    {
+        Debug::debug('Line 82 unauthorized access by: NotFoundException' . $this->ci->currentUser->user_name);
+        throw new NotFoundException();
     }
 
 
@@ -153,7 +162,7 @@ class DatatablesController extends SimpleController
             foreach ($this->permissions as $permission) {
                 if (!$authorizer->checkAccess($currentUser, $permission)) {
                     Debug::debug("Line 119 throwing forbidden exception for - $permission");
-                    throw new ForbiddenException();
+                    $this->denyAccess();
                 }
             }
         }
@@ -463,9 +472,9 @@ class DatatablesController extends SimpleController
             return $query;
         });
         //return $this->sprunje->toResponse($response);
-        Debug::debug("Line 361 getLookup getting array now");
+        //Debug::debug("Line 361 getLookup getting array now");
         $result = $this->sprunje->getArray();
-        Debug::debug("Line 363 after GetArray");
+        //Debug::debug("Line 363 after GetArray");
         $result['pagination'] = ['more' => ($result['recordsFiltered'] > 10)];
         return $response->withJson($result, 200, JSON_PRETTY_PRINT);
     }
