@@ -218,6 +218,7 @@ class DatatablesSprunje extends Sprunje
                     return $result;
                 }
             case 'dtcsv': {
+                    $this->destination = 'dtcsv';
                     $result = $this->getDtCsv();
                     if ($result == false) {
                         return $response->withStatus(400, 'Noting to export');
@@ -348,6 +349,11 @@ class DatatablesSprunje extends Sprunje
     public function getDtCsv()
     {
         $columnNames = $this->getExportable();
+        //if (is_array($columnNames)) {
+        //Debug::debug("Line 351 getExportable is $columnNames", $columnNames);
+        //} else {
+        //Debug::debug("Line 354 getExportable is $columnNames");
+        //}
         $dtcsv = ['header' => [], 'body' => []];
         if ($columnNames === false) {
             return false;
@@ -368,17 +374,20 @@ class DatatablesSprunje extends Sprunje
             //$columnNames = $this->getExportable();
             if ($columnNames == '*') {
                 $columnNames = [];
-                // Flatten collection while simultaneously building the column names from the union of each element's keys
-                $collection->transform(function ($item, $key) use (&$columnNames) {
-                    $item = Arr::dot($item->toArray());
-                    foreach ($item as $itemKey => $itemValue) {
-                        if (!in_array($itemKey, $columnNames)) {
-                            $columnNames[] = $itemKey;
-                        }
-                    }
-                    return $item;
-                });
             }
+            // Flatten collection while simultaneously building the column names from the union of each element's keys
+            $collection->transform(function ($item, $key) use (&$columnNames) {
+                if (count($columnNames) > 0) {
+                    $item = collect($item->only($columnNames));
+                }
+                $item = Arr::dot($item->toArray());
+                foreach ($item as $itemKey => $itemValue) {
+                    if (!in_array($itemKey, $columnNames)) {
+                        $columnNames[] = $itemKey;
+                    }
+                }
+                return $item;
+            });
 
             if (is_array($columnNames)) {
                 $dtcsv['header'] = $columnNames;
