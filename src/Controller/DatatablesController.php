@@ -307,9 +307,11 @@ class DatatablesController extends SimpleController
         }
         //Debug::debug("Line 208 The datatable params are ", $params);
         $var_sorts = [];
-        foreach ($params1['order'] as $orderrec) {
-            $thiscol = $params1['columns'][$orderrec['column']];
-            $var_sorts[$thiscol['name']] = $orderrec['dir'];
+        if (isset($params1['order']) && is_array($params1['order'])) {
+            foreach ($params1['order'] as $orderrec) {
+                $thiscol = $params1['columns'][$orderrec['column']];
+                $var_sorts[$thiscol['name']] = $orderrec['dir'];
+            }
         }
         $params['sorts'] = $var_sorts;
 
