@@ -350,19 +350,17 @@ class DatatablesSprunje extends Sprunje
     {
         $columnNames = $this->getExportable();
         //if (is_array($columnNames)) {
-        //Debug::debug("Line 351 getExportable is $columnNames", $columnNames);
+            //Debug::debug("Line 351 getExportable is $columnNames", $columnNames);
         //} else {
-        //Debug::debug("Line 354 getExportable is $columnNames");
+            //Debug::debug("Line 354 getExportable is $columnNames");
         //}
         $dtcsv = ['header' => [], 'body' => []];
         if ($columnNames === false) {
             return false;
         } else {
             $filteredQuery = clone $this->query;
-
             // Apply filters
             $this->applyFilters($filteredQuery);
-
             // Apply sorts
             $this->applySorts($filteredQuery);
 
@@ -377,6 +375,7 @@ class DatatablesSprunje extends Sprunje
             }
             // Flatten collection while simultaneously building the column names from the union of each element's keys
             $collection->transform(function ($item, $key) use (&$columnNames) {
+                //Debug::debug("Line 380 item is ",$item->toArray());
                 if (count($columnNames) > 0) {
                     $item = collect($item->only($columnNames));
                 }
