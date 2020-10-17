@@ -414,7 +414,7 @@ function setDatatableDOM(dtoptions, dtSettings) {
         //dtSettings['single_row'] = 'N'; // carry this into the frontend settings
 
         // Adding the auto lookup filter to the datatable
-        var searchcol = 9;
+        var searchcol = 11;
         var alhtml = '';
         if (lkpoptions !== undefined) {
             //dtSettings['auto_lookup'] = lkpoptions;
@@ -438,9 +438,10 @@ function setDatatableDOM(dtoptions, dtSettings) {
 
         if (dtoptions.pagelength !== '-1') {
             if (dtSettings['dtcustom']['dtExportCols'] !== false) {
-                //searchcol = searchcol - 2; //to account for export buttons
+                //schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 1) +
+                //    " search dt-search'f><'col-md-3 col-xs-4 dt-pagelength dt-snexpbtn'" + buttondom + "l>";
                 schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 1) +
-                    " search dt-search'f><'col-md-3 col-xs-4 dt-pagelength dt-snexpbtn'" + buttondom + "l>";
+                    " search dt-search dt-snexpbtn'f"+ buttondom+"><'col-md-1 col-xs-1 dt-pagelength'l>";
             } else {
                 schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 1) +
                     " search dt-search'f><'col-md-3 col-xs-4 dt-pagelength dt-snexpbtn'l>";
@@ -457,10 +458,17 @@ function setDatatableDOM(dtoptions, dtSettings) {
                 ">>";
 
         } else {
-            dtSettings["dom"] =
+            /*dtSettings["dom"] =
                 "<'dt-fulltable dtable-heading'<'row dt-topbox cddatatable-topbox '" +
                 alhtml + "<'col-md-" + searchcol + " col-xs-" + searchcol +
                 " search dt-search'f><'col-md-2 col-xs-2 dt-snexpbtn'" + buttondom + "> >r" +
+                "<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>" +
+                "<'row dt-altview'<'col-md-12 col-xs-12 dt-altview-content'>>t>S";
+            */
+            dtSettings["dom"] =
+                "<'dt-fulltable dtable-heading'<'row dt-topbox cddatatable-topbox '" +
+                alhtml + "<'col-md-" + searchcol + " col-xs-" + searchcol +
+                " search dt-search dt-snexpbtn'f" + buttondom + ">>r" +
                 "<'row dt-helpbox'<'col-md-12 col-xs-12 dt-help-content'>>" +
                 "<'row dt-altview'<'col-md-12 col-xs-12 dt-altview-content'>>t>S";
         }
