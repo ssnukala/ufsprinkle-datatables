@@ -78,6 +78,11 @@ class DatatablesController extends SimpleController
         return $return;
     }
 
+    public function isAdmin()
+    {
+        return $this->ci->currentUser->isMaster();
+    }
+
     public function denyAccess($message = '')
     {
         Debug::debug('Line 82 unauthorized access by: NotFoundException' . $this->ci->currentUser->user_name);

@@ -42,6 +42,7 @@ function createDatatableOnPage(dtoptions) {
         oSearch: {
             sSearch: dtoptions.initial_search
         },
+        //searchBuilder: true,
         columns: dtoptions.columns,
         createdRow: function (row, data, index) {
             //      var thisapi = this.api();
@@ -225,6 +226,8 @@ function createDatatableOnPage(dtoptions) {
     }
 
     oTable = jQuery(datatableID).dataTable(dtSettings);
+    //oTable.searchBuilder.container().prependTo(oTable.table().container());
+
     /* since  dataTables.bootstrap.js  is creating the Wrapper div we will add our own classes here*/
     jQuery(datatableID + '_wrapper').removeClass('form-inline').addClass('uf-datatables');
     moveHelpText(datatableID);
@@ -414,7 +417,7 @@ function setDatatableDOM(dtoptions, dtSettings) {
         //dtSettings['single_row'] = 'N'; // carry this into the frontend settings
 
         // Adding the auto lookup filter to the datatable
-        var searchcol = 11;
+        var searchcol = 10;
         var alhtml = '';
         if (lkpoptions !== undefined) {
             //dtSettings['auto_lookup'] = lkpoptions;
@@ -441,10 +444,10 @@ function setDatatableDOM(dtoptions, dtSettings) {
                 //schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 1) +
                 //    " search dt-search'f><'col-md-3 col-xs-4 dt-pagelength dt-snexpbtn'" + buttondom + "l>";
                 schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 1) +
-                    " search dt-search dt-snexpbtn'f"+ buttondom+"><'col-md-1 col-xs-1 dt-pagelength'l>";
+                    " search dt-search dt-snexpbtn'f><'col-md-2 col-xs-2 dt-pagelength' "+ buttondom+"l>";
             } else {
                 schbtn_dom = alhtml + filterhtml + "<'col-md-" + searchcol + " col-xs-" + (searchcol - 1) +
-                    " search dt-search'f><'col-md-3 col-xs-4 dt-pagelength dt-snexpbtn'l>";
+                    " search dt-search'f><'col-md-2 col-xs-3 dt-pagelength dt-snexpbtn'l>";
             }
 
             var dtdom1 = "<'dt-fulltable dtable-heading' " +
