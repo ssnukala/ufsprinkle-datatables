@@ -104,7 +104,7 @@ function createDatatableOnPage(dtoptions) {
             var dtid = dtoptions.htmlid;
             if (dtoptions.showRowPage !== undefined) {
                 var fncallback2 = window[dtoptions.showRowPage.fnCleanHTML];
-                console.log("Line 499 the rowCallback function ");
+                //console.log("Line 499 the rowCallback function ");
                 var viewclass = 'dt-pageview-row';
                 if (data.id !== undefined) {
                     viewclass = viewclass + ' dt-viewrow-' + data.id;
@@ -657,7 +657,8 @@ function extendAjaxPostData(data, dtid) {
         dtpostdata.datatable = param_data;
     }
     // Need to return this as an object or the data does not go thru properly
-    return jQuery.extend({}, data, dtpostdata);
+    var retdata = jQuery.extend({}, data, dtpostdata);
+    return retdata;
 }
 
 function moveHelpText(datatableID) {
@@ -719,7 +720,6 @@ function setDTFilterSelect2(dthtmlid) {
         // Set the Hidden filter values based on this selection
         var seldata = $(e.params.data.element).data();
         setDTFilterData(dthtmlid, seldata);
-
         reloadDatatable(dthtmlid);
 
         //var filterbox = jQuery(this).closest("div.datatable-filters");
@@ -808,8 +808,16 @@ function reloadDatatable(oTableid, getListable) {
     if (!$.fn.DataTable.isDataTable("#" + oTableid)) {
         createDatatableOnPage(dtoptions[oTableid]);
     } else {
-        var oTable = jQuery("#" + oTableid).DataTable();
-        oTable.ajax.reload();
+        var crudbox = jQuery("#" + oTableid).closest("div.crud-datatable");
+    // Enable Filter Selection Datatable Refresh now
+        var filter_url = crudbox.find("div.datatable-filters select[name='filter_url']");
+        if (filter_url.length) {
+            var dtURL = filter_url.val();
+            reloadDatatableNewURL(oTableid, dtURL);
+        } else {
+            var oTable = jQuery("#" + oTableid).DataTable();
+            oTable.ajax.reload();
+        }
     }
     if (getListable && listable.length) {
         listable.val(oldlistval);
