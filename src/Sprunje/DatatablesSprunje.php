@@ -349,10 +349,11 @@ class DatatablesSprunje extends Sprunje
     public function getDtCsv()
     {
         $columnNames = $this->getExportable();
+        $pickColumns = true;
         //if (is_array($columnNames)) {
-            //Debug::debug("Line 351 getExportable is $columnNames", $columnNames);
+        //Debug::debug("Line 351 getExportable is $columnNames", $columnNames);
         //} else {
-            //Debug::debug("Line 354 getExportable is $columnNames");
+        //Debug::debug("Line 354 getExportable is $columnNames");
         //}
         $dtcsv = ['header' => [], 'body' => []];
         if ($columnNames === false) {
@@ -372,21 +373,29 @@ class DatatablesSprunje extends Sprunje
             //$columnNames = $this->getExportable();
             if ($columnNames == '*') {
                 $columnNames = [];
+                $pickColumns = false;
             }
             // Flatten collection while simultaneously building the column names from the union of each element's keys
-            $collection->transform(function ($item, $key) use (&$columnNames) {
+            //Debug::debug("Line 377 Collection Array before DOT", $collection->toArray());
+            //Debug::debug("Line 378 Columnnames before DOT", $columnNames);
+            $collection->transform(function ($item, $key) use (&$columnNames, $pickColumns) {
                 //Debug::debug("Line 380 item is ",$item->toArray());
-                if (count($columnNames) > 0) {
-                    $item = collect($item->only($columnNames));
+                if ($pickColumns) {
+                    $item0 = collect($item->only($columnNames));
+                } else {
+                    $item0 = $item;
                 }
-                $item = Arr::dot($item->toArray());
-                foreach ($item as $itemKey => $itemValue) {
+                //Debug::debug("Line 382 Item Array before DOT", $item->toArray());
+
+                $item1 = Arr::dot($item0->toArray());
+                foreach ($item1 as $itemKey => $itemValue) {
                     if (!in_array($itemKey, $columnNames)) {
                         $columnNames[] = $itemKey;
                     }
                 }
-                return $item;
+                return $item1;
             });
+            //Debug::debug("Line 390 column names", $columnNames);
 
             if (is_array($columnNames)) {
                 $dtcsv['header'] = $columnNames;
@@ -394,6 +403,7 @@ class DatatablesSprunje extends Sprunje
                 foreach ($collection as $item) {
                     //$collection->each(function ($item) use ($dtcsv, $columnNames) {
                     $row = [];
+                    //Debug::debug("Line 404 Item Array is  column names", $item);
                     foreach ($columnNames as $itemKey) {
                         // Only add the value if it is set and not an array.  Laravel's array_dot sometimes creates empty child arrays :(
                         // See https://github.com/laravel/framework/pull/13009

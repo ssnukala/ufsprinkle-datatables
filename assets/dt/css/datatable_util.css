@@ -175,6 +175,10 @@ th.dt_column {
     overflow: scroll;
 }
 
+div.dt-button-collection {
+    right: 0px !important;
+    left: auto !important;
+}
 /*
 .cddatatable-topbox .dt-search {
     padding: 0px;

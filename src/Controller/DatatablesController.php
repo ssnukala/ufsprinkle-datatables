@@ -44,6 +44,7 @@ class DatatablesController extends SimpleController
     protected $protected = true; //if the user needs to be logged in
     protected $permissions = []; // the permissions needed to access data, leave blank if open for all
     protected $schema = 'not_set';
+    protected $CRUDctl;
     protected $default_options = [
         "htmlid" => "notsetbyuser",
         "ajax_url" => "/datatable/notsetbyuser",
@@ -89,6 +90,19 @@ class DatatablesController extends SimpleController
         throw new NotFoundException();
     }
 
+    public function setCRUDController($dtprop = [])
+    {
+        if (isset($dtprop['crudctl'])) {
+            $this->CRUDCtl = $dtprop['crudctl'];
+        } else {
+            $this->CRUDCtl = $this->getCRUDController();
+        }
+    }
+
+    public function getCRUDController()
+    {
+        return 'SET-IN-CHILD';
+    }
 
     public function setDestination($destination)
     {
