@@ -179,6 +179,11 @@ div.dt-button-collection {
     right: 0px !important;
     left: auto !important;
 }
+
+.sh-detail-blk {
+    display:block;
+}
+
 /*
 .cddatatable-topbox .dt-search {
     padding: 0px;

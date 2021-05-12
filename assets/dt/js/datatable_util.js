@@ -1004,7 +1004,18 @@ function setDTFilterData(sTableId, data) {
     }
 }
 
-function toggleSelectOnRowClick(oTableid) {
+function toggleSelectOnRowClick(shctl, oTableid) {
+    var tglctl = jQuery(shctl).find('.dt-shdetail-toggle');
+    if (tglctl.hasClass('glyphicon-eye-close')) {
+        jQuery('#' + oTableid + ' .sh-detail-blk').show();
+        tglctl.removeClass('glyphicon-eye-close text-danger').addClass('glyphicon-eye-open text-info');
+    } else {
+        jQuery('#' + oTableid + ' .sh-detail-blk').hide();
+        tglctl.removeClass('glyphicon-eye-open text-info').addClass('glyphicon-eye-close text-danger');
+    }
+}
+
+function toggleShDetailBlk(oTableid) {
     jQuery('#' + oTableid + ' tbody').on('click', 'tr', function () {
         if (jQuery(this).hasClass('selected')) {
             jQuery(this).removeClass('selected');
