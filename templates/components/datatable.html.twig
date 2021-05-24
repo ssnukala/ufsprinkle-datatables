@@ -31,7 +31,7 @@
     </div>
 {% endif %}
     <table cellpadding="0" cellspacing="0" style="width:100%!important;" 
-        class="table table-striped table-bordered dataTable srinivas {{dtoptions.tableclass}}" 
+        class="table table-striped table-bordered hide_dt_detail dataTable srinivas {{dtoptions.tableclass}}" 
         border="0" id="{{dtoptions.htmlid}}" data-url="/datatable/testurl" data-name='{{dtoptions.name}}'
         data-schema="testschema" 
     {% if (crud_params.parentdtid is not empty) %} parentdt="{{crud_params.parentdtid}}" {% endif %} 

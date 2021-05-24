@@ -180,8 +180,12 @@ div.dt-button-collection {
     left: auto !important;
 }
 
-.sh-detail-blk {
+.dataTable.show_dt_detail .sh-detail-blk {
     display:block;
+}
+
+.dataTable.hide_dt_detail .sh-detail-blk {
+    display:none;
 }
 
 /*
