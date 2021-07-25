@@ -868,7 +868,7 @@ function reloadDatatableNewURLQuery(oTableid, query) {
 
 function testCreatedRow(row, data, dataIndex) {
     console.log("Line 213 CreatedRow the table row is ");
-    console.log(data);
+    //console.log(data);
 }
 
 function testRowCallback(row, data) {
@@ -877,7 +877,7 @@ function testRowCallback(row, data) {
 
 function testCustomRenderCallback(row, rowhtml, meta) {
     console.log("Line 225 testCustomRenderCallback the table row is will look for #widget-cg-" + row.id);
-    console.log(row);
+    //console.log(row);
     if (jQuery('#widget-cg-' + row.id).length) {
         jQuery('#widget-cg-' + row.id + ' .box-title').addClass('srinivas');
         console.log('Line 229: adding srinivas class to rendered HTML')
