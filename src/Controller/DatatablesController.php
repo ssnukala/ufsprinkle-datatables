@@ -10,19 +10,11 @@
 
 namespace UserFrosting\Sprinkle\Datatables\Controller;
 
-use Carbon\Carbon;
-use UserFrosting\Sprinkle\Core\Controller\SimpleController;
-use UserFrosting\Sprinkle\Core\Util\EnvironmentInfo;
-use UserFrosting\Fortress\RequestDataTransformer;
-use UserFrosting\Fortress\RequestSchema;
-use UserFrosting\Fortress\ServerSideValidator;
-use UserFrosting\Support\Repository\Loader\YamlFileLoader;
-use UserFrosting\Sprinkle\Core\Facades\Debug;
-use UserFrosting\Sprinkle\UfMessage\Controller\Util\UfMessageUtilController;
 use Psr\Container\ContainerInterface;
+use UserFrosting\Sprinkle\Core\Controller\SimpleController;
+use UserFrosting\Sprinkle\UfMessage\Controller\Util\UfMessageUtilController;
 use UserFrosting\Support\Exception\NotFoundException;
-use UserFrosting\Support\Exception\BadRequestException;
-use UserFrosting\Support\Exception\ForbiddenException;
+use UserFrosting\Support\Repository\Loader\YamlFileLoader;
 
 /**
  * DatatablesController Class
@@ -36,11 +28,11 @@ class DatatablesController extends SimpleController
 
     protected $destination;
     //    protected $schema;       // json schema for the datatable definitions
-    protected $fields = [];       // datatable field definitions
-    protected $exportable = false;       // fields that are exportable : false if none
-    protected $options = [];       // options for the data table
-    protected $sprunje_name = 'sprunjenotset';       // Name if the sprunje
-    protected $sprunje = 'sprunjenotset';       // Sprunje to be used for data retrieval
+    protected $fields = []; // datatable field definitions
+    protected $exportable = false; // fields that are exportable : false if none
+    protected $options = []; // options for the data table
+    protected $sprunje_name = 'sprunjenotset'; // Name if the sprunje
+    protected $sprunje = 'sprunjenotset'; // Sprunje to be used for data retrieval
     protected $protected = true; //if the user needs to be logged in
     protected $permissions = []; // the permissions needed to access data, leave blank if open for all
     protected $schema = 'not_set';
@@ -58,7 +50,7 @@ class DatatablesController extends SimpleController
         "export_rows" => 'none',
         'rowId' => 'id',
         'ajax_params' => ['listable' => ['type' => 'hidden', 'name' => 'get_listable', 'value' => 'N']],
-        'createdRow' => 'genericCreatedRow'
+        'createdRow' => 'genericCreatedRow',
         //,"initial_sort" => [[0, 'asc']] // make first column is always ID even if is hidden?
     ];
 
@@ -86,7 +78,7 @@ class DatatablesController extends SimpleController
 
     public function denyAccess($message = '')
     {
-        Debug::debug('Line 82 unauthorized access by: NotFoundException' . $this->ci->currentUser->user_name);
+        //Debug::debug('Line 82 unauthorized access by: NotFoundException' . $this->ci->currentUser->user_name);
         throw new NotFoundException();
     }
 
@@ -113,7 +105,6 @@ class DatatablesController extends SimpleController
     {
         return $this->destination;
     }
-
 
     public function setupDatatable($options = [])
     {
@@ -159,33 +150,33 @@ class DatatablesController extends SimpleController
     /*
     public function getProtected()
     {
-        return $this->protected;
+    return $this->protected;
     }
 
     public function setProtected($protected)
     {
-        $this->protected = $protected;
+    $this->protected = $protected;
     }
-    */
+     */
 
     public function verifyPermission()
     {
         // ToDO : Srinivas : 4/14 : need to think thru this and set the appropriate permissions
-        // will comment this for now. 
-        // Can also handle this based on query also 
+        // will comment this for now.
+        // Can also handle this based on query also
         // The datatable query will restrict what the user can see based on role
         /*
-        if (count($this->permissions) > 0) {
-            $authorizer = $this->ci->authorizer;
-            $currentUser = $this->ci->currentUser;
-            foreach ($this->permissions as $permission) {
-                if (!$authorizer->checkAccess($currentUser, $permission)) {
-                    Debug::debug("Line 119 throwing forbidden exception for - $permission");
-                    $this->denyAccess();
-                }
-            }
-        }
-        */
+    if (count($this->permissions) > 0) {
+    $authorizer = $this->ci->authorizer;
+    $currentUser = $this->ci->currentUser;
+    foreach ($this->permissions as $permission) {
+    if (!$authorizer->checkAccess($currentUser, $permission)) {
+    Debug::debug("Line 119 throwing forbidden exception for - $permission");
+    $this->denyAccess();
+    }
+    }
+    }
+     */
     }
 
     public function getSprunjeName()
@@ -284,7 +275,7 @@ class DatatablesController extends SimpleController
         $retarr["templates"] = isset($this->options['templates']) ? $this->options['templates'] : [];
         $retarr["crud_forms"] = isset($this->options['crud_forms']) ? $this->options['crud_forms'] : [];
 
-        // Setting default for the Listable this can be overridden 
+        // Setting default for the Listable this can be overridden
         $listable = ['listable' => ['type' => 'hidden', 'name' => 'get_listable', 'value' => 'N']];
         $retarr['ajax_params'] = isset($this->options['ajax_params']) ? $this->options['ajax_params'] : $listable;
 
@@ -297,15 +288,15 @@ class DatatablesController extends SimpleController
         $dtarr = $this->getDatatableArray();
 
         /*        $template = 'pages/generic-crud.html.twig';
-        return $this->ci->view->render($response, $template, [
-            'info' => [
-                'environment' => $this->ci->environment,
-                'path' => ['project' => \UserFrosting\ROOT_DIR],
-            ],
-            'crudform' => $formArray,
-            'params' => $params
-        ]);        
-*/
+    return $this->ci->view->render($response, $template, [
+    'info' => [
+    'environment' => $this->ci->environment,
+    'path' => ['project' => \UserFrosting\ROOT_DIR],
+    ],
+    'crudform' => $formArray,
+    'params' => $params
+    ]);
+     */
     }
 
     /**
@@ -374,7 +365,7 @@ class DatatablesController extends SimpleController
         if ($this->exportable !== false) {
             $this->sprunje->setExportable($this->exportable);
         }
-        $this->sprunje->setCurrentUser($this->ci->currentUser); // set the current user 
+        $this->sprunje->setCurrentUser($this->ci->currentUser); // set the current user
     }
 
     /**
@@ -428,8 +419,8 @@ class DatatablesController extends SimpleController
     }
     /**
      * getList function
-     * Returns the json array to populate the datatable, 
-     * almost 100% of the time this will be overridden in the child class 
+     * Returns the json array to populate the datatable,
+     * almost 100% of the time this will be overridden in the child class
      * @param [type] $request
      * @param [type] $response
      * @param [type] $args
