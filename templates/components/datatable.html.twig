@@ -1,6 +1,6 @@
 <!-- datatable div starts -->
 {#{% set help_position =  crud_params.rs_help.position | default('bottom') %}#}
-<div id="{{dtoptions.htmlid}}_content" class="table-responsive dtable-content sn-datatable {{dtoptions.dtclass}}">
+<div id="{{dtoptions.htmlid}}_content" class="table-responsive1 dtable-content sn-datatable {{dtoptions.dtclass}}">
 {% if dtoptions.quick_edit is iterable %}
 {% set qe = dtoptions.quick_edit %}
     <div class="dt-quickedit pull-right" id="{{dtoptions.htmlid}}_quickedit_div" >

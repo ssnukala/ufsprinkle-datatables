@@ -245,6 +245,12 @@ function createDatatableOnPage(dtoptions) {
 
     stylePageLength(datatableID, dtoptions.pagelength);
 
+    // call this function after all the datatable tasks are done
+    if (dtoptions["customDTCreateCallback"] != undefined && dtoptions["customDTCreateCallback"] != "") {
+        var dtcbfn = setValidCallback("customDTCreateCallback");
+        dtcbfn(datatableID);
+    }
+
     /*
     if (dtoptions["showRowPage"] !== undefined) {
         clickSelectRowShowPage(dtoptions.htmlid, dtoptions["showRowPage"]);
