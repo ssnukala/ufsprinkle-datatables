@@ -188,7 +188,6 @@ div.dt-button-collection {
     display:none;
 }
 
-<<<<<<< HEAD
 .dt-control-sidebar {
     position: absolute;
     margin-top: 50px;
@@ -239,8 +238,6 @@ div.dt-button-collection {
   font-weight: 400;
   font-size: 14px;
 }
-
-=======
 
 .corner-delete {
   width: 0;
@@ -294,7 +291,6 @@ div.dt-button-collection {
     display: block;
     color:white;
 }
->>>>>>> f3a9b34c5d14183fe3e9429c9c07d39df59f5947
 /*
 .cddatatable-topbox .dt-search {
     padding: 0px;
