@@ -181,13 +181,66 @@ div.dt-button-collection {
 }
 
 .dataTable.show_dt_detail .sh-detail-blk {
-    display:block;
+    display:initial;
 }
 
 .dataTable.hide_dt_detail .sh-detail-blk {
     display:none;
 }
 
+
+.corner-delete {
+  width: 0;
+  height: 0;
+  border-top: 15px solid #ffcc00;
+  border-bottom: 15px solid transparent;
+  border-left: 15px solid transparent;
+  position:absolute;
+  right:0;
+}
+
+.corner {
+    width: 0;
+    height: 0;
+    border-top: 45px solid #ffcc00;
+    border-bottom: 45px solid transparent;
+    border-left: 45px solid transparent;
+    position: relative;
+    float: right;
+}
+
+.corner span {
+    position: absolute;
+    top: -35px;
+    width: 40px;
+    left: -35px;
+    text-align: center;
+    font-size: 10px;
+    font-family: arial;
+    transform: rotate(45deg);
+    display: block;
+}
+
+.corner-25 {
+    width: 0;
+    height: 0;
+    border-top: 25px solid red; /* #ffcc00;*/
+    border-bottom: 25px solid transparent;
+    border-left: 25px solid transparent;
+    position: relative;
+    float: right;
+}
+
+.corner-25 span {
+    position: absolute;
+    top: -24px;
+    width: 40px;
+    left: -27px;
+    text-align: center;
+    transform: rotate(45deg);
+    display: block;
+    color:white;
+}
 /*
 .cddatatable-topbox .dt-search {
     padding: 0px;
