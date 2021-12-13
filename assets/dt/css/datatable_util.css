@@ -188,6 +188,57 @@ div.dt-button-collection {
     display:none;
 }
 
+.dt-control-sidebar {
+    position: absolute;
+    margin-top: 50px;
+    z-index: 1010;
+}
+.dt-control-sidebar-bg, .dt-control-sidebar {
+    top: 0;
+    right: -330px;
+    width: 330px;
+    -webkit-transition: right 0.3s ease-in-out;
+    -o-transition: right 0.3s ease-in-out;
+    transition: right 0.3s ease-in-out;
+}
+
+.dt-control-sidebar > .tab-content {
+  padding: 10px 15px;
+}
+.dt-control-sidebar.dt-control-sidebar-open,
+.dt-control-sidebar.dt-control-sidebar-open + .dt-control-sidebar-bg {
+  left: 0;
+}
+.dt-control-sidebar-open .dt-control-sidebar-bg,
+.dt-control-sidebar-open .dt-control-sidebar {
+  left: 0;
+}
+@media (min-width: 768px) {
+  .dt-control-sidebar-open .content-wrapper,
+  .dt-control-sidebar-open .right-side,
+  .dt-control-sidebar-open .main-footer {
+    margin-right: 230px;
+  }
+}
+.fixed .dt-control-sidebar {
+  position: fixed;
+  height: 100%;
+  overflow-y: auto;
+  padding-bottom: 50px;
+}
+
+.dt-control-sidebar-heading {
+  font-weight: 400;
+  font-size: 16px;
+  padding: 10px 0;
+  margin-bottom: 10px;
+}
+.dt-control-sidebar-subheading {
+  display: block;
+  font-weight: 400;
+  font-size: 14px;
+}
+
 /*
 .cddatatable-topbox .dt-search {
     padding: 0px;

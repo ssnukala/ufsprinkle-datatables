@@ -69,7 +69,7 @@
             <!-- datatable filters end -->
             {% if cruddt.templates.newrow_template is not empty   %}
                 <!-- datatable crud newrow start -->
-                <div class='crud-newrow' id='crud-newrow_{{cruddt.settings.htmlid}}' 
+                <div class='crud-newrow ' id='crud-newrow_{{cruddt.settings.htmlid}}' 
                     data-dtname='{{cruddt.settings.name}}' data-dtid='{{cruddt.settings.htmlid}}'>
                     {% include cruddt.templates.newrow_template with {
                     'dtoptions' : cruddt.settings,
