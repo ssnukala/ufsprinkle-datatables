@@ -181,7 +181,7 @@ div.dt-button-collection {
 }
 
 .dataTable.show_dt_detail .sh-detail-blk {
-    display:block;
+    display:initial;
 }
 
 .dataTable.hide_dt_detail .sh-detail-blk {
