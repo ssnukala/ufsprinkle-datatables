@@ -15,5 +15,6 @@ return [
     ],
     'debug' => [
         'queries' => false
-    ]
+    ],
+    'dt'=>['logo'=>'assets://dt/images/cm-aum-flower04.png']
 ];

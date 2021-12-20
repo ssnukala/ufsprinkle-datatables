@@ -181,19 +181,23 @@ div.dt-button-collection {
 }
 
 .dataTable.show_dt_detail .sh-detail-blk {
-    display:initial;
+    display: initial;
 }
 
 .dataTable.hide_dt_detail .sh-detail-blk {
-    display:none;
+    display: none;
 }
 
 .dt-control-sidebar {
     position: absolute;
-    margin-top: 50px;
+    /*margin-top: 50px;*/
+    width: 85%;
     z-index: 1010;
 }
-.dt-control-sidebar-bg, .dt-control-sidebar {
+
+/*
+.dt-control-sidebar-bg,
+.dt-control-sidebar {
     top: 0;
     right: -330px;
     width: 330px;
@@ -202,9 +206,10 @@ div.dt-button-collection {
     transition: right 0.3s ease-in-out;
 }
 
-.dt-control-sidebar > .tab-content {
-  padding: 10px 15px;
+.dt-control-sidebar>.tab-content {
+    padding: 10px 15px;
 }
+
 .dt-control-sidebar.dt-control-sidebar-open,
 .dt-control-sidebar.dt-control-sidebar-open + .dt-control-sidebar-bg {
   left: 0;
@@ -238,15 +243,15 @@ div.dt-button-collection {
   font-weight: 400;
   font-size: 14px;
 }
-
+*/
 .corner-delete {
-  width: 0;
-  height: 0;
-  border-top: 15px solid #ffcc00;
-  border-bottom: 15px solid transparent;
-  border-left: 15px solid transparent;
-  position:absolute;
-  right:0;
+    width: 0;
+    height: 0;
+    border-top: 15px solid #ffcc00;
+    border-bottom: 15px solid transparent;
+    border-left: 15px solid transparent;
+    position: absolute;
+    right: 0;
 }
 
 .corner {
@@ -274,7 +279,8 @@ div.dt-button-collection {
 .corner-25 {
     width: 0;
     height: 0;
-    border-top: 25px solid red; /* #ffcc00;*/
+    border-top: 25px solid red;
+    /* #ffcc00;*/
     border-bottom: 25px solid transparent;
     border-left: 25px solid transparent;
     position: relative;
@@ -289,8 +295,9 @@ div.dt-button-collection {
     text-align: center;
     transform: rotate(45deg);
     display: block;
-    color:white;
+    color: white;
 }
+
 /*
 .cddatatable-topbox .dt-search {
     padding: 0px;
