@@ -190,8 +190,8 @@ div.dt-button-collection {
 
 .dt-control-sidebar {
     position: absolute;
-    /*margin-top: 50px;*/
-    width: 85%;
+    /*margin-top: 50px;
+    width: 85%; */
     z-index: 1010;
 }
 
