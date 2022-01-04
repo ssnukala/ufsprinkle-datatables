@@ -1,5 +1,15 @@
 .dataTable .dt-head tr {
-    background: #337ab7;
+    background: #116DD0;
+    color: white;
+}
+
+.skin-blue .dataTable .dt-head tr {
+    background: #116DD0;
+    color: white;
+}
+
+.skin-blue-light .dataTable .dt-head tr {
+    background: #1379E8;
     color: white;
 }
 
@@ -193,6 +203,14 @@ div.dt-button-collection {
     /*margin-top: 50px;
     width: 85%; */
     z-index: 1010;
+}
+
+.dt-control-sidebar .rs-editform {
+    padding: 5px;
+}
+
+.rs-editform .form-control {
+    padding: 5px;
 }
 
 /*
