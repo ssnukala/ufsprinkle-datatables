@@ -7,11 +7,10 @@
             <div class='title-pulldown col-md-11'>
                 {% if (cruddt.settings.title is not empty) %}
                     <h3 class="box-title">
-                        {#<i class="fa fa-tasks fa-fw"></i> #}
+                        <i class="fa fa-tasks fa-fw"></i>
+                        {#
                         {% set dtlogo = cruddt.settings.logo|default('assets://dt/images/cm-aum-flower04.png') %}
-                        <img class="dt-head-image img-circle" src="{{assets.url(dtlogo)}}" alt="Datatable">
-                        {#<img class="dt-head-image img-circle" src="{{assets.url('assets://dt/images/cm-aum-flower04.png')}}" alt="Datatable">#}
-                        {#<span class="glyphicon glyphicon-tasks" aria-hidden="true"></span>#}
+                        <img class="dt-head-image img-circle" src="{{assets.url(dtlogo)}}" alt="Datatable"> #}
                         {% if cruddt.settings.title is not empty %}
                             {{translate(cruddt.settings.title|default('CRUD_DATATABLE'))}}
                         {% else %}
