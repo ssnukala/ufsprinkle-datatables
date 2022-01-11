@@ -15,6 +15,7 @@ use UserFrosting\Sprinkle\Core\Controller\SimpleController;
 use UserFrosting\Sprinkle\UfMessage\Controller\Util\UfMessageUtilController;
 use UserFrosting\Support\Exception\NotFoundException;
 use UserFrosting\Support\Repository\Loader\YamlFileLoader;
+use UserFrosting\Sprinkle\Core\Facades\Debug;
 
 /**
  * DatatablesController Class
@@ -363,6 +364,10 @@ class DatatablesController extends SimpleController
         if (isset($args['format'])) {
             $this->sprunje->setFormat($args['format']);
         }
+        if (isset($args['destination'])) {
+            // /Debug::debug("Line 368 setting sprunje destination  " . $this->sprunje_name . " dest " . $args['destination']);
+            $this->sprunje->setDestination($args['destination']);
+        }
         if ($this->exportable !== false) {
             $this->sprunje->setExportable($this->exportable);
         }
@@ -429,6 +434,7 @@ class DatatablesController extends SimpleController
      */
     public function getList($request, $response, $args)
     {
+        Debug::debug("Line 435 the incoming args are ", $args);
         $this->verifyPermission();
         $this->setSprunje($request, $response, $args);
         // Extend query if needed in the child class
