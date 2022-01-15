@@ -103,6 +103,22 @@ class DatatablesSprunje extends Sprunje
         'id' => 'id', 'title' => 'not-set', 'text' => 'not-set', 'selection' => 'not-set'
     ];
 
+    protected $assetObj;
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setAssets($assets)
+    {
+        $this->assetObj = $assets;
+    }
+
+    public function getAssets()
+    {
+        return $this->assetObj;
+    }
+
+
     public function setCurrentUser($value)
     {
         $this->currentUser = $value;

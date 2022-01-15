@@ -434,7 +434,7 @@ class DatatablesController extends SimpleController
      */
     public function getList($request, $response, $args)
     {
-        Debug::debug("Line 435 the incoming args are ", $args);
+        //Debug::debug("Line 435 the incoming args are ", $args);
         $this->verifyPermission();
         $this->setSprunje($request, $response, $args);
         // Extend query if needed in the child class
