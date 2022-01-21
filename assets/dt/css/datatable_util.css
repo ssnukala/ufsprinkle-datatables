@@ -207,6 +207,7 @@ div.dt-button-collection {
 
 .dt-control-sidebar .rs-editform {
     padding: 10px;
+    border: 1px dashed maroon;
 }
 
 .rs-editform .form-control {
