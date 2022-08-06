@@ -251,7 +251,7 @@ class DatatablesSprunje extends Sprunje
 
     public function getArray()
     {
-        Debug::debug("Line 52 the options are ", $this->options);
+        //Debug::debug("Line 52 the options are ", $this->options);
         if (isset($this->options['length']) && isset($this->options['start'])) {
             $this->options['page'] = ($this->options['start'] / $this->options['length']);
         } else {
